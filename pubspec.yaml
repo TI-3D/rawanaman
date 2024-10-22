@@ -15,6 +15,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   font_awesome_flutter: ^10.7.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
