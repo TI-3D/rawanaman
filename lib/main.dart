@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rawanaman/pages/login_page.dart';
-import 'package:rawanaman/pages/register_page.dart';
-import 'package:rawanaman/pages/splash_screen.dart';
 import 'package:rawanaman/pages/wiki_page.dart';
 
 void main() {
@@ -30,10 +27,7 @@ void main() {
     initialRoute: '/',
     routes: {
       WikiPage.routeName: (context) => WikiPage(),
-      '/wiki': (context) => WikiPage(),
-      '/': (context) => SplashScreen(),
-      '/login': (context) => LoginPage(),
-      '/register': (context) => RegisterPage(),
+      '/': (context) => WikiPage(),
       // '/item': (context) => ItemPage(),
     },
   ));
