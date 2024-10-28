@@ -54,7 +54,7 @@ class _CardMyPlants extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
+                    child: Image.asset(
                       plantImages[index], // Using network image
                       width: 100,
                       height: 160,

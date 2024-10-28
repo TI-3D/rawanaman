@@ -10,20 +10,15 @@ class DetailScreen extends StatelessWidget {
         ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
 
     return Scaffold(
+      backgroundColor: Color(0xFFE0F6EF), //background hijau
       body: Column(
         children: [
-          //background hijau
           Stack(
             children: [
-              Container(
-                height: 690,
-                color: Color(0xFFE0F6EF),
-              ),
-
               // Gambar tanaman di bagian atas
               Container(
                 width: double.infinity,
-                height: 250.0, // Atur tinggi gambar
+                height: 350.0, // Atur tinggi gambar
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/images/daun_kuping_gajah.jpg'),
@@ -50,90 +45,12 @@ class DetailScreen extends StatelessWidget {
                 ),
               ),
               Stack(
-                children: [
-                  Expanded(
-                    child: Container(
-                      width: 473,
-                      padding: EdgeInsets.all(16),
-                      margin: EdgeInsets.fromLTRB(14, 550, 0, 0),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xFF10B982)),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Row(
-                        children: [
-                          // Plant Course
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Plant Care Manual',
-                                  style: GoogleFonts.poppins(
-                                    textStyle: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                    height:
-                                        8), // Spasi antara judul dan ikon+teks
-                                Row(
-                                  children: [
-                                    Icon(Icons.book, color: Colors.green),
-                                    SizedBox(
-                                        width:
-                                            16), // Spasi antara ikon dan teks deskripsi
-                                    Expanded(
-                                      child: Text(
-                                        'Learn how to care for "${args?['name'] ?? 'nama tanaman'}" step by step',
-                                        style: GoogleFonts.poppins(
-                                          textStyle: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black54,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                    height: 27), // Spasi sebelum "Learn More"
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, '/plantCareManual');
-                                  },
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Learn More >',
-                                      style: GoogleFonts.poppins(
-                                        textStyle: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                children: [],
               ),
               // Card yang menutupi sisa layar di bawah gambar
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(0, 225, 0, 0),
+                  margin: EdgeInsets.fromLTRB(0, 295, 0, 0),
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -158,6 +75,7 @@ class DetailScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+                        SizedBox(height: 9),
                         Text(
                           'a Species of Laceleaf (Anthurium)',
                           style: GoogleFonts.poppins(
@@ -168,9 +86,9 @@ class DetailScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 8),
+                        SizedBox(height: 20),
                         Text(
-                          'Common Name: Crystal Anthurium, Anthurium\n'
+                          'Common Name: Crystal Anthurium, Anthurium\n\n'
                           'Botanical Name: Anthurium crystallinum',
                           style: GoogleFonts.poppins(
                             textStyle: TextStyle(
@@ -179,19 +97,19 @@ class DetailScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 16),
+                        SizedBox(height: 36),
                         Text(
                           'Deskripsi: Lorem ipsum dolor sit amet consectetur adipiscing elit. '
                           'Ipsum qui perferendis inventore iste obcaecati debitis dolorum delectus '
                           'illo repellat cum at praesentium.',
                           style: GoogleFonts.poppins(
                             textStyle: TextStyle(
-                              fontSize: 14,
+                              fontSize: 15,
                               color: Colors.black87,
                             ),
                           ),
                         ),
-                        SizedBox(height: 16),
+                        SizedBox(height: 27),
                         Row(
                           children: [
                             Expanded(
@@ -224,6 +142,79 @@ class DetailScreen extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          Positioned(
+            child: Container(
+              width: 473,
+              padding: EdgeInsets.all(16),
+              margin: EdgeInsets.fromLTRB(14, 9, 14, 0),
+              decoration: BoxDecoration(
+                border: Border.all(color: Color(0xFF10B982)),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Row(
+                children: [
+                  // Plant Course
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Plant Care Manual',
+                          style: GoogleFonts.poppins(
+                            textStyle: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 8), // Spasi antara judul dan ikon+teks
+                        Row(
+                          children: [
+                            Icon(Icons.book, color: Colors.green),
+                            SizedBox(
+                                width:
+                                    16), // Spasi antara ikon dan teks deskripsi
+                            Expanded(
+                              child: Text(
+                                'Learn how to care for "${args?['name'] ?? 'nama tanaman'}" step by step',
+                                style: GoogleFonts.poppins(
+                                  textStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 27), // Spasi sebelum "Learn More"
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/plantCareManual');
+                          },
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Learn More >',
+                              style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
