@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rawanaman/pages/start_page.dart';
-import 'package:rawanaman/pages/wiki_page.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
