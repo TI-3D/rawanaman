@@ -1,22 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/pages/detail_wiki_pages.dart';
 
 class CardWikiData extends StatelessWidget {
+  final int itemCount;
+
+  CardWikiData({this.itemCount = 5});
+
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 1.0,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8),
-      itemCount: 5, // Number of cards
-      itemBuilder: (context, index) {
-        return CardWiki(index: index);
-      },
-    );
+    if (itemCount == 0) {
+      return Container(
+        margin: const EdgeInsets.symmetric(
+          vertical: double.minPositive,
+        ),
+        child: Text(
+          'No Plants Available',
+          style: GoogleFonts.poppins(
+            textStyle: TextStyle(fontSize: 18),
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
+      );
+    } else {
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1.0,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8),
+        itemCount: 5, // Number of cards
+        itemBuilder: (context, index) {
+          return CardWiki(index: index);
+        },
+      );
+    }
   }
 }
 
@@ -31,7 +52,7 @@ class CardWiki extends StatelessWidget {
       elevation: 4,
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, '/');
+          Navigator.pushNamed(context, DetailWikiPage.routeName);
         },
         child: Stack(
           children: [

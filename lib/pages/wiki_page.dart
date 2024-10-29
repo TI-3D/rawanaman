@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rawanaman/widgets/card_wiki.dart';
 import 'package:rawanaman/widgets/card_wiki2.dart';
-import 'package:rawanaman/widgets/navbar.dart';
+// import 'package:rawanaman/widgets/navbar.dart';
 import 'package:rawanaman/widgets/search_input.dart';
 import 'package:rawanaman/widgets/slide_button.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -51,7 +51,7 @@ class _WikiPage extends State<WikiPage> {
                 ),
               ),
               Text(
-                'Get to know the disease of all plants',
+                'Get to know more about plants',
                 style: GoogleFonts.poppins(
                   textStyle: TextStyle(fontSize: 12),
                 ),
@@ -85,7 +85,7 @@ class _WikiPage extends State<WikiPage> {
                             ),
                           ),
                           Text(
-                            'Get to know your plant disease and how to cure them',
+                            'Get to know about your plant’s, disease and how to take care of them',
                             style: GoogleFonts.poppins(
                               textStyle: TextStyle(fontSize: 11),
                             ),
@@ -109,7 +109,7 @@ class _WikiPage extends State<WikiPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Common Plants Disease',
+                            'Other Plants',
                             style: GoogleFonts.poppins(
                               textStyle: TextStyle(
                                   color: Color.fromRGBO(49, 81, 22, 1.0),
@@ -118,7 +118,7 @@ class _WikiPage extends State<WikiPage> {
                             ),
                           ),
                           Text(
-                            'Get to know other plant disease and how to cure them',
+                            'Get to know about plant’s, disease and how to take care of them',
                             style: GoogleFonts.poppins(
                               textStyle: TextStyle(fontSize: 11),
                             ),
@@ -135,7 +135,7 @@ class _WikiPage extends State<WikiPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Navbar(),
+      // bottomNavigationBar: Navbar(),
     );
   }
 }
