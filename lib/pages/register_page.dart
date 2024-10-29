@@ -10,6 +10,8 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isObscure = true; // To toggle password visibility
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Container(
               height: 40,
               child: TextField(
-                controller: _emailController,
+                controller: _nameController,
                 decoration: InputDecoration(
                   hintText: 'Name',
                   hintStyle: GoogleFonts.poppins(
@@ -181,7 +183,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Container(
               height: 40,
               child: TextField(
-                controller: _passwordController,
+                controller: _confirmPasswordController,
                 obscureText: _isObscure,
                 decoration: InputDecoration(
                   hintText: 'Password',
@@ -235,7 +237,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
 
             Spacer(),
 
