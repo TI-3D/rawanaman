@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rawanaman/pages/camera_page.dart';
 import 'package:rawanaman/pages/findplant_page.dart';
+import 'package:rawanaman/pages/setting_page.dart';
 import 'package:rawanaman/widgets/card_diagnosa.dart';
 import 'package:rawanaman/widgets/card_scan_resultHealth.dart';
 import 'package:rawanaman/widgets/card_scan_pict.dart';
@@ -43,6 +44,7 @@ void main() {
       '/scanResult': (context) => CardResultScan(),
       '/resultSick': (context) => CardScanResultsick(),
       '/diagnoseResult': (context) => CardDiagnosa(),
+      '/settingPage': (context) => SettingPage(),
     },
   ));
 }

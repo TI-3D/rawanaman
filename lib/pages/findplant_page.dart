@@ -40,7 +40,12 @@ class FindPlantPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    SvgPicture.asset('assets/svgs/setting.svg'),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/settingPage');
+                      },
+                      child: SvgPicture.asset('assets/svgs/setting.svg'),
+                    ),
                   ],
                 ),
               ),
