@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:rawanaman/pages/camera_page.dart';
 import 'package:rawanaman/pages/findplant_page.dart';
+import 'package:rawanaman/widgets/card_diagnosa.dart';
+import 'package:rawanaman/widgets/card_scan_resultHealth.dart';
+import 'package:rawanaman/widgets/card_scan_pict.dart';
+import 'package:rawanaman/widgets/card_scan_resultSick.dart';
 
 // import 'src/app.dart';
 // import 'src/settings/settings_controller.dart';
@@ -33,11 +38,11 @@ void main() {
     routes: {
       FindPlantPage.routeName: (context) => FindPlantPage(),
       '/': (context) => FindPlantPage(),
-      // '/item': (context) => ItemPage(),
-      // '/detail': (context) => DetailScreen(),
-      // '/plantCareManual': (context) => CardPlantCareManual(),
-      // '/fullSunCare': (context) => CardFullSunCare(),
-      // '/lessonDetail': (context) => CardLessonDetail(),
+      '/cameraPage': (context) => CameraPage(),
+      '/scanScreen': (context) => CardScanPict(),
+      '/scanResult': (context) => CardResultScan(),
+      '/resultSick': (context) => CardScanResultsick(),
+      '/diagnoseResult': (context) => CardDiagnosa(),
     },
   ));
 }
