@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/pages/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartPage extends StatelessWidget {
   @override
@@ -90,7 +92,10 @@ class StartPage extends StatelessWidget {
             // Login button
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/login');
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (context) => LoginPage(isLogin: true)),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF10B982),
@@ -115,7 +120,9 @@ class StartPage extends StatelessWidget {
             // Register button
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/register');
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (context) => LoginPage(isLogin: false)));
               },
               child: Text(
                 'Register',
@@ -131,9 +138,16 @@ class StartPage extends StatelessWidget {
             SizedBox(height: 15),
 
             // Continue as a guest text
-            Text(
-              'Continue as a guest',
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            TextButton(
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('isGuest', true);
+                Navigator.pushReplacementNamed(context, '/main');
+              },
+              child: Text(
+                'Continue as a guest',
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              ),
             ),
           ],
         ),

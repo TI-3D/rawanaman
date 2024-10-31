@@ -135,7 +135,6 @@ class _WikiPage extends State<WikiPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Navbar(),
     );
   }
 }
