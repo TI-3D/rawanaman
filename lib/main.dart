@@ -1,20 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:rawanaman/pages/detail_wiki_pages.dart';
+import 'package:rawanaman/pages/wiki_page.dart';
+import 'package:rawanaman/pages/myplant_page.dart';
+import 'package:rawanaman/pages/find_pages.dart';
+import 'package:rawanaman/pages/wiki_article.dart';
+import 'package:rawanaman/widgets/navbar.dart';
 
-import 'src/app.dart';
-import 'src/settings/settings_controller.dart';
-import 'src/settings/settings_service.dart';
+void main() {
+  runApp(MyApp());
+}
 
-void main() async {
-  // Set up the SettingsController, which will glue user settings to multiple
-  // Flutter Widgets.
-  final settingsController = SettingsController(SettingsService());
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'rawanaman',
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.transparent,
+      ),
+      // initialRoute: '/',
+      routes: {
+        '/': (context) => MainScreen(),
+        DetailWikiPage.routeName: (context) => const DetailWikiPage(),
+        WikiArticle.routeName: (context) => const WikiArticle(),
+      },
+      // home: MainScreen(),
+    );
+  }
+}
 
-  // Load the user's preferred theme while the splash screen is displayed.
-  // This prevents a sudden theme change when the app is first displayed.
-  await settingsController.loadSettings();
+class MainScreen extends StatefulWidget {
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
 
-  // Run the app and pass in the SettingsController. The app listens to the
-  // SettingsController for changes, then passes it further down to the
-  // SettingsView.
-  runApp(MyApp(settingsController: settingsController));
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 1; // Start with WikiPage selected
+
+  final List<Widget> _pages = [
+    MyPlantPage(),
+    FindPlantPage(),
+    WikiPage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromRGBO(16, 185, 130, 0.3),
+            Color.fromRGBO(255, 255, 255, 1.0),
+            Color.fromRGBO(255, 255, 255, 1.0),
+          ],
+          stops: [0.0, 0.6, 1.0],
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: _pages[_selectedIndex],
+        bottomNavigationBar: Navbar(
+          selectedIndex: _selectedIndex,
+          onItemTapped: _onItemTapped,
+        ),
+      ),
+    );
+  }
 }
