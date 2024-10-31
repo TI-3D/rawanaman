@@ -16,8 +16,20 @@ import 'package:rawanaman/pages/detail_wiki_pages.dart';
 import 'package:rawanaman/pages/wiki_page.dart';
 import 'package:rawanaman/pages/wiki_article.dart';
 import 'package:rawanaman/widgets/navbar.dart';
+import 'package:rawanaman/pages/wiki_page.dart';
+import 'package:rawanaman/widgets/navbar.dart';
+import 'package:rawanaman/pages/login_page.dart';
+import 'package:rawanaman/pages/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(MyApp());
 }
 
@@ -30,9 +42,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.transparent,
       ),
-      // initialRoute: '/',
+      initialRoute: '/',
       routes: {
-        '/': (context) => MainScreen(),
+        '/': (context) => SplashScreen(),
+        '/main': (context) => MainScreen(),
         '/myplant': (context) => MyPlantsPage(),
         DetailWikiPage.routeName: (context) => const DetailWikiPage(),
         WikiArticle.routeName: (context) => const WikiArticle(),
