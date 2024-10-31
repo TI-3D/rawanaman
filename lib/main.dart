@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:rawanaman/pages/find_pages.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
 import 'package:rawanaman/widgets/card_detail_myplants.dart';
 import 'package:rawanaman/widgets/card_full_sun_care.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/widgets/card_plant_care_manual.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
+
 import 'package:rawanaman/pages/detail_wiki_pages.dart';
 import 'package:rawanaman/pages/wiki_page.dart';
 import 'package:rawanaman/pages/wiki_article.dart';
@@ -48,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 1; // Start with WikiPage selected
 
   final List<Widget> _pages = [
-    MyPlantPage(),
+    MyPlantsPage(),
     FindPlantPage(),
     WikiPage(),
   ];

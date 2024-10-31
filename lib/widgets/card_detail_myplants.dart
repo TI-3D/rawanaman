@@ -218,7 +218,6 @@ class DetailScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: Navbar(),
     );
   }
 

@@ -42,7 +42,6 @@ class MyPlantsPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: Navbar(),
     );
   }
 }
