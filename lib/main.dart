@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:rawanaman/pages/myplants_page.dart';
+import 'package:rawanaman/widgets/card_detail_myplants.dart';
+import 'package:rawanaman/widgets/card_full_sun_care.dart';
+import 'package:rawanaman/widgets/card_lesson_detail.dart';
+import 'package:rawanaman/widgets/card_plant_care_manual.dart';
+import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/pages/detail_wiki_pages.dart';
 import 'package:rawanaman/pages/wiki_page.dart';
-import 'package:rawanaman/pages/myplant_page.dart';
-import 'package:rawanaman/pages/find_pages.dart';
 import 'package:rawanaman/pages/wiki_article.dart';
 import 'package:rawanaman/widgets/navbar.dart';
 
@@ -14,6 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, //hapus banner
       title: 'rawanaman',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.transparent,
@@ -21,8 +26,13 @@ class MyApp extends StatelessWidget {
       // initialRoute: '/',
       routes: {
         '/': (context) => MainScreen(),
+        '/myplant': (context) => MyPlantsPage(),
         DetailWikiPage.routeName: (context) => const DetailWikiPage(),
         WikiArticle.routeName: (context) => const WikiArticle(),
+        '/detail': (context) => DetailScreen(),
+        '/plantCareManual': (context) => CardPlantCareManual(),
+        '/fullSunCare': (context) => CardFullSunCare(),
+        '/lessonDetail': (context) => CardLessonDetail(),
       },
       // home: MainScreen(),
     );
