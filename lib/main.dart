@@ -6,7 +6,13 @@ import 'package:rawanaman/widgets/card_full_sun_care.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/widgets/card_plant_care_manual.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
-
+import 'package:rawanaman/pages/camera_page.dart';
+import 'package:rawanaman/pages/findplant_page.dart';
+import 'package:rawanaman/pages/setting_page.dart';
+import 'package:rawanaman/widgets/card_diagnosa.dart';
+import 'package:rawanaman/widgets/card_scan_resultHealth.dart';
+import 'package:rawanaman/widgets/card_scan_pict.dart';
+import 'package:rawanaman/widgets/card_scan_resultSick.dart';
 import 'package:rawanaman/pages/detail_wiki_pages.dart';
 import 'package:rawanaman/pages/wiki_page.dart';
 import 'package:rawanaman/pages/wiki_article.dart';
@@ -35,6 +41,13 @@ class MyApp extends StatelessWidget {
         '/plantCareManual': (context) => CardPlantCareManual(),
         '/fullSunCare': (context) => CardFullSunCare(),
         '/lessonDetail': (context) => CardLessonDetail(),
+        '/find-plant': (context) => FindPlantPage(),
+        '/cameraPage': (context) => CameraPage(),
+        '/scanScreen': (context) => CardScanPict(),
+        '/scanResult': (context) => CardResultScan(),
+        '/resultSick': (context) => CardScanResultsick(),
+        '/diagnoseResult': (context) => CardDiagnosa(),
+        '/settingPage': (context) => SettingPage(),
       },
       // home: MainScreen(),
     );
