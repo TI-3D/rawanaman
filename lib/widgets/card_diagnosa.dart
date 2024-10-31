@@ -143,7 +143,6 @@ class CardDiagnosa extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Navbar(),
     );
   }
 }

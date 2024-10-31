@@ -55,7 +55,6 @@ class FindPlantPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: Navbar(),
     );
   }
 }

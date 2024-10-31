@@ -350,7 +350,6 @@ class CardScanResultsick extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Navbar(),
     );
   }
 

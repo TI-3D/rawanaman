@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rawanaman/pages/find_pages.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
 import 'package:rawanaman/widgets/card_detail_myplants.dart';
 import 'package:rawanaman/widgets/card_full_sun_care.dart';

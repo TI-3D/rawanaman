@@ -346,7 +346,6 @@ class CardResultScan extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Navbar(),
     );
   }
 
