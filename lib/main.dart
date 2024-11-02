@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:rawanaman/pages/login_page.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
 import 'package:rawanaman/widgets/card_camerabutton.dart';
 import 'package:rawanaman/widgets/card_detail_myplants.dart';
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => SplashScreen(),
+        '/loginPage': (context) => LoginPage(
+              isLogin: true,
+            ),
         '/main': (context) => MainScreen(),
         '/myplant': (context) => MyPlantsPage(),
         DetailWikiPage.routeName: (context) => const DetailWikiPage(),
