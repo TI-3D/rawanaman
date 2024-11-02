@@ -19,17 +19,18 @@ class DetailScreen extends StatelessWidget {
                 // Gambar tanaman di bagian atas
                 Container(
                   width: double.infinity,
-                  height: 350.0, // Atur tinggi gambar
+                  height: 300.0, // Atur tinggi gambar
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/daun_kuping_gajah.jpg'),
+                      image: AssetImage(
+                          args?['image'] ?? 'assets/images/default.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 //tombol back
                 Container(
-                  margin: EdgeInsets.fromLTRB(0, 130, 0, 0),
+                  margin: EdgeInsets.fromLTRB(0, 178, 0, 0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.rectangle,
@@ -51,7 +52,7 @@ class DetailScreen extends StatelessWidget {
                 // Card yang menutupi sisa layar di bawah gambar
                 Expanded(
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 295, 0, 0),
+                    margin: EdgeInsets.fromLTRB(0, 265, 0, 0),
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -136,7 +137,7 @@ class DetailScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 16),
+                          SizedBox(height: 3),
                         ],
                       ),
                     ),
@@ -195,7 +196,13 @@ class DetailScreen extends StatelessWidget {
                           SizedBox(height: 27), // Spasi sebelum "Learn More"
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, '/plantCareManual');
+                              Navigator.pushNamed(
+                                context,
+                                '/plantCareManual',
+                                arguments: {
+                                  'name': args?['name'] ?? 'Nama Tumbuhan'
+                                },
+                              );
                             },
                             child: Align(
                               alignment: Alignment.center,
@@ -218,80 +225,7 @@ class DetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(
-              child: Container(
-                width: 473,
-                padding: EdgeInsets.all(16),
-                margin: EdgeInsets.fromLTRB(14, 9, 14, 0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xFF10B982)),
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Row(
-                  children: [
-                    // Plant Course
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Plant Care Manual',
-                            style: GoogleFonts.poppins(
-                              textStyle: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                              height: 8), // Spasi antara judul dan ikon+teks
-                          Row(
-                            children: [
-                              Icon(Icons.book, color: Colors.green),
-                              SizedBox(
-                                  width:
-                                      16), // Spasi antara ikon dan teks deskripsi
-                              Expanded(
-                                child: Text(
-                                  'Learn how to care for "${args?['name'] ?? 'nama tanaman'}" step by step',
-                                  style: GoogleFonts.poppins(
-                                    textStyle: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 27), // Spasi sebelum "Learn More"
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/plantCareManual');
-                            },
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Learn More >',
-                                style: GoogleFonts.poppins(
-                                  textStyle: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            SizedBox(height: 37),
           ],
         ),
       ),
