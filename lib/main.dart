@@ -4,7 +4,6 @@ import 'package:rawanaman/widgets/card_detail_myplants.dart';
 import 'package:rawanaman/widgets/card_full_sun_care.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/widgets/card_plant_care_manual.dart';
-import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/pages/camera_page.dart';
 import 'package:rawanaman/pages/findplant_page.dart';
 import 'package:rawanaman/pages/setting_page.dart';
@@ -16,13 +15,9 @@ import 'package:rawanaman/pages/detail_wiki_pages.dart';
 import 'package:rawanaman/pages/wiki_page.dart';
 import 'package:rawanaman/pages/wiki_article.dart';
 import 'package:rawanaman/widgets/navbar.dart';
-import 'package:rawanaman/pages/wiki_page.dart';
-import 'package:rawanaman/widgets/navbar.dart';
-import 'package:rawanaman/pages/login_page.dart';
 import 'package:rawanaman/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

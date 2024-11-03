@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -197,8 +198,95 @@ class _SettingPageState extends State<SettingPage> {
             // Logout Button
             Center(
               child: GestureDetector(
-                onTap: () {
-                  // Tambahkan logika logout di sini
+                onTap: () async {
+                  bool? confirmLogout = await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20), // Sudut dialog melengkung
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.all(20), // Padding internal
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(height: 10),
+                              Text(
+                                'Confirm Logout',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Anda yakin ingin logout?',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false); // Tutup dialog, tidak logout
+                                    },
+                                    style: TextButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                      backgroundColor: Colors.grey[300],
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'No',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true); // Setujui logout
+                                    },
+                                    style: TextButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                      backgroundColor: Colors.red,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Yes',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+
+                  // Cek jika pengguna memilih "Yes"
+                  if (confirmLogout == true) {
+                    try {
+                      await FirebaseAuth.instance.signOut(); // Proses logout Firebase
+                      Navigator.pushReplacementNamed(context, '/'); // Pindah ke StartPage setelah logout
+                    } catch (e) {
+                      print('Error during logout: $e'); // Log error jika ada masalah saat logout
+                    }
+                  }
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 60, vertical: 12),
@@ -207,27 +295,21 @@ class _SettingPageState extends State<SettingPage> {
                     borderRadius: BorderRadius.circular(15),
                     color: Colors.transparent,
                   ),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context,
-                          '/loginPage'); // Ini nanti diarahain ke page login.
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.logout, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text(
-                          'Logout',
-                          style: GoogleFonts.inter(
-                            textStyle: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 17),
-                          ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.logout, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text(
+                        'Logout',
+                        style: GoogleFonts.inter(
+                          textStyle: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

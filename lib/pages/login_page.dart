@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rawanaman/pages/wiki_page.dart';
+import 'package:rawanaman/main.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => WikiPage()),
+        MaterialPageRoute(builder: (context) => MainScreen()),
       );
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();

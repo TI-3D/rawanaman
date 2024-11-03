@@ -21,6 +21,7 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   google_fonts: ^6.2.1
   shared_preferences: ^2.0.8
+  cloud_firestore: ^5.4.4
 
 dev_dependencies:
   flutter_test:
@@ -37,4 +38,5 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+    - assets/images/icons/green/
     - assets/svgs/
