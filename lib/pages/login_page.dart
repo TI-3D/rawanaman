@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,11 +29,14 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   var _enteredEmail = '';
+  var _enteredUsername = '';
   var _enteredPassword = '';
   var _enteredConfirmedPassword = '';
+
   Color labelColor1 = Colors.grey[400]!;
   Color labelColor2 = Colors.grey[400]!;
   Color labelColor3 = Colors.grey[400]!;
+  Color labelColor4 = Colors.grey[400]!;
 
   void _submit() async {
     final isValid = _formKey.currentState!.validate();
@@ -49,13 +53,19 @@ class _LoginPageState extends State<LoginPage> {
           email: _enteredEmail,
           password: _enteredPassword,
         );
-        print(userCredentials);
       } else {
         final userCredentials = await _firebase.createUserWithEmailAndPassword(
           email: _enteredEmail,
           password: _enteredPassword,
         );
-        print(userCredentials);
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredentials.user!.uid)
+            .set({
+              'username': _enteredUsername,
+              'email': _enteredEmail,
+            });
       }
 
       Navigator.of(context).pushReplacement(
@@ -113,6 +123,51 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (!_isLogin)
+                      Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Focus(
+                            onFocusChange: (hasFocus) {
+                              setState(() {
+                                labelColor4 = hasFocus
+                                    ? Color.fromRGBO(16, 185, 130, 1)
+                                    : Colors.grey[500]!;
+                              });
+                            },
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Username',
+                                labelStyle: TextStyle(
+                                  color: labelColor4,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide: BorderSide(
+                                        color:
+                                            Color.fromRGBO(16, 185, 130, 1))),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide:
+                                        BorderSide(color: Colors.grey[500]!)),
+                              ),
+                              enableSuggestions: false,
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value.trim().length < 4) {
+                                  return 'Username must be at least 4 characters long';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _enteredUsername = value!;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    SizedBox(height: 20),
                     Focus(
                       onFocusChange: (hasFocus) {
                         setState(() {
@@ -128,15 +183,12 @@ class _LoginPageState extends State<LoginPage> {
                             color: labelColor1,
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide:
-                                BorderSide(color: Color.fromRGBO(16, 185, 130, 1))
-                          ),
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                  color: Color.fromRGBO(16, 185, 130, 1))),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide:
-                                BorderSide(color: Colors.grey[500]!)
-                          ),
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.grey[500]!)),
                         ),
                         keyboardType: TextInputType.emailAddress,
                         autocorrect: false,
@@ -170,15 +222,12 @@ class _LoginPageState extends State<LoginPage> {
                             color: labelColor2,
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide:
-                                BorderSide(color: Color.fromRGBO(16, 185, 130, 1))
-                          ),
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                  color: Color.fromRGBO(16, 185, 130, 1))),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide:
-                                BorderSide(color: Colors.grey[500]!)
-                          ),
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.grey[500]!)),
                         ),
                         obscureText: true,
                         validator: (value) {
@@ -211,15 +260,14 @@ class _LoginPageState extends State<LoginPage> {
                                   color: labelColor3,
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  borderSide:
-                                      BorderSide(color: Color.fromRGBO(16, 185, 130, 1))
-                                ),
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide: BorderSide(
+                                        color:
+                                            Color.fromRGBO(16, 185, 130, 1))),
                                 enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  borderSide:
-                                      BorderSide(color: Colors.grey[500]!)
-                                ),
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide:
+                                        BorderSide(color: Colors.grey[500]!)),
                               ),
                               obscureText: true,
                               validator: (value) {
