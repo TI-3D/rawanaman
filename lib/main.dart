@@ -21,7 +21,6 @@ import 'package:rawanaman/widgets/navbar.dart';
 import 'package:rawanaman/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
