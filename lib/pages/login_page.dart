@@ -291,7 +291,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF10B982),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 130, vertical: 20),
+                            EdgeInsets.symmetric(horizontal: 130, vertical: 15),
                       ),
                       child: Text(
                         _isLogin ? 'Login' : 'Signup',

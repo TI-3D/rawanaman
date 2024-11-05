@@ -4,6 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 class CardPlantCareManual extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Ambil Argument dari page sebelumnya
+    final Map<String, String>? args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+
     return Scaffold(
       backgroundColor: Colors.white, // Menambahkan background putih di Scaffold
       body: Padding(
@@ -11,10 +15,10 @@ class CardPlantCareManual extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 122), // Menambahkan jarak dari atas layar
+            SizedBox(height: 100), // Menambahkan jarak dari atas layar
             // Judul Utama
             Text(
-              'Learn How to care for "Nama Tanaman" step-by-step',
+              'Learn how to care for "${args?['name'] ?? 'Nama Tumbuhan'}" step-by-step',
               style: GoogleFonts.poppins(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -50,18 +54,20 @@ class CardPlantCareManual extends StatelessWidget {
                   children: [
                     _buildLessonContainer(
                       context,
-                      title: 'Get to Know "Nama Tanaman"',
+                      title: 'Get to Know "${args?['name'] ?? 'Nama Tanaman'}"',
                       subtitle: 'Introduction',
                     ),
                     _buildLessonContainer(
                       context,
-                      title: 'Environments Where "Nama Tanaman" Thrives',
+                      title:
+                          'Environments Where "${args?['name'] ?? 'Nama Tumbuhan'}" Thrives',
                       subtitle:
                           'Watering & Hardiness\nSunlight Conditions\nSoil Requirements',
                     ),
                     _buildLessonContainer(
                       context,
-                      title: 'Help! My "Nama Tanaman" Looks Sick!',
+                      title:
+                          'Help! My "${args?['name'] ?? 'Nama Tumbuhan'}" Looks Sick!',
                       subtitle: 'Introduction',
                     ),
                   ],
@@ -70,7 +76,6 @@ class CardPlantCareManual extends StatelessWidget {
             ),
 
             // Tombol Kembali
-            SizedBox(height: 26),
             Container(
               margin: EdgeInsets.fromLTRB(44, 0, 44, 122),
               child: Center(
@@ -84,11 +89,13 @@ class CardPlantCareManual extends StatelessWidget {
                     style: GoogleFonts.poppins(
                         fontSize: 18,
                         textStyle: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.w500)),
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.3)),
                   ),
                   style: ElevatedButton.styleFrom(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 140, vertical: 13),
+                        EdgeInsets.symmetric(horizontal: 110, vertical: 12),
                     backgroundColor: Color(0xFF10B982),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
@@ -97,7 +104,7 @@ class CardPlantCareManual extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 5),
           ],
         ),
       ),
@@ -148,16 +155,16 @@ class CardPlantCareManual extends StatelessWidget {
 
 Widget _buildLessonContainer(BuildContext context,
     {required String title, required String subtitle}) {
+  final Map<String, String>? args =
+      ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
   return GestureDetector(
     onTap: () {
       // Aksi yang ingin dilakukan saat Container di-tap
-      Navigator.pushNamed(context, '/lessonDetail', arguments: {
-        'title': title,
-        'subtitle': subtitle,
-      });
+      Navigator.pushNamed(context, '/lessonDetail',
+          arguments: {'name': args?['name'] ?? 'Nama Tumbuhan'});
     },
     child: Container(
-      margin: EdgeInsets.fromLTRB(27, 0, 27, 10),
+      margin: EdgeInsets.fromLTRB(27, 0, 27, 8),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,

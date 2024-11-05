@@ -1,10 +1,13 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:rawanaman/pages/login_page.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
+import 'package:rawanaman/pages/start_page.dart';
+import 'package:rawanaman/widgets/card_camerabutton.dart';
 import 'package:rawanaman/widgets/card_detail_myplants.dart';
 import 'package:rawanaman/widgets/card_full_sun_care.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/widgets/card_plant_care_manual.dart';
-import 'package:rawanaman/pages/camera_page.dart';
 import 'package:rawanaman/pages/findplant_page.dart';
 import 'package:rawanaman/pages/setting_page.dart';
 import 'package:rawanaman/widgets/card_diagnosa.dart';
@@ -19,8 +22,13 @@ import 'package:rawanaman/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Obtain a list of the available cameras on the device.
+  final cameras = await availableCameras();
+
+// Get a specific camera from the list of available cameras.
+  final firstCamera = cameras.first;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -40,7 +48,11 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => SplashScreen(),
+        '/loginPage': (context) => LoginPage(
+              isLogin: true,
+            ),
         '/main': (context) => MainScreen(),
+        '/startPage': (context) => StartPage(),
         '/myplant': (context) => MyPlantsPage(),
         DetailWikiPage.routeName: (context) => const DetailWikiPage(),
         WikiArticle.routeName: (context) => const WikiArticle(),
@@ -49,7 +61,7 @@ class MyApp extends StatelessWidget {
         '/fullSunCare': (context) => CardFullSunCare(),
         '/lessonDetail': (context) => CardLessonDetail(),
         '/find-plant': (context) => FindPlantPage(),
-        '/cameraPage': (context) => CameraPage(),
+        '/cameraPage': (context) => CameraButton(),
         '/scanScreen': (context) => CardScanPict(),
         '/scanResult': (context) => CardResultScan(),
         '/resultSick': (context) => CardScanResultsick(),

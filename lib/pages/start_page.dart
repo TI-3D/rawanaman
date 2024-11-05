@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/pages/login_page.dart';
@@ -25,21 +26,25 @@ class StartPage extends StatelessWidget {
 
             // Row of images around the logo
             Row(
-              mainAxisAlignment: MainAxisAlignment.center, // Center items closely
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Center items closely
               children: [
                 Column(
                   children: [
-                    Image.asset('assets/images/icons/green/lamp.png', width: 50, height: 50),
+                    Image.asset('assets/images/icons/green/lamp.png',
+                        width: 50, height: 50),
                     SizedBox(height: 60),
-                    Image.asset('assets/images/icons/green/picture.png', width: 60, height: 60),
+                    Image.asset('assets/images/icons/green/picture.png',
+                        width: 60, height: 60),
                     SizedBox(height: 60),
-                    Image.asset('assets/images/icons/green/book.png', width: 50, height: 50),
+                    Image.asset('assets/images/icons/green/book.png',
+                        width: 50, height: 50),
                   ],
                 ),
-                SizedBox(width: 30),  // Reduced spacing here
+                SizedBox(width: 30), // Reduced spacing here
                 Container(
-                  height: 282,  // Height of the box
-                  width: 160,   // Width of the box
+                  height: 282, // Height of the box
+                  width: 160, // Width of the box
                   padding: EdgeInsets.all(30),
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
@@ -58,23 +63,25 @@ class StartPage extends StatelessWidget {
                       Text(
                         'RAWANAMAN',
                         style: GoogleFonts.poppins(
-                          textStyle: TextStyle(
-                            fontSize: 12, 
-                            fontWeight: FontWeight.bold,
-                          )
-                        ),
+                            textStyle: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        )),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(width: 30),  // Reduced spacing here
+                SizedBox(width: 30), // Reduced spacing here
                 Column(
                   children: [
-                    Image.asset('assets/images/icons/green/leaf.png', width: 50, height: 50),
+                    Image.asset('assets/images/icons/green/leaf.png',
+                        width: 50, height: 50),
                     SizedBox(height: 60),
-                    Image.asset('assets/images/icons/green/water.png', width: 60, height: 60),
+                    Image.asset('assets/images/icons/green/water.png',
+                        width: 60, height: 60),
                     SizedBox(height: 60),
-                    Image.asset('assets/images/icons/green/sun.png', width: 50, height: 50),
+                    Image.asset('assets/images/icons/green/sun.png',
+                        width: 50, height: 50),
                   ],
                 ),
               ],
@@ -85,57 +92,57 @@ class StartPage extends StatelessWidget {
             Text(
               'Take Plants of your devices\nwith ease. Simplify your control\nexperience.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.grey[600], fontFamily: 'Poppins'),
+              style: TextStyle(
+                  fontSize: 14, color: Colors.grey[600], fontFamily: 'Poppins'),
             ),
             SizedBox(height: 20),
 
             // Login button
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context, 
-                  MaterialPageRoute(builder: (context) => LoginPage(isLogin: true)),
-                );
+                Navigator.of(context).push(FadeThroughPageRoute(
+                    page: LoginPage(
+                  isLogin: true,
+                )));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF10B982),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 150, vertical: 17),  // Adjust padding if needed
+                padding: EdgeInsets.symmetric(horizontal: 150, vertical: 17),
               ),
               child: Text(
                 'Login',
                 style: GoogleFonts.poppins(
                   textStyle: TextStyle(
-                    fontSize: 18, 
+                    fontSize: 18,
                     color: Colors.white,
-                    fontWeight: FontWeight.w500
-                  )
-                ),
-              ),
-            ),
-            SizedBox(height: 5),
-
-            // Register button
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context, 
-                  MaterialPageRoute(builder: (context) => LoginPage(isLogin: false)));
-              },
-              child: Text(
-                'Register',
-                style: GoogleFonts.poppins(
-                  textStyle: TextStyle(
-                    fontSize: 18, 
-                    color: Color(0xFF10B982),
-                    fontWeight: FontWeight.w500
-                  )
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
             SizedBox(height: 15),
+
+            // Register button
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).push(FadeThroughPageRoute(
+                    page: LoginPage(
+                  isLogin: false,
+                )));
+              },
+              child: Text(
+                'Register',
+                style: GoogleFonts.poppins(
+                    textStyle: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF10B982),
+                        fontWeight: FontWeight.w500)),
+              ),
+            ),
+            SizedBox(height: 5),
 
             // Continue as a guest text
             TextButton(
@@ -154,4 +161,27 @@ class StartPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class FadeThroughPageRoute extends PageRouteBuilder {
+  final Widget page;
+
+  FadeThroughPageRoute({required this.page})
+      : super(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final fadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeIn));
+            final fadeOut = Tween<double>(begin: 3.0, end: 0.0).animate(
+                CurvedAnimation(
+                    parent: secondaryAnimation, curve: Curves.easeOut));
+
+            return FadeTransition(
+              opacity: animation.status == AnimationStatus.forward
+                  ? fadeIn
+                  : fadeOut,
+              child: child,
+            );
+          },
+        );
 }
