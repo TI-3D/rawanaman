@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:rawanaman/pages/login_page.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
+import 'package:rawanaman/pages/start_page.dart';
 import 'package:rawanaman/widgets/card_camerabutton.dart';
 import 'package:rawanaman/widgets/card_detail_myplants.dart';
 import 'package:rawanaman/widgets/card_full_sun_care.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
               isLogin: true,
             ),
         '/main': (context) => MainScreen(),
+        '/startPage': (context) => StartPage(),
         '/myplant': (context) => MyPlantsPage(),
         DetailWikiPage.routeName: (context) => const DetailWikiPage(),
         WikiArticle.routeName: (context) => const WikiArticle(),

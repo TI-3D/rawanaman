@@ -237,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF10B982),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 130, vertical: 20),
+                            EdgeInsets.symmetric(horizontal: 130, vertical: 15),
                       ),
                       child: Text(
                         _isLogin ? 'Login' : 'Signup',
@@ -253,6 +253,24 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(height: 15),
                   ],
                 ),
+              ),
+            ),
+            //buat testing animasi aja
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 178, 0, 0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10.0),
+                  bottomRight: Radius.circular(10.0),
+                ),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/startPage');
+                },
+                icon: Icon(Icons.arrow_back, color: Colors.black),
               ),
             ),
           ],
