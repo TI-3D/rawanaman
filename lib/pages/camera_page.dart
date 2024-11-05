@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CameraPage extends StatefulWidget {
   @override
@@ -7,102 +9,123 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> {
-  CameraController? _cameraController;
-  List<CameraDescription>? cameras;
+  late CameraController controller;
+  late Future<void> cameraInitializer;
+  String? imagePath; // Menyimpan jalur gambar yang diambil
 
   @override
   void initState() {
     super.initState();
-    initializeCamera();
+    cameraInitializer = initializeCamera();
   }
 
   Future<void> initializeCamera() async {
-    cameras = await availableCameras();
-    _cameraController = CameraController(cameras![0], ResolutionPreset.high);
-    await _cameraController!.initialize();
-    setState(() {});
+    var cameras = await availableCameras();
+    controller = CameraController(cameras[0], ResolutionPreset.medium);
+    await controller.initialize();
   }
 
   @override
   void dispose() {
-    _cameraController?.dispose();
+    controller.dispose();
     super.dispose();
   }
 
-  // tampilan utama
+  Future<void> takePicture() async {
+    Directory root = await getTemporaryDirectory();
+    String directoryPath = '${root.path}/Guided_Camera';
+    await Directory(directoryPath).create(recursive: true);
+    String filePath = '$directoryPath/${DateTime.now()}.jpg';
+
+    try {
+      XFile picture = await controller.takePicture();
+      setState(() {
+        imagePath = picture.path; // Simpan jalur gambar yang diambil
+      });
+    } catch (e) {
+      print("Error saat mengambil gambar: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_cameraController == null || !_cameraController!.value.isInitialized) {
-      return Center(child: CircularProgressIndicator());
-    }
     return Scaffold(
-      body: Stack(
-        children: [
-          CameraPreview(_cameraController!),
-          Positioned(
-            top: 50,
-            left: 20,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(10.0),
-                  bottomRight: Radius.circular(10.0),
-                ),
-              ),
-              child: IconButton(
-                icon: Icon(Icons.close, color: Colors.black),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 60.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.help_outline, color: Colors.black),
-                    onPressed: () {
-                      // Tambahkan info ketika ditekan
-                    },
-                  ),
-                  /*ini harusnya ke logika di backend. Sementara aku ganti ke GestureDetector().
-                  FloatingActionButton(
-                    backgroundColor: Colors.green,
-                    onPressed: () async {
-                      Navigator.pushNamed(context,
-                          '/scanScreen');
-                      await _cameraController!.takePicture();
-                    },
-                    child: Icon(Icons.camera_alt),
-                  ),*/
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(
-                          context, '/scanScreen'); // Route untuk Scan
-                    },
-                    child: const Icon(
-                      Icons.camera_alt,
-                      color: Color(0xff10B982),
-                      size: 50,
+      backgroundColor: Colors.white,
+      body: FutureBuilder<void>(
+          future: cameraInitializer,
+          builder: (context, snapshot) => (snapshot.connectionState ==
+                  ConnectionState.done)
+              ? Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.width *
+                              controller.value.aspectRatio,
+                          child: CameraPreview(controller),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 70.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.help_outline,
+                                      color: Colors.black),
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    if (!controller.value.isTakingPicture) {
+                                      await takePicture(); // Ambil gambar
+                                    }
+                                  },
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    color: Color(0xff10B982),
+                                    size: 60,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.autorenew,
+                                      color: Colors.black),
+                                  onPressed: () {
+                                    // Tambahkan tindakan untuk mengubah kamera di sini
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    if (imagePath != null) // Menampilkan gambar jika ada
+                      Positioned.fill(
+                        child: Image.file(
+                          File(imagePath!),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.width,
+                      child: Image.asset(
+                        'assets/images/layer_foto.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                )
+              : const Center(
+                  child: SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.autorenew, color: Colors.black),
-                    onPressed: () {
-                      // Tambahkan tindakan untuk mengubah kamera di sini
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+                )),
     );
   }
 }

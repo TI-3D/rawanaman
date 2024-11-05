@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -208,9 +209,9 @@ class _SettingPageState extends State<SettingPage> {
                     color: Colors.transparent,
                   ),
                   child: GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context,
-                          '/loginPage'); // Ini nanti diarahain ke page login.
+                    onTap: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacementNamed(context, '/loginPage');
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,

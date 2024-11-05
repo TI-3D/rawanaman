@@ -23,6 +23,7 @@ class MyPlantsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 65),
               Text(
                 'My Plants',
                 style: GoogleFonts.poppins(
@@ -36,7 +37,7 @@ class MyPlantsPage extends StatelessWidget {
                   textStyle: TextStyle(fontSize: 15),
                 ),
               ),
-              SizedBox(height: 84),
+              SizedBox(height: 35),
               CardMyPlants()
             ],
           ),
