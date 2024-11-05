@@ -255,24 +255,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            //buat testing animasi aja
-            Container(
-              margin: EdgeInsets.fromLTRB(0, 178, 0, 0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(10.0),
-                  bottomRight: Radius.circular(10.0),
-                ),
-              ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/startPage');
-                },
-                icon: Icon(Icons.arrow_back, color: Colors.black),
-              ),
-            ),
           ],
         ),
       ),
