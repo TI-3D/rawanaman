@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/widgets/card_camerabutton.dart';
-import 'package:rawanaman/widgets/navbar.dart';
 
 class FindPlantPage extends StatelessWidget {
   static const routeName = '/findplants';

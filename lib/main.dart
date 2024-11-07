@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:rawanaman/pages/account_page.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
+import 'package:rawanaman/pages/setting_page2.dart';
 import 'package:rawanaman/widgets/card_detail_myplants.dart';
 import 'package:rawanaman/widgets/card_full_sun_care.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
@@ -54,7 +56,8 @@ class MyApp extends StatelessWidget {
         '/scanResult': (context) => CardResultScan(),
         '/resultSick': (context) => CardScanResultsick(),
         '/diagnoseResult': (context) => CardDiagnosa(),
-        '/settingPage': (context) => SettingPage(),
+        '/settingPage': (context) => SettingPage2(),
+        '/account': (context) => AccountPage(),
       },
       // home: MainScreen(),
     );
