@@ -6,6 +6,9 @@ class CardLessonDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, String>? args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -29,7 +32,7 @@ class CardLessonDetail extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Get to Know "Nama Tanaman"',
+                  'Get to Know "${args?['name'] ?? 'Nama Tumbuhan'}"',
                   style: GoogleFonts.inter(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -65,7 +68,7 @@ class CardLessonDetail extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Environments Where "Nama Tanaman" Thrives',
+                  'Environments Where "${args?['name'] ?? 'Nama Tumbuhan'}" Thrives',
                   style: GoogleFonts.inter(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

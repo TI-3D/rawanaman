@@ -6,12 +6,6 @@ import 'package:rawanaman/widgets/card_camerabutton.dart';
 class FindPlantPage extends StatelessWidget {
   static const routeName = '/findplants';
 
-//   @override
-//   _FindPlantsPage createState() => _FindPlantsPage();
-
-//   class _MyPlantsPage {
-// }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +15,7 @@ class FindPlantPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 84),
+              SizedBox(height: 65),
               Text(
                 'Find Plants',
                 style: GoogleFonts.poppins(

@@ -62,47 +62,45 @@ class AuthCheck extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: checkGuestStatus(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            body: Center(
-              child: Image.asset(
-                'assets/images/rawanaman_logo.png',
-                width: 150,
-                height: 150,
-              ),
-            ),
-          );
-        }
-
-        if (snapshot.hasData && snapshot.data == true) {
-          // Jika pengguna adalah "guest", arahkan ke MainScreen
-          return MainScreen();
-        }
-
-        return StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (ctx, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Scaffold(
-                body: Center(
-                  child: Image.asset(
-                    'assets/images/rawanaman_logo.png',
-                    width: 150,
-                    height: 150,
-                  ),
+        future: checkGuestStatus(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              body: Center(
+                child: Image.asset(
+                  'assets/images/rawanaman_logo.png',
+                  width: 150,
+                  height: 150,
                 ),
-              );
-            }
-
-            if (snapshot.hasData) {
-              return MainScreen();
-            }
-            return StartPage();
+              ),
+            );
           }
-        );
-      }
-    );
+
+          if (snapshot.hasData && snapshot.data == true) {
+            // Jika pengguna adalah "guest", arahkan ke MainScreen
+            return MainScreen();
+          }
+
+          return StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (ctx, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Scaffold(
+                    body: Center(
+                      child: Image.asset(
+                        'assets/images/rawanaman_logo.png',
+                        width: 150,
+                        height: 150,
+                      ),
+                    ),
+                  );
+                }
+
+                if (snapshot.hasData) {
+                  return MainScreen();
+                }
+                return StartPage();
+              });
+        });
   }
 }
