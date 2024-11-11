@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rawanaman/models/gemini.dart';
 
 class CameraPage extends StatefulWidget {
   @override
@@ -42,10 +43,14 @@ class _CameraPageState extends State<CameraPage> {
       setState(() {
         imagePath = picture.path; // Simpan jalur gambar yang diambil
       });
-
+      print('start promt');
+      String prompt = 'sawi';
+      await generateAndSaveText(prompt);
+      print('finish promt');
       // Navigate to CardResultScan and pass the image path
       Navigator.pushNamed(context, '/scanResult', arguments: <String, String?>{
         'imagePath': imagePath,
+        'nama': prompt,
       });
     } catch (e) {
       print("Error saat mengambil gambar: $e");
