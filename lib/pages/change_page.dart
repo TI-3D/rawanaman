@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/pages/login_page.dart'; // Import your login page
 
 class ChangePage extends StatefulWidget {
   final String field; // The field to change (e.g., "password", "email", or "username")
@@ -22,9 +22,34 @@ class _ChangePageState extends State<ChangePage> {
   final TextEditingController _usernameController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? currentUser ;
 
+  bool _obscureText1 = true;
+  bool _obscureText2 = true;
+  bool _obscureText3 = true;
+  Color labelColor1 = Colors.grey[500]!;
+  Color labelColor2 = Colors.grey[500]!;
+  Color labelColor3 = Colors.grey[500]!;
 
-  // Placeholder function for updating data (you can replace this with actual logic)
+  @override
+  void initState() {
+    super.initState();
+    _fetchCurrentUser ();
+  }
+
+  Future<void> _fetchCurrentUser () async {
+    currentUser  = _auth.currentUser ;
+    if (currentUser  != null) {
+      _emailController.text = currentUser !.email!;
+      // Fetch username from Firestore
+      final uid = currentUser !.uid;
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (userDoc.exists) {
+        _usernameController.text = userDoc['username'] ?? '';
+      }
+    }
+  }
+
   Future<void> updateData() async {
     try {
       if (widget.field == 'password') {
@@ -33,12 +58,26 @@ class _ChangePageState extends State<ChangePage> {
           return;
         }
         await _updatePassword(_newPasswordController.text);
+        Navigator.pop(context);
       } else if (widget.field == 'email') {
+        if (_emailController.text == currentUser !.email) {
+          _showMessage("New email must be different from the current email.");
+          return;
+        }
         await _updateEmail(_emailController.text);
+        _showEmailVerificationDialog();
       } else if (widget.field == 'username') {
+        if (_usernameController.text.isEmpty) {
+          _showMessage("Username cannot be empty.");
+          return;
+        }
+        if (_usernameController.text == currentUser !.displayName) {
+          _showMessage("New username must be different from the current username.");
+          return;
+        }
         await _updateUsername(_usernameController.text);
+        Navigator.pop(context);
       }
-      Navigator.pop(context); // Go back to AccountPage after updating
     } catch (e) {
       _showMessage("Error updating ${widget.field}: $e");
     }
@@ -46,32 +85,25 @@ class _ChangePageState extends State<ChangePage> {
 
   // Function to update the password
   Future<void> _updatePassword(String newPassword) async {
-    final currentUser = _auth.currentUser;
-
     final credential = EmailAuthProvider.credential(
-      email: currentUser!.email!,
+      email: currentUser !.email!,
       password: _currentPasswordController.text,
     );
-    await currentUser.reauthenticateWithCredential(credential);
-    
-    if (currentUser != null) {
-      await currentUser.updatePassword(newPassword);
-      _showMessage("Password updated successfully. Please re-login.");
-    }
+    await currentUser !.reauthenticateWithCredential(credential);
+    await currentUser !.updatePassword(newPassword);
+    _showMessage("Password updated successfully. Please re-login.");
   }
 
   // Function to update the email
   Future<void> _updateEmail(String newEmail) async {
-    final currentUser = _auth.currentUser;
-    if (currentUser != null) {
-      await currentUser.verifyBeforeUpdateEmail(newEmail);
-      _showMessage("Email updated successfully.");
+    if (currentUser  != null) {
+      await currentUser !.verifyBeforeUpdateEmail(newEmail);
+      _showMessage("Verification email sent. Please check your inbox.");
     }
   }
 
   Future<void> _updateUsername(String newUsername) async {
-    final user = FirebaseAuth.instance.currentUser;
-    final uid = user!.uid;
+    final uid = currentUser !.uid;
 
     try {
       await FirebaseFirestore.instance
@@ -89,6 +121,49 @@ class _ChangePageState extends State<ChangePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
+  }
+
+  // Show dialog after sending verification email
+  void _showEmailVerificationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Verification Email Sent"),
+          content: Text("Please check your inbox for a verification link."),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _listenForEmailVerification();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Listen for email verification
+  void _listenForEmailVerification() async {
+    User? currentUser  = _auth.currentUser ;
+
+    // Polling mechanism to check if the user is verified
+    while (currentUser  != null && !currentUser .emailVerified) {
+      await Future.delayed(Duration(seconds: 2));
+      await currentUser .reload();
+      currentUser  = _auth.currentUser ;
+    }
+
+    // Redirect to login page after verification
+    if (currentUser  != null && currentUser .emailVerified) {
+      _showMessage("Email verified. Please re-login.");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage(isLogin: true,)),
+      );
+    }
   }
 
   @override
@@ -121,36 +196,181 @@ class _ChangePageState extends State<ChangePage> {
         child: Column(
           children: [
             if (widget.field == 'password') ...[
-              TextField(
-                controller: _currentPasswordController,
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'Current Password'),
+              Focus(
+                onFocusChange: (hasFocus){
+                  setState(() {
+                    labelColor1 = hasFocus 
+                    ? Color(0xff10B982) 
+                    : Colors.grey[500]!;
+                  });
+                },
+                child: TextField(
+                  controller: _currentPasswordController,
+                  obscureText: _obscureText1,
+                  decoration: InputDecoration(
+                    labelText: 'Current Password',
+                    labelStyle: TextStyle(
+                      color: labelColor1,
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xff10B982), width: 2),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[500]!, width: 2),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText1 ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText1 = !_obscureText1;
+
+                        });
+                      },
+                    ),
+                  ),
+                ),
               ),
-              TextField(
-                controller: _newPasswordController,
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'New Password'),
+              Focus(
+                onFocusChange: (hasFocus){
+                  setState(() {
+                    labelColor2 = hasFocus 
+                    ? Color(0xff10B982) 
+                    : Colors.grey[500]!;
+                  });
+                },
+                child: TextField(
+                  controller: _newPasswordController,
+                  obscureText: _obscureText2,
+                  decoration: InputDecoration(
+                    labelText: 'New Password',
+                    labelStyle: TextStyle(
+                      color: labelColor2,
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xff10B982), width: 2),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[500]!, width: 2),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText2 ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText2 = !_obscureText2;
+
+                        });
+                      },
+                    ),
+                  ),
+                ),
               ),
-              TextField(
-                controller: _confirmPasswordController,
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'Confirm New Password'),
+              Focus(
+                onFocusChange: (hasFocus){
+                  setState(() {
+                    labelColor3 = hasFocus 
+                    ? Color(0xff10B982) 
+                    : Colors.grey[500]!;
+                  });
+                },
+                child: TextField(
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureText3,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm New Password',
+                    labelStyle: TextStyle(
+                      color: labelColor3,
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xff10B982), width: 2),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[500]!, width: 2),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText3 ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText3 = !_obscureText3;
+
+                        });
+                      },
+                    ),
+                  ),
+                ),
               ),
             ] else if (widget.field == 'email') ...[
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'New Email Address'),
+              Focus(
+                onFocusChange: (hasFocus){
+                  setState(() {
+                    labelColor1 = hasFocus 
+                    ? Color(0xff10B982) 
+                    : Colors.grey[500]!;
+                  });
+                },
+                child: TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'New Email Address',
+                    labelStyle: TextStyle(
+                      color: labelColor1,
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xff10B982), width: 2),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[500]!, width: 2),
+                    ),
+                  ),
+                ),
               ),
             ] else if (widget.field == 'username') ...[
-              TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(labelText: 'New Username'),
+              Focus(
+                onFocusChange: (hasFocus){
+                  setState(() {
+                    labelColor1 = hasFocus 
+                    ? Color(0xff10B982) 
+                    : Colors.grey[500]!;
+                  });
+                },
+                child: TextField(
+                  controller: _usernameController,
+                  decoration: InputDecoration(
+                    labelText: 'New Username',
+                    labelStyle: TextStyle(
+                      color: labelColor1,
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xff10B982), width: 2),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey[500]!, width: 2),
+                    ),
+                  ),
+                ),
               ),
             ],
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: updateData,
-              child: Text('Update ${widget.field.capitalize()}'),
+              child: Text(
+                'Update ${widget.field.capitalize()}',
+                style: GoogleFonts.poppins(
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xff10B982),
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),

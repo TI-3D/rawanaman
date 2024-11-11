@@ -33,6 +33,8 @@ class _LoginPageState extends State<LoginPage> {
   var _enteredPassword = '';
   var _enteredConfirmedPassword = '';
 
+  bool _obscureText1 = true;
+  bool _obscureText2 = true;
   Color labelColor1 = Colors.grey[400]!;
   Color labelColor2 = Colors.grey[400]!;
   Color labelColor3 = Colors.grey[400]!;
@@ -228,8 +230,20 @@ class _LoginPageState extends State<LoginPage> {
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               borderSide: BorderSide(color: Colors.grey[500]!)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureText1 ? Icons.visibility_off : Icons.visibility,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureText1 = !_obscureText1;
+
+                              });
+                            },
+                          ),
                         ),
-                        obscureText: true,
+                        obscureText: _obscureText1,
                         validator: (value) {
                           if (value == null || value.trim().length < 6) {
                             return 'Password must be at least 6 characters long';
@@ -268,8 +282,20 @@ class _LoginPageState extends State<LoginPage> {
                                     borderRadius: BorderRadius.circular(30),
                                     borderSide:
                                         BorderSide(color: Colors.grey[500]!)),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureText2 ? Icons.visibility_off : Icons.visibility,
+                                    color: Colors.grey,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureText2 = !_obscureText2;
+
+                                    });
+                                  },
+                                ),
                               ),
-                              obscureText: true,
+                              obscureText: _obscureText2,
                               validator: (value) {
                                 if (value == null ||
                                     value.trim().isEmpty ||
@@ -290,8 +316,7 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: _submit,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF10B982),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 130, vertical: 15),
+                        padding: EdgeInsets.symmetric(horizontal: 130, vertical: 15),
                       ),
                       child: Text(
                         _isLogin ? 'Login' : 'Signup',
