@@ -42,6 +42,11 @@ class _CameraPageState extends State<CameraPage> {
       setState(() {
         imagePath = picture.path; // Simpan jalur gambar yang diambil
       });
+
+      // Navigate to CardResultScan and pass the image path
+      Navigator.pushNamed(context, '/scanResult', arguments: <String, String?>{
+        'imagePath': imagePath,
+      });
     } catch (e) {
       print("Error saat mengambil gambar: $e");
     }
@@ -102,13 +107,6 @@ class _CameraPageState extends State<CameraPage> {
                         ),
                       ],
                     ),
-                    if (imagePath != null) // Menampilkan gambar jika ada
-                      Positioned.fill(
-                        child: Image.file(
-                          File(imagePath!),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.width,
@@ -117,6 +115,13 @@ class _CameraPageState extends State<CameraPage> {
                         fit: BoxFit.cover,
                       ),
                     ),
+                    if (imagePath != null) // Menampilkan gambar jika ada
+                      Positioned.fill(
+                        child: Image.file(
+                          File(imagePath!),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                   ],
                 )
               : const Center(

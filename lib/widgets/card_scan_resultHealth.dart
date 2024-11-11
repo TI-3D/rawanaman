@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,8 +8,15 @@ class CardResultScan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Menerima data dari arguments, dengan penanganan null safety
-    final Map<String, String>? args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+    final Map<String, String?>? args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String?>?;
+
+    // Get the image path from the arguments
+    final String? imagePath = args?['imagePath'];
+
+    ImageProvider imageProvider = imagePath == null
+        ? AssetImage('assets/images/kuping_gajah.jpg')
+        : FileImage(File(imagePath));
 
     return Scaffold(
       backgroundColor: Color(0xFFE0F6EF), // Background hijau
@@ -22,9 +30,9 @@ class CardResultScan extends StatelessWidget {
                 Container(
                   width: double.infinity,
                   height: 350.0, // Atur tinggi gambar
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/kuping_gajah.jpg'),
+                      image: imageProvider,
                       fit: BoxFit.cover,
                     ),
                   ),
