@@ -179,7 +179,11 @@ class CardResultScan extends StatelessWidget {
                               //   ),
                               // ),
 
-                              Row(
+                              Wrap(
+                                alignment: WrapAlignment.center,
+                                spacing: 12, // Horizontal spacing between cards
+                                runSpacing:
+                                    12, // Vertical spacing between rows of cards
                                 children: listPerawatan.map((perawatan) {
                                   String jenis = perawatan['jenis_perawatan'] ??
                                       'Unknown Type';
@@ -188,25 +192,23 @@ class CardResultScan extends StatelessWidget {
                                   String deskripsi = perawatan['deskripsi'] ??
                                       'No description available';
 
-                                  return Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        // Navigate to the care tips page with the jenis and deskripsi as arguments
-                                        Navigator.pushNamed(
-                                          context,
-                                          '/careTips',
-                                          arguments: {
-                                            'jenis': jenis,
-                                            'deskripsi': deskripsi,
-                                          },
-                                        );
-                                      },
-                                      child: _buildCareCard(
-                                          getIconData(icon), jenis),
-                                    ),
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/careTips',
+                                        arguments: {
+                                          'jenis': jenis,
+                                          'deskripsi': deskripsi,
+                                        },
+                                      );
+                                    },
+                                    child: _buildCareCard(
+                                        getIconData(icon), jenis),
                                   );
                                 }).toList(),
                               ),
+
                               SizedBox(height: 16),
                             ],
                           ),
@@ -430,22 +432,38 @@ class CardResultScan extends StatelessWidget {
 
   // Function untuk membuat card info perawatan tanaman
   Widget _buildCareCard(IconData icon, String text) {
-    String c = "Colors.yellow";
     return Container(
-      padding: EdgeInsets.all(12),
+      width: 202, // Set a fixed width for consistency in layout
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
-        color: Color(0xFFF2FFFB),
-        borderRadius: BorderRadius.circular(8),
+        color: Color(0xFFF2FFFB), // Light green background
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: Offset(0, 2), // Slight shadow for depth
+          ),
+        ],
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(icon, color: getColorIcon(icon)),
-          SizedBox(width: 8),
+          Icon(
+            icon,
+            color: getColorIcon(icon),
+            size: 28, // Slightly larger icon
+          ),
+          SizedBox(width: 11), // Space between icon and text
           Text(
             text,
             style: GoogleFonts.poppins(
-              textStyle: TextStyle(fontSize: 14, color: Colors.green),
+              textStyle: TextStyle(fontSize: 14, color: Colors.black),
+              fontWeight: FontWeight.w500,
             ),
+            textAlign: TextAlign.center, // Center-align text
           ),
         ],
       ),
