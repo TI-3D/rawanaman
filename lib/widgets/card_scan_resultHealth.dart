@@ -38,7 +38,8 @@ class CardResultScan extends StatelessWidget {
           String healthState = plantData['healthState'] ?? 'Unknown';
 
           // data for saran perawatan
-          // List<Map<String, dynamic>> listPerawatan = plantData['perawatan'];
+          List<Map<String, dynamic>> listPerawatan =
+              List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
 
           ImageProvider imageProvider = imagePath == null
               ? AssetImage('assets/images/kuping_gajah.jpg')
@@ -137,43 +138,74 @@ class CardResultScan extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(height: 27),
+
+                              // pake grid view
+                              // Container(
+                              //   height: 50,
+                              //   child: GridView.builder(
+                              //     gridDelegate:
+                              //         SliverGridDelegateWithFixedCrossAxisCount(
+                              //       crossAxisCount: 2, // Number of columns
+                              //       crossAxisSpacing:
+                              //           10, // Space between columns
+                              //       mainAxisSpacing: 10, // Space between rows
+                              //     ),
+                              //     itemCount: listPerawatan.length,
+                              //     itemBuilder: (context, index) {
+                              //       final perawatan = listPerawatan[index];
+                              //       String jenis =
+                              //           perawatan['jenis'] ?? 'Unknown Type';
+                              //       String icon =
+                              //           perawatan['icon'] ?? 'Unknown Type';
+                              //       String deskripsi = perawatan['deskripsi'] ??
+                              //           'No description available';
+
+                              //       return GestureDetector(
+                              //         onTap: () {
+                              //           // Navigate to the care tips page with the jenis and deskripsi as arguments
+                              //           Navigator.pushNamed(
+                              //             context,
+                              //             '/careTips',
+                              //             arguments: {
+                              //               'jenis': jenis,
+                              //               'deskripsi': deskripsi,
+                              //             },
+                              //           );
+                              //         },
+                              //         child: _buildCareCard(
+                              //             getIconData(icon), jenis),
+                              //       );
+                              //     },
+                              //   ),
+                              // ),
+
                               Row(
-                                children:
-                                    // listPerawatan.map((perawatan) {
-                                    //   return Expanded(
-                                    //     child: GestureDetector(
-                                    //       onTap: () {
-                                    //         Navigator.pushNamed(context,
-                                    //             '/fullSunCare'); // Route untuk Full Sun
-                                    //       },
-                                    //       child: _buildCareCard(
-                                    //           Icons.wb_sunny, 'Full Sun'),
-                                    //     ),
-                                    //   );
-                                    // }).toList(),
-                                    [
-                                  Expanded(
+                                children: listPerawatan.map((perawatan) {
+                                  String jenis = perawatan['jenis_perawatan'] ??
+                                      'Unknown Type';
+                                  String icon =
+                                      perawatan['icon'] ?? 'Unknown Type';
+                                  String deskripsi = perawatan['deskripsi'] ??
+                                      'No description available';
+
+                                  return Expanded(
                                     child: GestureDetector(
                                       onTap: () {
-                                        Navigator.pushNamed(context,
-                                            '/fullSunCare'); // Route untuk Full Sun
+                                        // Navigate to the care tips page with the jenis and deskripsi as arguments
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/careTips',
+                                          arguments: {
+                                            'jenis': jenis,
+                                            'deskripsi': deskripsi,
+                                          },
+                                        );
                                       },
                                       child: _buildCareCard(
-                                          Icons.wb_sunny, 'Full Sun'),
+                                          getIconData(icon), jenis),
                                     ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.pushNamed(context,
-                                            '/mediumCare'); // Route untuk Medium
-                                      },
-                                      child: _buildCareCard(
-                                          Icons.wb_sunny_outlined, 'Medium'),
-                                    ),
-                                  ),
-                                ],
+                                  );
+                                }).toList(),
                               ),
                               SizedBox(height: 16),
                             ],
@@ -398,6 +430,7 @@ class CardResultScan extends StatelessWidget {
 
   // Function untuk membuat card info perawatan tanaman
   Widget _buildCareCard(IconData icon, String text) {
+    String c = "Colors.yellow";
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -406,7 +439,7 @@ class CardResultScan extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.yellow),
+          Icon(icon, color: getColorIcon(icon)),
           SizedBox(width: 8),
           Text(
             text,
@@ -426,5 +459,31 @@ class CardResultScan extends StatelessWidget {
     return await collectionRef
         .doc(name)
         .get(); // Fetch document with ID 'tomat'
+  }
+
+  static Map<String, IconData> iconMap = {
+    'Icons.sunny': Icons.wb_sunny,
+    'Icons.water_drop': Icons.water_drop,
+    'Icons.health_and_safety': Icons.health_and_safety,
+    'Icons.cut': Icons.cut,
+    // Add more mappings as needed
+  };
+
+  static Map<IconData, Color> colorIcon = {
+    Icons.sunny: Colors.yellow,
+    Icons.water_drop: Colors.blue,
+    Icons.health_and_safety: Colors.green,
+    Icons.cut: Colors.black,
+    // Add more mappings as needed
+  };
+
+  // Function to get IconData from string
+  IconData getIconData(String iconString) {
+    return iconMap[iconString] ?? Icons.help; // Default icon if not found
+  }
+
+  // Function to get ColorData from string
+  Color getColorIcon(IconData iconColor) {
+    return colorIcon[iconColor] ?? Colors.black; // Default icon if not found
   }
 }
