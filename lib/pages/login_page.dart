@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rawanaman/main.dart';
+import 'package:rawanaman/widgets/transision_fade.dart';
 
 final _firebase = FirebaseAuth.instance;
 
 class LoginPage extends StatefulWidget {
   final bool isLogin;
-
   @override
   const LoginPage({Key? key, required this.isLogin}) : super(key: key);
 
@@ -65,11 +65,11 @@ class _LoginPageState extends State<LoginPage> {
             .collection('users')
             .doc(userCredentials.user!.uid)
             .set({
-              'username': _enteredUsername,
-              'email': _enteredEmail,
-            });
+          'username': _enteredUsername,
+          'email': _enteredEmail,
+        });
       }
-
+      // animated
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => MainScreen()),
       );
@@ -82,6 +82,27 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
+
+  /* Fungsi untuk menavigasi dengan animasi Fade In/Out Transition
+  void navigateWithFadeTransition(Widget destination) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => destination,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const curve = Curves.easeInOut;
+
+          // Membuat animasi fade in/out
+          var fadeTween = Tween<double>(begin: 0.0, end: 1.0)
+              .chain(CurveTween(curve: curve));
+
+          return FadeTransition(
+            opacity: animation.drive(fadeTween),
+            child: child,
+          );
+        },
+      ),
+    );
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+            // ... (Bagian lain dari form seperti sebelumnya)
             SizedBox(height: 50),
             Container(
               margin: EdgeInsets.all(20),
@@ -232,13 +254,14 @@ class _LoginPageState extends State<LoginPage> {
                               borderSide: BorderSide(color: Colors.grey[500]!)),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscureText1 ? Icons.visibility_off : Icons.visibility,
+                              _obscureText1
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                               color: Colors.grey,
                             ),
                             onPressed: () {
                               setState(() {
                                 _obscureText1 = !_obscureText1;
-
                               });
                             },
                           ),
@@ -284,13 +307,14 @@ class _LoginPageState extends State<LoginPage> {
                                         BorderSide(color: Colors.grey[500]!)),
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _obscureText2 ? Icons.visibility_off : Icons.visibility,
+                                    _obscureText2
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
                                     color: Colors.grey,
                                   ),
                                   onPressed: () {
                                     setState(() {
                                       _obscureText2 = !_obscureText2;
-
                                     });
                                   },
                                 ),
@@ -316,7 +340,8 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: _submit,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF10B982),
-                        padding: EdgeInsets.symmetric(horizontal: 130, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 130, vertical: 15),
                       ),
                       child: Text(
                         _isLogin ? 'Login' : 'Signup',
@@ -342,8 +367,15 @@ class _LoginPageState extends State<LoginPage> {
         child: TextButton(
           onPressed: () {
             setState(() {
-              _isLogin = !_isLogin;
+              _isLogin = !_isLogin; // Toggle antara login dan signup
             });
+            // animasi
+            Navigator.push(
+              context,
+              FadeThroughPageRoute(
+                page: LoginPage(isLogin: _isLogin),
+              ),
+            );
           },
           child: Text(
             _isLogin ? 'Create an account' : 'I already have an account',
