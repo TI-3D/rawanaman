@@ -28,6 +28,8 @@ dependencies:
   dotted_border: ^2.1.0
   animations: ^2.0.11
   google_generative_ai: ^0.4.6
+  tflite_flutter: ^0.11.0
+  image: ^3.0.1
 
 
 dev_dependencies:
@@ -47,3 +49,4 @@ flutter:
     - assets/images/
     - assets/images/icons/green/
     - assets/svgs/
+    - assets/model/

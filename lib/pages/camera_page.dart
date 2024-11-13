@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rawanaman/models/gemini.dart';
+import 'package:rawanaman/models/rwn-epc10.dart';
 
 class CameraPage extends StatefulWidget {
   @override
@@ -43,8 +44,11 @@ class _CameraPageState extends State<CameraPage> {
       setState(() {
         imagePath = picture.path; // Simpan jalur gambar yang diambil
       });
+      print('start identifying image');
+      String prompt = await imageIdentification(imagePath!);
+      print('finish identify');
+
       print('start promt');
-      String prompt = 'sawi';
       await generateAndSaveText(prompt);
       print('finish promt');
       // Navigate to CardResultScan and pass the image path

@@ -480,7 +480,7 @@ class CardResultScan extends StatelessWidget {
   }
 
   static Map<String, IconData> iconMap = {
-    'Icons.sunny': Icons.wb_sunny,
+    'Icons.sunny': Icons.sunny,
     'Icons.water_drop': Icons.water_drop,
     'Icons.health_and_safety': Icons.health_and_safety,
     'Icons.cut': Icons.cut,
