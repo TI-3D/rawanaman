@@ -57,7 +57,7 @@ class CardWiki extends StatelessWidget {
         child: Stack(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(10),
               child: Image.network(
                 'https://th.bing.com/th/id/OIP.-A1tyf_ikwJsqIq9UgYD9AHaJQ?rs=1&pid=ImgDetMain',
                 width: double.infinity,
@@ -74,7 +74,7 @@ class CardWiki extends StatelessWidget {
                   'Plants $index',
                   style: GoogleFonts.poppins(
                     textStyle: TextStyle(
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
                   ),

@@ -41,8 +41,8 @@ class _SearchField extends State<SearchField> {
                     ),
                   ),
                   hintText: 'Search',
-                  hintStyle:
-                      GoogleFonts.poppins(textStyle: TextStyle(fontSize: 14)),
+                  hintStyle: GoogleFonts.poppins(
+                      textStyle: TextStyle(fontSize: 14, letterSpacing: 0.3)),
                   filled: true,
                   fillColor: Colors.white,
                 ),
