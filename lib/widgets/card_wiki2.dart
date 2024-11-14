@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/pages/detail_wiki_pages.dart';
+import 'package:rawanaman/widgets/transition_slide.dart';
 
 class CardWikiData2 extends StatelessWidget {
   @override
@@ -34,7 +36,8 @@ class CardWiki2 extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, '/');
+          Navigator.of(context)
+              .push(SlideScaleTransition(page: DetailWikiPage()));
         },
         child: Stack(
           alignment: Alignment.center, // Pusatkan konten di tengah

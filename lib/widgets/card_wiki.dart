@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/pages/detail_wiki_pages.dart';
+import 'package:rawanaman/widgets/transition_slide.dart';
 
 class CardWikiData extends StatelessWidget {
   final int itemCount;
@@ -52,7 +53,8 @@ class CardWiki extends StatelessWidget {
       elevation: 4,
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, DetailWikiPage.routeName);
+          Navigator.of(context)
+              .push(SlideScaleTransition(page: DetailWikiPage()));
         },
         child: Stack(
           children: [

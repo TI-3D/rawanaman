@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rawanaman/main.dart';
-import 'package:rawanaman/widgets/transision_fade.dart';
+import 'package:rawanaman/widgets/transition_fade.dart';
 
 final _firebase = FirebaseAuth.instance;
 
