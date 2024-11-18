@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rawanaman/main.dart';
+import 'package:rawanaman/widgets/transition_fade.dart';
 
 final _firebase = FirebaseAuth.instance;
 
 class LoginPage extends StatefulWidget {
   final bool isLogin;
-
   @override
   const LoginPage({Key? key, required this.isLogin}) : super(key: key);
 
@@ -33,6 +33,8 @@ class _LoginPageState extends State<LoginPage> {
   var _enteredPassword = '';
   var _enteredConfirmedPassword = '';
 
+  bool _obscureText1 = true;
+  bool _obscureText2 = true;
   Color labelColor1 = Colors.grey[400]!;
   Color labelColor2 = Colors.grey[400]!;
   Color labelColor3 = Colors.grey[400]!;
@@ -63,11 +65,11 @@ class _LoginPageState extends State<LoginPage> {
             .collection('users')
             .doc(userCredentials.user!.uid)
             .set({
-              'username': _enteredUsername,
-              'email': _enteredEmail,
-            });
+          'username': _enteredUsername,
+          'email': _enteredEmail,
+        });
       }
-
+      // animated
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => MainScreen()),
       );
@@ -80,6 +82,27 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
+
+  /* Fungsi untuk menavigasi dengan animasi Fade In/Out Transition
+  void navigateWithFadeTransition(Widget destination) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => destination,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const curve = Curves.easeInOut;
+
+          // Membuat animasi fade in/out
+          var fadeTween = Tween<double>(begin: 0.0, end: 1.0)
+              .chain(CurveTween(curve: curve));
+
+          return FadeTransition(
+            opacity: animation.drive(fadeTween),
+            child: child,
+          );
+        },
+      ),
+    );
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+            // ... (Bagian lain dari form seperti sebelumnya)
             SizedBox(height: 50),
             Container(
               margin: EdgeInsets.all(20),
@@ -228,8 +252,21 @@ class _LoginPageState extends State<LoginPage> {
                           enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               borderSide: BorderSide(color: Colors.grey[500]!)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureText1
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureText1 = !_obscureText1;
+                              });
+                            },
+                          ),
                         ),
-                        obscureText: true,
+                        obscureText: _obscureText1,
                         validator: (value) {
                           if (value == null || value.trim().length < 6) {
                             return 'Password must be at least 6 characters long';
@@ -268,8 +305,21 @@ class _LoginPageState extends State<LoginPage> {
                                     borderRadius: BorderRadius.circular(30),
                                     borderSide:
                                         BorderSide(color: Colors.grey[500]!)),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureText2
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: Colors.grey,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureText2 = !_obscureText2;
+                                    });
+                                  },
+                                ),
                               ),
-                              obscureText: true,
+                              obscureText: _obscureText2,
                               validator: (value) {
                                 if (value == null ||
                                     value.trim().isEmpty ||
@@ -317,8 +367,15 @@ class _LoginPageState extends State<LoginPage> {
         child: TextButton(
           onPressed: () {
             setState(() {
-              _isLogin = !_isLogin;
+              _isLogin = !_isLogin; // Toggle antara login dan signup
             });
+            // animasi
+            Navigator.push(
+              context,
+              FadeThroughPageRoute(
+                page: LoginPage(isLogin: _isLogin),
+              ),
+            );
           },
           child: Text(
             _isLogin ? 'Create an account' : 'I already have an account',

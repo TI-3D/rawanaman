@@ -71,8 +71,8 @@ class SlideButton extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 16),
       padding: EdgeInsets.all(5),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: const [
           BoxShadow(
             color: Color.fromRGBO(122, 191, 165, 0.3),
           ),
@@ -81,53 +81,63 @@ class SlideButton extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: ElevatedButton(
-              onPressed: () => onPressed0(),
-              child: Text(
-                'Based on Your Plant',
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width > 600 ? 18 : 14,
-                  fontWeight: FontWeight.bold,
+            // Animation
+            child: AnimatedContainer(
+              margin: EdgeInsets.all(3),
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: ElevatedButton(
+                onPressed: () => onPressed0(),
+                child: Text(
+                  'Based on Your Plant',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width > 600 ? 18 : 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              style: ElevatedButton.styleFrom(
-                elevation: selectedMenu == '0' ? 4 : 0,
-                shadowColor: Color.fromRGBO(217, 217, 217, 0.3),
-                foregroundColor: selectedMenu == '0'
-                    ? Colors.black
-                    : Color.fromRGBO(63, 86, 78, 1.0),
-                backgroundColor:
-                    selectedMenu == '0' ? Colors.white : Colors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                style: ElevatedButton.styleFrom(
+                  elevation: selectedMenu == '0' ? 4 : 0,
+                  shadowColor: Color.fromRGBO(217, 217, 217, 0.3),
+                  foregroundColor: selectedMenu == '0'
+                      ? Colors.black
+                      : Color.fromRGBO(63, 86, 78, 1.0),
+                  backgroundColor:
+                      selectedMenu == '0' ? Colors.white : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                 ),
-                padding: EdgeInsets.symmetric(vertical: 16),
               ),
             ),
           ),
           SizedBox(width: 16),
           Expanded(
-            child: ElevatedButton(
-              onPressed: () => onPressed1(),
-              child: Text(
-                'Common Plant Disease',
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width > 600 ? 18 : 14,
-                  fontWeight: FontWeight.bold,
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: ElevatedButton(
+                onPressed: () => onPressed1(),
+                child: Text(
+                  'Common Plant Disease',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width > 600 ? 18 : 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              style: ElevatedButton.styleFrom(
-                elevation: selectedMenu == '1' ? 4 : 0,
-                shadowColor: Color.fromRGBO(217, 217, 217, 0.3),
-                foregroundColor: selectedMenu == '1'
-                    ? Colors.black
-                    : Color.fromRGBO(63, 86, 78, 1.0),
-                backgroundColor:
-                    selectedMenu == '1' ? Colors.white : Colors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                style: ElevatedButton.styleFrom(
+                  elevation: selectedMenu == '1' ? 4 : 0,
+                  shadowColor: Color.fromRGBO(217, 217, 217, 0.3),
+                  foregroundColor: selectedMenu == '1'
+                      ? Colors.black
+                      : Color.fromRGBO(63, 86, 78, 1.0),
+                  backgroundColor:
+                      selectedMenu == '1' ? Colors.white : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                 ),
-                padding: EdgeInsets.symmetric(vertical: 16),
               ),
             ),
           ),

@@ -1,10 +1,12 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:rawanaman/pages/login_page.dart';
+import 'package:rawanaman/pages/account_page.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
 import 'package:rawanaman/pages/start_page.dart';
 import 'package:rawanaman/widgets/card_camerabutton.dart';
 import 'package:rawanaman/widgets/card_care_tips.dart';
+import 'package:rawanaman/pages/setting_page2.dart';
 import 'package:rawanaman/widgets/card_detail_myplants.dart';
 import 'package:rawanaman/widgets/card_full_sun_care.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
@@ -68,7 +70,8 @@ class MyApp extends StatelessWidget {
         '/scanResult': (context) => CardResultScan(),
         '/resultSick': (context) => CardScanResultsick(),
         '/diagnoseResult': (context) => CardDiagnosa(),
-        '/settingPage': (context) => SettingPage(),
+        '/settingPage': (context) => SettingPage2(),
+        '/account': (context) => AccountPage(),
       },
       // home: MainScreen(),
     );
@@ -98,16 +101,15 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color.fromRGBO(16, 185, 130, 0.3),
-            Color.fromRGBO(255, 255, 255, 1.0),
-            Color.fromRGBO(255, 255, 255, 1.0),
+            Color(0xffa5f4dd),
+            Color(0xFFFFFFFF),
           ],
-          stops: [0.0, 0.6, 1.0],
+          stops: [0.0, 0.8],
         ),
       ),
       child: Scaffold(

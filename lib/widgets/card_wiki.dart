@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/pages/detail_wiki_pages.dart';
+import 'package:rawanaman/widgets/transition_slide.dart';
 
 class CardWikiData extends StatelessWidget {
   final int itemCount;
@@ -52,12 +53,13 @@ class CardWiki extends StatelessWidget {
       elevation: 4,
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, DetailWikiPage.routeName);
+          Navigator.of(context)
+              .push(SlideScaleTransition(page: DetailWikiPage()));
         },
         child: Stack(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(10),
               child: Image.network(
                 'https://th.bing.com/th/id/OIP.-A1tyf_ikwJsqIq9UgYD9AHaJQ?rs=1&pid=ImgDetMain',
                 width: double.infinity,
@@ -74,7 +76,7 @@ class CardWiki extends StatelessWidget {
                   'Plants $index',
                   style: GoogleFonts.poppins(
                     textStyle: TextStyle(
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
                   ),

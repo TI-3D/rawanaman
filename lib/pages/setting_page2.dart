@@ -2,52 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SettingPage extends StatefulWidget {
+class SettingPage2 extends StatefulWidget {
   @override
   _SettingPageState createState() => _SettingPageState();
 }
 
-class _SettingPageState extends State<SettingPage> {
-  // Controllers untuk input username dan password
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-
-  // Default values untuk username dan password
-  String _username = "Username Sebelumnya";
-  String _password = "Password Sebelumnya";
-
-  // Fungsi untuk menampilkan dialog input
-  void _showEditDialog(
-      String title, TextEditingController controller, Function onSave) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Edit $title"),
-          content: TextField(
-            controller: controller,
-            decoration: InputDecoration(hintText: "Masukkan $title baru"),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Batal"),
-            ),
-            TextButton(
-              onPressed: () {
-                onSave();
-                Navigator.pop(context);
-              },
-              child: Text("Simpan"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
+class _SettingPageState extends State<SettingPage2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,102 +55,34 @@ class _SettingPageState extends State<SettingPage> {
             SizedBox(height: 16),
             // Container untuk Username dan Password
             Container(
-              padding: EdgeInsets.fromLTRB(36, 11, 42, 11),
-              decoration: BoxDecoration(color: Colors.white),
+              padding: EdgeInsets.symmetric(vertical: 11),
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
                 children: [
-                  // Username Row
-                  Row(
-                    children: [
-                      Icon(Icons.person, color: Colors.black),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Username',
-                              style: GoogleFonts.inter(
-                                textStyle: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              _username,
-                              style: GoogleFonts.inter(
-                                textStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ),
-                          ],
+                  ListTile(
+                    leading: Icon(Icons.person, color: Colors.black),
+                    title: Text(
+                      'Account',
+                      style: GoogleFonts.inter(
+                        textStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.black),
-                        onPressed: () {
-                          _usernameController.text = _username;
-                          _showEditDialog("Username", _usernameController, () {
-                            setState(() {
-                              _username = _usernameController.text;
-                            });
-                          });
-                        },
-                      ),
-                    ],
+                    ),
+                    trailing: Icon(Icons.navigate_next_rounded,
+                        color: Colors.black),
+                    onTap: () {
+                      // Navigate to ChangePage for updating username
+                      Navigator.pushNamed(context, '/account');
+                    },
                   ),
-                  Divider(
-                      color:
-                          Colors.grey), // Pemisah antara Username dan Password
                   SizedBox(height: 8),
-                  // Password Row
-                  Row(
-                    children: [
-                      Icon(Icons.lock, color: Colors.black),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Password',
-                              style: GoogleFonts.inter(
-                                textStyle: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              '•' * _password.length,
-                              style: GoogleFonts.inter(
-                                textStyle: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.black),
-                        onPressed: () {
-                          _passwordController.text = _password;
-                          _showEditDialog("Password", _passwordController, () {
-                            setState(() {
-                              _password = _passwordController.text;
-                            });
-                          });
-                        },
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -204,7 +96,8 @@ class _SettingPageState extends State<SettingPage> {
                     builder: (BuildContext context) {
                       return Dialog(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20), // Sudut dialog melengkung
+                          borderRadius: BorderRadius.circular(
+                              20), // Sudut dialog melengkung
                         ),
                         child: Container(
                           padding: EdgeInsets.all(20), // Padding internal
@@ -235,14 +128,17 @@ class _SettingPageState extends State<SettingPage> {
                               ),
                               SizedBox(height: 20),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(false); // Tutup dialog, tidak logout
+                                      Navigator.of(context).pop(
+                                          false); // Tutup dialog, tidak logout
                                     },
                                     style: TextButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 24, vertical: 12),
                                       backgroundColor: Colors.grey[300],
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -255,10 +151,12 @@ class _SettingPageState extends State<SettingPage> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(true); // Setujui logout
+                                      Navigator.of(context)
+                                          .pop(true); // Setujui logout
                                     },
                                     style: TextButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 24, vertical: 12),
                                       backgroundColor: Colors.red,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -281,10 +179,13 @@ class _SettingPageState extends State<SettingPage> {
                   // Cek jika pengguna memilih "Yes"
                   if (confirmLogout == true) {
                     try {
-                      await FirebaseAuth.instance.signOut(); // Proses logout Firebase
-                      Navigator.pushReplacementNamed(context, '/'); // Pindah ke StartPage setelah logout
+                      await FirebaseAuth.instance
+                          .signOut(); // Proses logout Firebase
+                      Navigator.pushReplacementNamed(
+                          context, '/'); // Pindah ke StartPage setelah logout
                     } catch (e) {
-                      print('Error during logout: $e'); // Log error jika ada masalah saat logout
+                      print(
+                          'Error during logout: $e'); // Log error jika ada masalah saat logout
                     }
                   }
                 },
