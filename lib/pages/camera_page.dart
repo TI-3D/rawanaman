@@ -44,6 +44,7 @@ class _CameraPageState extends State<CameraPage> {
       XFile picture = await controller.takePicture();
       setState(() {
         imagePath = picture.path; // Simpan jalur gambar yang diambil
+        // imagePath = '/assets/images/leaf_mold.jpg';
       });
       print('start identifying image');
       String prompt = 'tomat';
@@ -68,6 +69,7 @@ class _CameraPageState extends State<CameraPage> {
             arguments: <String, String?>{
               'imagePath': imagePath,
               'nama': prompt,
+              'healthState': healthState,
             });
       }
     } catch (e) {

@@ -14,6 +14,7 @@ class CardScanResultsick extends StatelessWidget {
     // Get the image path from the arguments
     final String? imagePath = args?['imagePath'];
     final String? nama_doc = args?['nama'];
+    final String? diseaseName = args?['healthState'];
 
     return FutureBuilder<DocumentSnapshot>(
         future: _fetchPlantData(nama_doc!), // Fetch data using document ID
@@ -35,7 +36,7 @@ class CardScanResultsick extends StatelessWidget {
           String name = plantData['nama'] ?? 'Unknown Plant';
           String description =
               plantData['deskripsi'] ?? 'No description available';
-          String healthState = plantData['healthState'] ?? 'Unknown';
+          // String healthState = plantData['healthState'] ?? 'Unknown';
 
           // data for saran perawatan
           List<Map<String, dynamic>> listPerawatan =
@@ -315,7 +316,11 @@ class CardScanResultsick extends StatelessWidget {
                               child: GestureDetector(
                                 onTap: () {
                                   Navigator.pushNamed(
-                                      context, '/diagnoseResult');
+                                      context, '/diagnoseResult',
+                                      arguments: <String, String?>{
+                                        'healthState': diseaseName,
+                                        'imagePath': imagePath,
+                                      });
                                 },
                                 child: Align(
                                   alignment: Alignment.center,
