@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rawanaman/models/gemini.dart';
+import 'package:rawanaman/models/rwn-epc10.dart';
+import 'package:rawanaman/models/rwn-flask.dart';
 
 class CameraPage extends StatefulWidget {
   @override
@@ -42,6 +45,31 @@ class _CameraPageState extends State<CameraPage> {
       setState(() {
         imagePath = picture.path; // Simpan jalur gambar yang diambil
       });
+      print('start identifying image');
+      String prompt = 'tomat';
+      String healthState = await makePrediction(imagePath!);
+      print('finish identify');
+      print('healthState = $healthState');
+
+      print('start promt');
+      await generateAndSaveText(prompt);
+      print('finish promt');
+      // Navigate to CardResultScan and pass the image path
+      if (healthState == 'Healthy') {
+        print('is healhty');
+        Navigator.pushNamed(context, '/scanResult',
+            arguments: <String, String?>{
+              'imagePath': imagePath,
+              'nama': prompt,
+            });
+      } else {
+        print('is sick');
+        Navigator.pushNamed(context, '/resultSick',
+            arguments: <String, String?>{
+              'imagePath': imagePath,
+              'nama': prompt,
+            });
+      }
     } catch (e) {
       print("Error saat mengambil gambar: $e");
     }
@@ -102,13 +130,6 @@ class _CameraPageState extends State<CameraPage> {
                         ),
                       ],
                     ),
-                    if (imagePath != null) // Menampilkan gambar jika ada
-                      Positioned.fill(
-                        child: Image.file(
-                          File(imagePath!),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.width,
@@ -117,6 +138,13 @@ class _CameraPageState extends State<CameraPage> {
                         fit: BoxFit.cover,
                       ),
                     ),
+                    if (imagePath != null) // Menampilkan gambar jika ada
+                      Positioned.fill(
+                        child: Image.file(
+                          File(imagePath!),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                   ],
                 )
               : const Center(
