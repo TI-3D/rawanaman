@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rawanaman/models/gemini.dart';
 import 'package:rawanaman/models/rwn-epc10.dart';
+import 'package:rawanaman/models/rwn-flask.dart';
 
 class CameraPage extends StatefulWidget {
   @override
@@ -45,17 +46,30 @@ class _CameraPageState extends State<CameraPage> {
         imagePath = picture.path; // Simpan jalur gambar yang diambil
       });
       print('start identifying image');
-      String prompt = await imageIdentification(imagePath!);
+      String prompt = 'tomat';
+      String healthState = await makePrediction(imagePath!);
       print('finish identify');
+      print('healthState = $healthState');
 
       print('start promt');
       await generateAndSaveText(prompt);
       print('finish promt');
       // Navigate to CardResultScan and pass the image path
-      Navigator.pushNamed(context, '/scanResult', arguments: <String, String?>{
-        'imagePath': imagePath,
-        'nama': prompt,
-      });
+      if (healthState == 'Healthy') {
+        print('is healhty');
+        Navigator.pushNamed(context, '/scanResult',
+            arguments: <String, String?>{
+              'imagePath': imagePath,
+              'nama': prompt,
+            });
+      } else {
+        print('is sick');
+        Navigator.pushNamed(context, '/resultSick',
+            arguments: <String, String?>{
+              'imagePath': imagePath,
+              'nama': prompt,
+            });
+      }
     } catch (e) {
       print("Error saat mengambil gambar: $e");
     }

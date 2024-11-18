@@ -82,24 +82,6 @@ class CardResultScan extends StatelessWidget {
                           icon: Icon(Icons.arrow_back, color: Colors.black),
                         ),
                       ),
-                      // Tombol ke tampilan tanaman sakit (sementara doang)
-                      Container(
-                        margin: EdgeInsets.fromLTRB(0, 130, 0, 0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(10.0),
-                            bottomRight: Radius.circular(10.0),
-                          ),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/resultSick');
-                          },
-                          icon: Icon(Icons.arrow_right, color: Colors.black),
-                        ),
-                      ),
                       // Card yang menutupi sisa layar di bawah gambar
                       Container(
                         margin: EdgeInsets.fromLTRB(0, 295, 0, 0),
