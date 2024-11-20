@@ -195,9 +195,9 @@ class CardDiagnosa extends StatelessWidget {
 Future<DocumentSnapshot> _fetchDiseaseData(String name) async {
   name = name.toLowerCase();
 
-  print('start identifying image');
+  print('start identifying disease image');
   await generateAndSaveText2(name);
-  print('finish identify');
+  print('finish identify disease');
 
   final firestore = FirebaseFirestore.instance;
   final collectionRef = firestore.collection('disease');

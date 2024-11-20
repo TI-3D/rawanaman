@@ -8,7 +8,7 @@ const apiKey = Config.apiKey;
 Future<void> generateAndSaveText2(String plantName) async {
   // check if there were same data exist
   if (await _documentExists(plantName)) {
-    print('Document with this name already exists, skipping generation.');
+    print('Document with this disease already exists, skipping generation.');
     return; // Exit if the document already exists
   }
 
@@ -34,17 +34,17 @@ Future<bool> _documentExists(String name) async {
   return querySnapshot.exists; // Returns true if the document exists
 }
 
-Future<String> _generateText(String promptPlantName) async {
+Future<String> _generateText(String promptDiseaseName) async {
   final model = GenerativeModel(
     model: 'gemini-1.5-flash-latest',
     apiKey: apiKey,
   );
 
   // String prompt =
-  //     'tuliskan dengan format nama : $promptPlantName deskripsi: (singkat) perawatan: (maks 4) [ { jenis_perawatan : sinar matahari nilai : (isi banyak, secukupnya, atau rendah) (sebagai indikator cahaya yang diperlukan) deskripsi: ... }, { jenis_perawatan : air nilai : (sering, secukupnya, jarang) (sebagai indikator banyak penyiraman yang diperlukan) deskripsi: ... }, { jenis_perawatan : pemupukan nilai : (perlu, tidak perlu) (sebagai indikator apakah perlu pemupukan atau tidak) deskripsi: ... }, { jenis_perawatan : pemangkasan nilai : (perlu, tidak perlu) (sebagai indikator apakah perlu pemangkasan atau tidak) deskripsi: ... }, ] berbentuk json, disclaimer hanya berikan format json saja';
+  //     'tuliskan dengan format nama : $promptDiseaseName deskripsi: (singkat) perawatan: (maks 4) [ { jenis_perawatan : sinar matahari nilai : (isi banyak, secukupnya, atau rendah) (sebagai indikator cahaya yang diperlukan) deskripsi: ... }, { jenis_perawatan : air nilai : (sering, secukupnya, jarang) (sebagai indikator banyak penyiraman yang diperlukan) deskripsi: ... }, { jenis_perawatan : pemupukan nilai : (perlu, tidak perlu) (sebagai indikator apakah perlu pemupukan atau tidak) deskripsi: ... }, { jenis_perawatan : pemangkasan nilai : (perlu, tidak perlu) (sebagai indikator apakah perlu pemangkasan atau tidak) deskripsi: ... }, ] berbentuk json, disclaimer hanya berikan format json saja';
 
   String prompt =
-      'tuliskan dengan format nama : $promptPlantName (sebuah penyakit) deskripsi: (singkat) perawatan: (maks 3) [ { jenis_perawatan : (nama perawatan) deskripsi: ... }, { jenis_perawatan : (nama perawatan) deskripsi: ... }, { jenis_perawatan : (nama perawatan) deskripsi: ... }, ] berbentuk json, disclaimer hanya berikan format json saja Show drafts';
+      'tuliskan dengan format nama : $promptDiseaseName deskripsi: (singkat) perawatan: (maks 3) [ { jenis_perawatan : (nama perawatan) deskripsi: ... }, { jenis_perawatan : (nama perawatan) deskripsi: ... }, { jenis_perawatan : (nama perawatan) deskripsi: ... }, ] berbentuk json, disclaimer hanya berikan format json saja Show drafts';
 
   final content = [Content.text(prompt)];
   final response = await model.generateContent(content);
@@ -71,5 +71,5 @@ Future<void> _saveToFirestore(Map<String, dynamic> jsonData) async {
   // final querySnapshot =
   //     await collectionRef.where('tomat', isEqualTo: name.toLowerCase()).get();
   await collectionRef.doc(name).set(jsonData);
-  print('Document added successfully');
+  print('Document disease added successfully');
 }

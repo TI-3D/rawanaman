@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rawanaman/models/gemini.dart';
 import 'package:rawanaman/models/rwn-epc10.dart';
@@ -15,6 +16,7 @@ class _CameraPageState extends State<CameraPage> {
   late CameraController controller;
   late Future<void> cameraInitializer;
   String? imagePath; // Menyimpan jalur gambar yang diambil
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void initState() {
@@ -77,6 +79,44 @@ class _CameraPageState extends State<CameraPage> {
     }
   }
 
+  Future<void> pickImageFromGallery() async {
+    final pickedFile =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        imagePath = pickedFile.path; // Save the path of the selected image
+      });
+      await processImage(imagePath!);
+    }
+  }
+
+  Future<void> processImage(String path) async {
+    // Your existing processing logic
+    print('start identifying image2');
+    String prompt = 'tomat'; // Example prompt
+    String healthState = await makePrediction(path);
+    print('finish identify2');
+    print('healthState = $healthState');
+
+    print('start prompt2');
+    await generateAndSaveText(prompt);
+    print('finish prompt2');
+
+    // Navigate based on health state
+    if (healthState == 'Healthy') {
+      Navigator.pushNamed(context, '/scanResult', arguments: <String, String?>{
+        'imagePath': path,
+        'nama': prompt,
+      });
+    } else {
+      Navigator.pushNamed(context, '/resultSick', arguments: <String, String?>{
+        'imagePath': path,
+        'nama': prompt,
+        'healthState': healthState,
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,9 +143,11 @@ class _CameraPageState extends State<CameraPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.help_outline,
-                                      color: Colors.black),
+                                  icon: const Icon(Icons.image,
+                                      color: Colors.black), // Gallery icon
+                                  onPressed: () {
+                                    pickImageFromGallery(); // Pick image from gallery
+                                  },
                                 ),
                                 GestureDetector(
                                   onTap: () async {
