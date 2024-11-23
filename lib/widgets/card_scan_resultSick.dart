@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/widgets/card_button_addmyplant.dart';
 
 class CardScanResultsick extends StatelessWidget {
   @override
@@ -191,8 +192,13 @@ class CardScanResultsick extends StatelessWidget {
                                   );
                                 }).toList(),
                               ),
-
-                              SizedBox(height: 16),
+                              SizedBox(height: 25),
+                              // Button
+                              AddMyPlantButton(
+                                plantName: name.toLowerCase(),
+                                diseaseName: diseaseName!.toLowerCase(),
+                              ),
+                              SizedBox(height: 4),
                             ],
                           ),
                         ),

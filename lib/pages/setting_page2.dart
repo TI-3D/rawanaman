@@ -75,8 +75,8 @@ class _SettingPageState extends State<SettingPage2> {
                         ),
                       ),
                     ),
-                    trailing: Icon(Icons.navigate_next_rounded,
-                        color: Colors.black),
+                    trailing:
+                        Icon(Icons.navigate_next_rounded, color: Colors.black),
                     onTap: () {
                       // Navigate to ChangePage for updating username
                       Navigator.pushNamed(context, '/account');

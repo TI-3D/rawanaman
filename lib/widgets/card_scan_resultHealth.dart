@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/widgets/card_button_addmyplant.dart';
 
 class CardResultScan extends StatelessWidget {
   @override
@@ -198,6 +199,7 @@ class CardResultScan extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   // Health State
                   Container(
                     width: 473,
