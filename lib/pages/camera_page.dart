@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rawanaman/models/gemini.dart';
-import 'package:rawanaman/models/rwn-epc10.dart';
 import 'package:rawanaman/models/rwn-flask.dart';
 
 class CameraPage extends StatefulWidget {
