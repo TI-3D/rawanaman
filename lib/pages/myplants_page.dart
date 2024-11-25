@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rawanaman/widgets/card_myplants.dart';
-import 'package:rawanaman/widgets/navbar.dart';
-import 'package:rawanaman/widgets/card_detail_myplants.dart';
 
 class MyPlantsPage extends StatelessWidget {
   static const routeName = '/myplants';

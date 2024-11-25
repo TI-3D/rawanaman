@@ -66,7 +66,11 @@ class MyApp extends StatelessWidget {
         '/detail': (context) => DetailScreen(),
         '/plantCareManual': (context) => CardPlantCareManual(),
         '/fullSunCare': (context) => CardFullSunCare(),
-        '/careTips': (context) => CardCareTips(),
+        '/careTips': (context) => CareTipsDialog(
+              jenis: 'jenis',
+              deskripsi: 'deskripsi',
+              documentId: 'documentId',
+            ),
         '/lessonDetail': (context) => CardLessonDetail(),
         '/find-plant': (context) => FindPlantPage(),
         '/cameraPage': (context) => CameraButton(),

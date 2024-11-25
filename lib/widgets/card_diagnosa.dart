@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rawanaman/models/gemini2.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CardDiagnosa extends StatelessWidget {
@@ -78,7 +77,7 @@ class CardDiagnosa extends StatelessWidget {
                       ),
                       child: IconButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/');
+                          Navigator.pop(context);
                         },
                         icon: Icon(Icons.arrow_back, color: Colors.black),
                       ),
@@ -113,7 +112,7 @@ class CardDiagnosa extends StatelessWidget {
                             SizedBox(height: 16),
                             Text(
                               'Deskripsi: $description',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.inter(
                                 textStyle: TextStyle(
                                   fontSize: 15,
                                   color: Colors.black87,
@@ -129,21 +128,6 @@ class CardDiagnosa extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 10),
-                            // CureStep(
-                            //   title: 'Isolate Infected Plants',
-                            //   description:
-                            //       'Remove and destroy any severely infected plants to prevent the spread of the fungus.',
-                            // ),
-                            // CureStep(
-                            //   title: 'Avoid Overhead Watering',
-                            //   description:
-                            //       'Water plants at the base to avoid wetting the leaves, as wet leaves provide a favorable environment for fungal growth.',
-                            // ),
-                            // CureStep(
-                            //   title: 'Monitor for Recurrence',
-                            //   description:
-                            //       'Keep a close eye on your plants for signs of late blight, and take immediate action if you notice any symptoms.',
-                            // ),
                             Column(
                               children: listPerawatan.map((step) {
                                 return CureStep(
@@ -152,31 +136,7 @@ class CardDiagnosa extends StatelessWidget {
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 34),
-                            Center(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context,
-                                      '/addPlant'); //ini nanti ke page my plant
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(
-                                      color: Color(0xff10B982), width: 1),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 132, vertical: 14),
-                                ),
-                                child: Text(
-                                  'Add Plant',
-                                  style: TextStyle(
-                                    color: Color(0xff10B982),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
+                            SizedBox(height: 114),
                           ],
                         ),
                       ),
@@ -219,7 +179,7 @@ class CureStep extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            Icons.circle_outlined,
+            Icons.circle,
             color: Color(0xff10B982),
             size: 20,
           ),
@@ -232,19 +192,20 @@ class CureStep extends StatelessWidget {
                   title,
                   style: GoogleFonts.inter(
                     textStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.4),
                   ),
                 ),
                 SizedBox(height: 4),
                 Text(
+                  textAlign: TextAlign.justify,
                   description,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.sourceSans3(
                     textStyle: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0.09),
                   ),
                 ),
               ],

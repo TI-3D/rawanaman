@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/widgets/card_button_addmyplant.dart';
+import 'package:rawanaman/widgets/card_care_tips.dart';
+import 'package:rawanaman/widgets/card_plant_care_manual.dart';
+import 'package:rawanaman/widgets/transition_bottomslide.dart';
 
 class CardScanResultsick extends StatelessWidget {
   @override
@@ -14,11 +17,11 @@ class CardScanResultsick extends StatelessWidget {
 
     // Get the image path from the arguments
     final String? imagePath = args?['imagePath'];
-    final String? nama_doc = args?['nama'];
+    final String? namaDoc = args?['nama'];
     final String? diseaseName = args?['healthState'];
 
     return FutureBuilder<DocumentSnapshot>(
-        future: _fetchPlantData(nama_doc!), // Fetch data using document ID
+        future: _fetchPlantData(namaDoc!), // Fetch data using document ID
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -28,7 +31,7 @@ class CardScanResultsick extends StatelessWidget {
                 child: Text('Error: ${snapshot.error}')); // Show error message
           } else if (!snapshot.hasData || !snapshot.data!.exists) {
             return Center(
-                child: Text('No data found for $nama_doc')); // No data found
+                child: Text('No data found for $namaDoc')); // No data found
           }
 
           // If data is found, extract it
@@ -123,46 +126,6 @@ class CardScanResultsick extends StatelessWidget {
                               ),
                               SizedBox(height: 27),
 
-                              // pake grid view
-                              // Container(
-                              //   height: 50,
-                              //   child: GridView.builder(
-                              //     gridDelegate:
-                              //         SliverGridDelegateWithFixedCrossAxisCount(
-                              //       crossAxisCount: 2, // Number of columns
-                              //       crossAxisSpacing:
-                              //           10, // Space between columns
-                              //       mainAxisSpacing: 10, // Space between rows
-                              //     ),
-                              //     itemCount: listPerawatan.length,
-                              //     itemBuilder: (context, index) {
-                              //       final perawatan = listPerawatan[index];
-                              //       String jenis =
-                              //           perawatan['jenis'] ?? 'Unknown Type';
-                              //       String icon =
-                              //           perawatan['icon'] ?? 'Unknown Type';
-                              //       String deskripsi = perawatan['deskripsi'] ??
-                              //           'No description available';
-
-                              //       return GestureDetector(
-                              //         onTap: () {
-                              //           // Navigate to the care tips page with the jenis and deskripsi as arguments
-                              //           Navigator.pushNamed(
-                              //             context,
-                              //             '/careTips',
-                              //             arguments: {
-                              //               'jenis': jenis,
-                              //               'deskripsi': deskripsi,
-                              //             },
-                              //           );
-                              //         },
-                              //         child: _buildCareCard(
-                              //             getIconData(icon), jenis),
-                              //       );
-                              //     },
-                              //   ),
-                              // ),
-
                               Wrap(
                                 alignment: WrapAlignment.center,
                                 spacing: 12, // Horizontal spacing between cards
@@ -175,15 +138,22 @@ class CardScanResultsick extends StatelessWidget {
                                       perawatan['icon'] ?? 'Unknown Type';
                                   String deskripsi = perawatan['deskripsi'] ??
                                       'No description available';
+                                  String documentId = perawatan['imageUrl'] ??
+                                      'No image available';
 
                                   return GestureDetector(
                                     onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/careTips',
-                                        arguments: {
-                                          'jenis': jenis,
-                                          'deskripsi': deskripsi,
+                                      // Memanggil pop-up langsung tanpa berpindah halaman
+                                      showDialog(
+                                        context: context,
+                                        barrierColor: Colors.black.withOpacity(
+                                            0.5), // Latar semi-transparan
+                                        builder: (BuildContext context) {
+                                          return CareTipsDialog(
+                                            jenis: jenis,
+                                            deskripsi: deskripsi,
+                                            documentId: documentId,
+                                          );
                                         },
                                       );
                                     },
@@ -192,6 +162,7 @@ class CardScanResultsick extends StatelessWidget {
                                   );
                                 }).toList(),
                               ),
+
                               SizedBox(height: 25),
                               // Button
                               AddMyPlantButton(
@@ -269,10 +240,10 @@ class CardScanResultsick extends StatelessWidget {
                                   child: Text(
                                     'Bad',
                                     style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                        letterSpacing: 0.5),
                                   ),
                                 ),
                               ],
@@ -292,7 +263,7 @@ class CardScanResultsick extends StatelessWidget {
                                         textStyle: TextStyle(
                                             fontSize: 16,
                                             color: Colors.black,
-                                            letterSpacing: 0.1),
+                                            letterSpacing: 0.3),
                                         fontWeight: FontWeight.w600),
                                   ),
                                   TextSpan(
@@ -301,15 +272,15 @@ class CardScanResultsick extends StatelessWidget {
                                         textStyle: TextStyle(
                                             fontSize: 16,
                                             color: Color(0xffFFB200),
-                                            letterSpacing: 0.1),
-                                        fontWeight: FontWeight.w700),
+                                            letterSpacing: 0.3),
+                                        fontWeight: FontWeight.w800),
                                   ),
                                 ],
                               ),
                             ),
                             SizedBox(height: 9),
                             Text(
-                              "Your plant's Good!",
+                              "Your plant's Sick!",
                               style: GoogleFonts.inter(
                                 textStyle: TextStyle(
                                     fontSize: 13,
@@ -413,8 +384,9 @@ class CardScanResultsick extends StatelessWidget {
                               SizedBox(height: 27),
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.pushNamed(
-                                      context, '/plantCareManual');
+                                  Navigator.of(context).push(
+                                      SlideScaleTransition(
+                                          page: CardPlantCareManual()));
                                 },
                                 child: Align(
                                   alignment: Alignment.center,
