@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/widgets/card_lesson_detail.dart';
 
-class CardPlantCareManual extends StatelessWidget {
+class CardPlantCareManual extends StatefulWidget {
+  const CardPlantCareManual({super.key});
+
+  static const routeName = '/plant';
+
+  @override
+  _CardPlantCareManual createState() => _CardPlantCareManual();
+}
+
+class _CardPlantCareManual extends State<CardPlantCareManual> {
   @override
   Widget build(BuildContext context) {
     // Ambil Argument dari page sebelumnya
@@ -54,7 +64,8 @@ class CardPlantCareManual extends StatelessWidget {
                   children: [
                     _buildLessonContainer(
                       context,
-                      title: 'Get to Know "${args?['name'] ?? 'Nama Tanaman'}"',
+                      title:
+                          'Get to Know "${args?['name'] ?? 'Nama Tumbuhan'}"',
                       subtitle: 'Introduction',
                     ),
                     _buildLessonContainer(
@@ -83,7 +94,6 @@ class CardPlantCareManual extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  // icon: Icon(Icons.arrow_back, color: Colors.white),
                   label: Text(
                     'Back',
                     style: GoogleFonts.poppins(
@@ -160,8 +170,14 @@ Widget _buildLessonContainer(BuildContext context,
   return GestureDetector(
     onTap: () {
       // Aksi yang ingin dilakukan saat Container di-tap
-      Navigator.pushNamed(context, '/lessonDetail',
-          arguments: {'name': args?['name'] ?? 'Nama Tumbuhan'});
+      // Navigator.pushNamed(context, '/lessonDetail',
+      //     arguments: {'name': args?['name'] ?? 'Nama Tumbuhan'});
+      Navigator.of(context).push(
+        createSlideRoute(
+          CardLessonDetail(),
+          {'name': args?['name'] ?? 'Nama Tumbuhan'}, // Kirim arguments
+        ),
+      );
     },
     child: Container(
       margin: EdgeInsets.fromLTRB(27, 0, 27, 8),
@@ -218,5 +234,30 @@ Widget _buildLessonContainer(BuildContext context,
         ],
       ),
     ),
+  );
+}
+
+Route createSlideRoute(Widget page, Map<String, String> arguments) {
+  return PageRouteBuilder(
+    settings: RouteSettings(arguments: arguments), // Mengirim arguments
+    pageBuilder: (context, animation, secondaryAnimation) => page,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      // Ubah slide animation agar mulai dari kanan
+      final slideAnimation =
+          Tween<Offset>(begin: Offset(1, 0), end: Offset.zero).animate(
+        CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+      );
+      final scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
+        CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+      );
+
+      return SlideTransition(
+        position: slideAnimation,
+        child: ScaleTransition(
+          scale: scaleAnimation,
+          child: child,
+        ),
+      );
+    },
   );
 }

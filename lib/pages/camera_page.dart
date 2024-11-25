@@ -122,82 +122,129 @@ class _CameraPageState extends State<CameraPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder<void>(
-          future: cameraInitializer,
-          builder: (context, snapshot) => (snapshot.connectionState ==
-                  ConnectionState.done)
-              ? Stack(
-                  children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.width *
-                              controller.value.aspectRatio,
-                          child: CameraPreview(controller),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 70.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.image,
-                                      color: Colors.black), // Gallery icon
-                                  onPressed: () {
-                                    pickImageFromGallery(); // Pick image from gallery
-                                  },
+        future: cameraInitializer,
+        builder: (context, snapshot) => (snapshot.connectionState ==
+                ConnectionState.done)
+            ? Stack(
+                children: [
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width *
+                            controller.value.aspectRatio,
+                        child: CameraPreview(controller),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 70.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.image,
+                                    size: 40,
+                                    color: Colors.black), // Gallery icon
+                                onPressed: () {
+                                  pickImageFromGallery(); // Pick image from gallery
+                                },
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  if (!controller.value.isTakingPicture) {
+                                    await takePicture(); // Ambil gambar
+                                  }
+                                },
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  color: Color(0xff10B982),
+                                  size: 70,
                                 ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    if (!controller.value.isTakingPicture) {
-                                      await takePicture(); // Ambil gambar
-                                    }
-                                  },
-                                  child: const Icon(
-                                    Icons.camera_alt,
-                                    color: Color(0xff10B982),
-                                    size: 60,
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.autorenew,
-                                      color: Colors.black),
-                                  onPressed: () {
-                                    // Tambahkan tindakan untuk mengubah kamera di sini
-                                  },
-                                ),
-                              ],
-                            ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.info_outline,
+                                    size: 30, color: Colors.black),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Informasi'),
+                                        content: const Text(
+                                            'Arahkan kamera ke Tanaman yang ingin di Scan.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(); // Tutup dialog
+                                            },
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width,
+                      ),
+                    ],
+                  ),
+                  // Gambar di tengah layar
+                  Positioned(
+                    top: 90,
+                    child: Align(
+                      alignment: Alignment.center,
                       child: Image.asset(
-                        'assets/images/layer_foto.png',
+                        'assets/images/frame.png', // Ganti dengan path gambar Anda
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  if (imagePath != null) // Menampilkan gambar jika ada
+                    Positioned.fill(
+                      child: Image.file(
+                        File(imagePath!),
                         fit: BoxFit.cover,
                       ),
                     ),
-                    if (imagePath != null) // Menampilkan gambar jika ada
-                      Positioned.fill(
-                        child: Image.file(
-                          File(imagePath!),
-                          fit: BoxFit.cover,
+                  // Tombol Back di atas
+                  Positioned(
+                    top: 60,
+                    left: 20,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context); // Kembali ke halaman sebelumnya
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.5),
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 24,
                         ),
                       ),
-                  ],
-                )
-              : const Center(
-                  child: SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(),
+                    ),
                   ),
-                )),
+                ],
+              )
+            : const Center(
+                child: SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+      ),
     );
   }
 }

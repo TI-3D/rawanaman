@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/widgets/card_button_addmyplant.dart';
+import 'package:rawanaman/widgets/card_care_tips.dart';
+import 'package:rawanaman/widgets/card_plant_care_manual.dart';
+import 'package:rawanaman/widgets/transition_bottomslide.dart';
 
 class CardResultScan extends StatelessWidget {
   @override
@@ -15,6 +18,7 @@ class CardResultScan extends StatelessWidget {
     // Get the image path from the arguments
     final String? imagePath = args?['imagePath'];
     final String? nama_doc = args?['nama'];
+    final String? diseaseName = args?['healthState'];
 
     return FutureBuilder<DocumentSnapshot>(
         future: _fetchPlantData(nama_doc!), // Fetch data using document ID
@@ -122,46 +126,6 @@ class CardResultScan extends StatelessWidget {
                               ),
                               SizedBox(height: 27),
 
-                              // pake grid view
-                              // Container(
-                              //   height: 50,
-                              //   child: GridView.builder(
-                              //     gridDelegate:
-                              //         SliverGridDelegateWithFixedCrossAxisCount(
-                              //       crossAxisCount: 2, // Number of columns
-                              //       crossAxisSpacing:
-                              //           10, // Space between columns
-                              //       mainAxisSpacing: 10, // Space between rows
-                              //     ),
-                              //     itemCount: listPerawatan.length,
-                              //     itemBuilder: (context, index) {
-                              //       final perawatan = listPerawatan[index];
-                              //       String jenis =
-                              //           perawatan['jenis'] ?? 'Unknown Type';
-                              //       String icon =
-                              //           perawatan['icon'] ?? 'Unknown Type';
-                              //       String deskripsi = perawatan['deskripsi'] ??
-                              //           'No description available';
-
-                              //       return GestureDetector(
-                              //         onTap: () {
-                              //           // Navigate to the care tips page with the jenis and deskripsi as arguments
-                              //           Navigator.pushNamed(
-                              //             context,
-                              //             '/careTips',
-                              //             arguments: {
-                              //               'jenis': jenis,
-                              //               'deskripsi': deskripsi,
-                              //             },
-                              //           );
-                              //         },
-                              //         child: _buildCareCard(
-                              //             getIconData(icon), jenis),
-                              //       );
-                              //     },
-                              //   ),
-                              // ),
-
                               Wrap(
                                 alignment: WrapAlignment.center,
                                 spacing: 12, // Horizontal spacing between cards
@@ -174,15 +138,22 @@ class CardResultScan extends StatelessWidget {
                                       perawatan['icon'] ?? 'Unknown Type';
                                   String deskripsi = perawatan['deskripsi'] ??
                                       'No description available';
+                                  String documentId = perawatan['imageUrl'] ??
+                                      'No image available';
 
                                   return GestureDetector(
                                     onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/careTips',
-                                        arguments: {
-                                          'jenis': jenis,
-                                          'deskripsi': deskripsi,
+                                      // Memanggil pop-up langsung tanpa berpindah halaman
+                                      showDialog(
+                                        context: context,
+                                        barrierColor: Colors.black.withOpacity(
+                                            0.5), // Latar semi-transparan
+                                        builder: (BuildContext context) {
+                                          return CareTipsDialog(
+                                            jenis: jenis,
+                                            deskripsi: deskripsi,
+                                            documentId: documentId,
+                                          );
                                         },
                                       );
                                     },
@@ -190,6 +161,13 @@ class CardResultScan extends StatelessWidget {
                                         getIconData(icon), jenis),
                                   );
                                 }).toList(),
+                              ),
+
+                              SizedBox(height: 25),
+                              // Button
+                              AddMyPlantButton(
+                                plantName: name.toLowerCase(),
+                                diseaseName: (diseaseName ?? '').toLowerCase(),
                               ),
 
                               SizedBox(height: 16),
@@ -384,8 +362,9 @@ class CardResultScan extends StatelessWidget {
                               SizedBox(height: 27),
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.pushNamed(
-                                      context, '/plantCareManual');
+                                  Navigator.of(context).push(
+                                      SlideScaleTransition(
+                                          page: CardPlantCareManual()));
                                 },
                                 child: Align(
                                   alignment: Alignment.center,

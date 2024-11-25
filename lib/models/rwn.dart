@@ -1,4 +1,4 @@
-import 'dart:io';
+/* import 'dart:io';
 import 'package:image/image.dart' as img;
 import 'package:tflite_flutter/tflite_flutter.dart';
 
@@ -168,4 +168,4 @@ int findHighestProbabilityIndex(dynamic output) {
   // Handles different output structures
   var probabilities = output is List<List<double>> ? output[0] : output;
   return probabilities.indexOf(probabilities.reduce((a, b) => a > b ? a : b));
-}
+} */
