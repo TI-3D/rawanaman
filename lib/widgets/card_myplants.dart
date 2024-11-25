@@ -1,30 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CardMyPlants extends StatelessWidget {
+  final List<DocumentSnapshot> plants;
+
+  CardMyPlants({required this.plants});
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: 3, // Number of cards
-      itemBuilder: (context, index) {
-        return _CardMyPlants(index: index);
-      },
+    return SingleChildScrollView(
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: plants.length,
+        itemBuilder: (context, index) {
+          final plant = plants[index];
+          final plantReference = plant['plants'] as DocumentReference;
+          final diseaseReference = plant['disease'] as DocumentReference;
+
+          // Menggunakan FutureBuilder untuk mengambil data referensi
+          return FutureBuilder(
+            future: Future.wait([
+              plantReference.get(), // Mengambil data dari referensi plants
+              diseaseReference.get() // Mengambil data dari referensi disease
+            ]),
+            builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+
+              final plantData =
+                  snapshot.data![0].data() as Map<String, dynamic>;
+              final diseaseData =
+                  snapshot.data![1].data() as Map<String, dynamic>;
+
+              return _CardMyPlants(
+                plantName: plantData['name'] ?? "Unknown Plant",
+                plantImage:
+                    plantData['image'] ?? "assets/images/default_image.png",
+                diseaseName: diseaseData['name'] ?? "Unknown Disease",
+                reminder: plant['reminder'] ?? false,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
 
 class _CardMyPlants extends StatelessWidget {
-  final int index;
-  final List<String> plantNames = ['Kuping Gajah', 'Andong', 'Lidah Mertua'];
-  final List<String> plantImages = [
-    'assets/images/daun_kuping_gajah.jpg', // Replace with your images
-    'assets/images/andong.png',
-    'assets/images/daun_lidah_mertua.jpeg'
-  ];
+  final String plantName;
+  final String plantImage;
+  final String diseaseName;
+  final bool reminder;
 
-  _CardMyPlants({required this.index});
+  _CardMyPlants({
+    required this.plantName,
+    required this.plantImage,
+    required this.diseaseName,
+    required this.reminder,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +83,8 @@ class _CardMyPlants extends StatelessWidget {
                 context,
                 '/detail',
                 arguments: {
-                  'name': plantNames[index],
-                  'image': plantImages[index],
+                  'name': plantName,
+                  'image': plantImage,
                 },
               );
             },
@@ -55,7 +96,7 @@ class _CardMyPlants extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.asset(
-                      plantImages[index], // Using network image
+                      plantImage, // Gambar tanaman
                       width: 100,
                       height: 160,
                       fit: BoxFit.cover,
@@ -67,24 +108,24 @@ class _CardMyPlants extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          plantNames[index],
+                          plantName, // Nama tanaman
                           style: GoogleFonts.poppins(
                             textStyle: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Deskripsi tanaman, Lorem ipsum dolor sit amet consectetur adipiscing elit. Ipsum qui perferendis inventore iste obcaecati debitis dolorum delectus illo repellat cum at praesentium.',
+                          'Penyakit: $diseaseName', // Penyakit tanaman
                           style: GoogleFonts.poppins(
                             textStyle: TextStyle(
                               fontSize: 12,
                               color: Colors.black54,
                             ),
                           ),
-                          textAlign: TextAlign.justify,
                         ),
                         SizedBox(height: 8),
                         Row(
@@ -96,9 +137,9 @@ class _CardMyPlants extends StatelessWidget {
                             ),
                             SizedBox(width: 4),
                             Text(
-                              index == 1
-                                  ? 'Tambahkan Pengingat'
-                                  : 'Every 7 Days',
+                              reminder
+                                  ? 'Pengingat Aktif'
+                                  : 'Pengingat Tidak Aktif',
                               style: GoogleFonts.poppins(
                                 textStyle: TextStyle(
                                   fontSize: 12,

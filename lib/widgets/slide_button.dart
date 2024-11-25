@@ -119,7 +119,7 @@ class SlideButton extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => onPressed1(),
                 child: Text(
-                  'Common Plant Disease',
+                  'Other Plants',
                   style: TextStyle(
                     fontSize: MediaQuery.of(context).size.width > 600 ? 18 : 14,
                     fontWeight: FontWeight.bold,

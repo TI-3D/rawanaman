@@ -204,7 +204,8 @@ class _SettingPageState extends State<SettingPage> {
                     builder: (BuildContext context) {
                       return Dialog(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20), // Sudut dialog melengkung
+                          borderRadius: BorderRadius.circular(
+                              20), // Sudut dialog melengkung
                         ),
                         child: Container(
                           padding: EdgeInsets.all(20), // Padding internal
@@ -235,14 +236,17 @@ class _SettingPageState extends State<SettingPage> {
                               ),
                               SizedBox(height: 20),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(false); // Tutup dialog, tidak logout
+                                      Navigator.of(context).pop(
+                                          false); // Tutup dialog, tidak logout
                                     },
                                     style: TextButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 24, vertical: 12),
                                       backgroundColor: Colors.grey[300],
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -255,10 +259,12 @@ class _SettingPageState extends State<SettingPage> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(true); // Setujui logout
+                                      Navigator.of(context)
+                                          .pop(true); // Setujui logout
                                     },
                                     style: TextButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 24, vertical: 12),
                                       backgroundColor: Colors.red,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -281,10 +287,13 @@ class _SettingPageState extends State<SettingPage> {
                   // Cek jika pengguna memilih "Yes"
                   if (confirmLogout == true) {
                     try {
-                      await FirebaseAuth.instance.signOut(); // Proses logout Firebase
-                      Navigator.pushReplacementNamed(context, '/'); // Pindah ke StartPage setelah logout
+                      await FirebaseAuth.instance
+                          .signOut(); // Proses logout Firebase
+                      Navigator.pushReplacementNamed(
+                          context, '/'); // Pindah ke StartPage setelah logout
                     } catch (e) {
-                      print('Error during logout: $e'); // Log error jika ada masalah saat logout
+                      print(
+                          'Error during logout: $e'); // Log error jika ada masalah saat logout
                     }
                   }
                 },
