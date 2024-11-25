@@ -14,7 +14,8 @@ Future<String> makePrediction(String imagePath) async {
   };
 
   final response = await http.post(
-    Uri.parse('http://10.0.2.2:3000/predict'), // Update this URL as needed
+    Uri.parse(
+        'https://rawanaman.wibudev.moe/predict'), // Update this URL as needed
     headers: {'Content-Type': 'application/json'},
     body: json.encode(inputData),
   );
