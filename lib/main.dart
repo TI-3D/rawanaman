@@ -54,7 +54,11 @@ class MyApp extends StatelessWidget {
         '/loginPage': (context) => LoginPage(
               isLogin: true,
             ),
-        '/main': (context) => MainScreen(),
+        // '/main': (context) => MainScreen(),
+        '/main': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as int? ?? 1;
+          return MainScreen(initialIndex: args);
+        },
         '/startPage': (context) => StartPage(),
         '/myplant': (context) => MyPlantsPage(),
         DetailWikiPage.routeName: (context) => const DetailWikiPage(),
@@ -79,18 +83,28 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
+  final int initialIndex;
+
+  MainScreen({Key? key, this.initialIndex = 1}) : super(key: key);
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 1; // Start with WikiPage selected
+  // int _selectedIndex = 1;
+  late int _selectedIndex;
 
   final List<Widget> _pages = [
     MyPlantsPage(),
     FindPlantPage(),
     WikiPage(),
   ];
+
+  void initState() {
+    super.initState();
+    // Initialize _selectedIndex with the value passed from the constructor
+    _selectedIndex = widget.initialIndex;
+  }
 
   void _onItemTapped(int index) {
     setState(() {

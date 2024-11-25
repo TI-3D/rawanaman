@@ -136,8 +136,8 @@ class AddMyPlantButton extends StatelessWidget {
                             // Panggil fungsi untuk menambahkan tanaman
                             _addPlantToFirebase(reminder);
                             Navigator.of(context).pop(true); // Tutup dialog
-                            Navigator.pushNamed(
-                                context, '/myplant'); // Navigasi
+                            Navigator.pushNamed(context, '/main',
+                                arguments: 1); // Navigasi
                           },
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.symmetric(
