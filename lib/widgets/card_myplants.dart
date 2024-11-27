@@ -34,18 +34,24 @@ class CardMyPlants extends StatelessWidget {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }
 
-              final plantData =
-                  snapshot.data![0].data() as Map<String, dynamic>;
-              final diseaseData =
-                  snapshot.data![1].data() as Map<String, dynamic>;
+              if (snapshot.hasData && snapshot.data!.length == 2) {
+                // Extracting data from snapshots
+                final plantData =
+                    snapshot.data![0].data() as Map<String, dynamic>;
+                final diseaseData =
+                    snapshot.data![1].data() as Map<String, dynamic>;
 
-              return _CardMyPlants(
-                plantName: plantData['name'] ?? "Unknown Plant",
-                plantImage:
-                    plantData['image'] ?? "assets/images/default_image.png",
-                diseaseName: diseaseData['name'] ?? "Unknown Disease",
-                reminder: plant['reminder'] ?? false,
-              );
+                // You can also handle the case where data might be null
+                return _CardMyPlants(
+                  plantName: plantData['nama'] ?? "Unknown Plant",
+                  plantImage:
+                      plantData['image'] ?? "assets/images/default_image.png",
+                  diseaseName: diseaseData['nama'] ?? "Unknown Disease",
+                  reminder: plant['reminder'] ??
+                      false, // Ensure you're accessing the right map
+                );
+              }
+              return Center(child: Text('No data available'));
             },
           );
         },
