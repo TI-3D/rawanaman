@@ -82,7 +82,8 @@ class CardScanResultsick extends StatelessWidget {
                         ),
                         child: IconButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/');
+                            Navigator.of(context).pop(true);
+                            Navigator.pushNamed(context, '/main', arguments: 1);
                           },
                           icon: Icon(Icons.arrow_back, color: Colors.black),
                         ),

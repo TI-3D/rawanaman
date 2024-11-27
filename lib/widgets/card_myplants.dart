@@ -91,6 +91,7 @@ class _CardMyPlants extends StatelessWidget {
                 arguments: {
                   'name': plantName,
                   'image': plantImage,
+                  'disease': diseaseName,
                 },
               );
             },
