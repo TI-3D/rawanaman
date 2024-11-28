@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CustomCalendar extends StatefulWidget {
-  const CustomCalendar({Key? key}) : super(key: key);
+  const CustomCalendar({super.key});
 
   @override
   State<CustomCalendar> createState() => _CustomCalendarState();
@@ -173,7 +173,6 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 ),
               ],
             ),
-            SizedBox(height: 25),
 
             // Kalender
             Expanded(

@@ -1,6 +1,5 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:rawanaman/pages/camera_page.dart';
 import 'package:rawanaman/pages/login_page.dart';
 import 'package:rawanaman/pages/account_page.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
@@ -13,7 +12,6 @@ import 'package:rawanaman/widgets/card_full_sun_care.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/widgets/card_plant_care_manual.dart';
 import 'package:rawanaman/pages/home_page.dart';
-import 'package:rawanaman/pages/setting_page.dart';
 import 'package:rawanaman/widgets/card_diagnosa.dart';
 import 'package:rawanaman/widgets/card_scan_resultHealth.dart';
 import 'package:rawanaman/widgets/card_scan_pict.dart';
