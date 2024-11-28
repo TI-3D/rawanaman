@@ -15,27 +15,44 @@ class Navbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double floatingButtonSize = 60; // Ukuran FloatingActionButton
+    final double floatingButtonSize = 65; // Ukuran FloatingActionButton
 
     return Stack(
       clipBehavior: Clip.none,
       children: [
         BottomNavigationBar(
+          type: BottomNavigationBarType.fixed, // Tata letak tetap
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.seedling),
+              icon: SizedBox(
+                height: 28,
+                width: 28,
+                child: FaIcon(FontAwesomeIcons.home),
+              ),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: SizedBox(
+                height: 28,
+                width: 28,
+                child: FaIcon(FontAwesomeIcons.seedling),
+              ),
               label: 'My Plant',
             ),
             BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.magnifyingGlass),
-              label: 'Find Plant',
-            ),
-            BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.book),
+              icon: SizedBox(
+                height: 28,
+                width: 28,
+                child: FaIcon(FontAwesomeIcons.book),
+              ),
               label: 'Wiki Plants',
             ),
             BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.cog), // Ikon Settings
+              icon: SizedBox(
+                height: 28,
+                width: 28,
+                child: FaIcon(FontAwesomeIcons.cog),
+              ),
               label: 'Settings',
             ),
           ],
@@ -44,6 +61,9 @@ class Navbar extends StatelessWidget {
           unselectedItemColor: Colors.grey,
           onTap: onItemTapped,
           showUnselectedLabels: true,
+          selectedFontSize: 14, // Ukuran font label yang terpilih
+          unselectedFontSize: 12, // Ukuran font label yang tidak terpilih
+          iconSize: 28, // Ukuran ikon tetap
         ),
         Positioned(
           top: -floatingButtonSize / 1.5, // Posisi mengambang

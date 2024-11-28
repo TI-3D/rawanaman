@@ -12,7 +12,7 @@ import 'package:rawanaman/widgets/card_detail_myplants.dart';
 import 'package:rawanaman/widgets/card_full_sun_care.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/widgets/card_plant_care_manual.dart';
-import 'package:rawanaman/pages/findplant_page.dart';
+import 'package:rawanaman/pages/home_page.dart';
 import 'package:rawanaman/pages/setting_page.dart';
 import 'package:rawanaman/widgets/card_diagnosa.dart';
 import 'package:rawanaman/widgets/card_scan_resultHealth.dart';
@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
               documentId: 'documentId',
             ),
         '/lessonDetail': (context) => CardLessonDetail(),
-        '/find-plant': (context) => FindPlantPage(),
+        '/find-plant': (context) => HomePage(),
         '/cameraPage': (context) => CameraButton(),
         '/scanScreen': (context) => CardScanPict(),
         '/scanResult': (context) => CardResultScan(),
@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
 class MainScreen extends StatefulWidget {
   final int initialIndex;
 
-  MainScreen({Key? key, this.initialIndex = 1}) : super(key: key);
+  MainScreen({Key? key, this.initialIndex = 0}) : super(key: key);
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -100,8 +100,8 @@ class _MainScreenState extends State<MainScreen> {
   late int _selectedIndex;
 
   final List<Widget> _pages = [
+    HomePage(),
     MyPlantsPage(),
-    FindPlantPage(),
     WikiPage(),
     SettingPage2(),
   ];
