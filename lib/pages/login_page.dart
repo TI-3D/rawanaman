@@ -66,7 +66,6 @@ class _LoginPageState extends State<LoginPage> {
             .doc(userCredentials.user!.uid)
             .set({
               'username': _enteredUsername,
-              'email': _enteredEmail,
             });
       }
 

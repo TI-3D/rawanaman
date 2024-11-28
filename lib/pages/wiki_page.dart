@@ -118,7 +118,7 @@ class _WikiPage extends State<WikiPage> {
                             ),
                           ),
                           Text(
-                            'Get to know about plant’s, disease and how to take care of them',
+                            "Get to know about plant's, disease and how to take care of them",
                             style: GoogleFonts.poppins(
                               textStyle: TextStyle(fontSize: 11),
                             ),

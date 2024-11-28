@@ -1,47 +1,113 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CardWikiData2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 1.0,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8),
-      itemCount: 5, // Number of cards
-      itemBuilder: (context, index) {
-        return CardWiki2(index: index);
-      },
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('plants').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: double.minPositive),
+            child: Text(
+              'No Plants Available',
+              style: GoogleFonts.poppins(
+                textStyle: TextStyle(fontSize: 18),
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          );
+        } else {
+          final plants = snapshot.data!.docs;
+
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.0,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: plants.length, // Use the actual number of plants
+            itemBuilder: (context, index) {
+              return CardWiki2(plant: plants[index]);
+            },
+          );
+        }
+      }
     );
   }
 }
 
 class CardWiki2 extends StatelessWidget {
-  final int index;
+  final QueryDocumentSnapshot plant;
 
-  CardWiki2({required this.index});
+  CardWiki2({required this.plant});
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> plantData = plant.data() as Map<String, dynamic>;
+    final String plantName = plantData.containsKey('nama') ? plant['nama'] : 'No Name';
+    final String? plantImage = plantData.containsKey('image') ? plant['image'] : null;
+    final String documentId = plant.id;
+
     return Card(
       elevation: 4,
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, '/');
+          Navigator.pushNamed(
+            context,
+            '/plantCareManual',
+            arguments:{
+              'documentId': documentId,
+            },
+          );
         },
         child: Stack(
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                'https://th.bing.com/th/id/OIP.mtUMXpfr_9O8TjUCMRVS1QHaJ4?rs=1&pid=ImgDetMain',
-                width: double.infinity,
-                fit: BoxFit.fill,
-              ),
+              child: plantImage != null && plantImage.isNotEmpty
+                  ? Image.asset(
+                      plantImage,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        // Handle the error if the image is not found
+                        return Container(
+                          width: double.infinity,
+                          color: Colors.grey[300],
+                          child: Center(
+                            child: Icon(
+                              Icons.image_not_supported,
+                              size: 50,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : Container(
+                    width: double.infinity,
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: Icon(
+                        Icons.image_not_supported,
+                        size: 50,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
             ),
             Positioned(
               bottom: 0,
@@ -50,7 +116,7 @@ class CardWiki2 extends StatelessWidget {
                 color: Colors.black54,
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
-                  'Plants $index',
+                  plantName,
                   style: GoogleFonts.poppins(
                     textStyle: TextStyle(
                         fontSize: 18,
