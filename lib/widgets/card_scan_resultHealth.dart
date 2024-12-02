@@ -20,6 +20,8 @@ class CardResultScan extends StatelessWidget {
     final String? nama_doc = args?['nama'];
     final String? diseaseName = args?['healthState'];
 
+    print(nama_doc);
+
     return FutureBuilder<DocumentSnapshot>(
         future: _fetchPlantData(nama_doc!), // Fetch data using document ID
         builder: (context, snapshot) {
@@ -34,9 +36,17 @@ class CardResultScan extends StatelessWidget {
                 child: Text('No data found for $nama_doc')); // No data found
           }
 
+          final DocumentSnapshot documentSnapshot = snapshot.data!;
+
+          final documents = snapshot.data!;
+
+// Access the document data
+          final plantData = documentSnapshot.data() as Map<String, dynamic>;
           // If data is found, extract it
-          Map<String, dynamic> plantData =
-              snapshot.data!.data() as Map<String, dynamic>;
+          // final plant = snapshot.data!;
+          // final Map<String, dynamic> plantData =
+          //     plant.data() as Map<String, dynamic>;
+          // String documentId = plant.id;
           String name = plantData['nama'] ?? 'Unknown Plant';
           String description =
               plantData['deskripsi'] ?? 'No description available';
@@ -363,9 +373,16 @@ class CardResultScan extends StatelessWidget {
                               SizedBox(height: 27),
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                      SlideScaleTransition(
-                                          page: CardPlantCareManual()));
+                                  // Navigator.of(context).push(
+                                  //     SlideScaleTransition(
+                                  //         page: CardPlantCareManual()));
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/plantCareManual',
+                                    arguments: {
+                                      'documentId': nama_doc.toLowerCase(),
+                                    },
+                                  );
                                 },
                                 child: Align(
                                   alignment: Alignment.center,
@@ -397,7 +414,7 @@ class CardResultScan extends StatelessWidget {
   // Function untuk membuat card info perawatan tanaman
   Widget _buildCareCard(IconData icon, String text) {
     return Container(
-      width: 202, // Set a fixed width for consistency in layout
+      width: 181, // Set a fixed width for consistency in layout
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         color: Color(0xFFF2FFFB), // Light green background

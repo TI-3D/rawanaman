@@ -419,7 +419,7 @@ class CardScanResultsick extends StatelessWidget {
   // Function untuk membuat card info perawatan tanaman
   Widget _buildCareCard(IconData icon, String text) {
     return Container(
-      width: 202, // Set a fixed width for consistency in layout
+      width: 181, // Set a fixed width for consistency in layout
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         color: Color(0xFFF2FFFB), // Light green background

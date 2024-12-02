@@ -6,8 +6,6 @@ import 'package:rawanaman/widgets/card_lesson_detail.dart';
 class CardPlantCareManual extends StatefulWidget {
   const CardPlantCareManual({super.key});
 
-  static const routeName = '/plant';
-
   @override
   _CardPlantCareManual createState() => _CardPlantCareManual();
 }
@@ -18,7 +16,8 @@ class _CardPlantCareManual extends State<CardPlantCareManual> {
     // Retrieve the document ID from the arguments
     final Map<String, dynamic>? args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-    final String documentId = args?['documentId'] ?? '';
+    final String documentId = args?['documentId'] ?? 'immar';
+    print(documentId);
 
     // Fetch plant data from Firestore using the document ID
     return FutureBuilder<DocumentSnapshot>(

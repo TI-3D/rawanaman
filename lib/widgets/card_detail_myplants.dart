@@ -12,7 +12,6 @@ class DetailScreen extends StatelessWidget {
         ModalRoute.of(context)?.settings.arguments as Map<String, String?>?;
     final String documentId = args?['documentId'] ?? '';
 
-
     return FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
             .collection('plants')
@@ -53,7 +52,6 @@ class DetailScreen extends StatelessWidget {
                         width: double.infinity,
                         height: 300.0, // Atur tinggi gambar
                         decoration: BoxDecoration(
-
                             image: plantImage != null && plantImage.isNotEmpty
                                 ? DecorationImage(
                                     image: AssetImage(plantImage),
@@ -154,63 +152,61 @@ class DetailScreen extends StatelessWidget {
                                 ),
                                 SizedBox(height: 27),
                                 Wrap(
-                                    alignment: WrapAlignment.center,
-                                    spacing: 12,
-                                    runSpacing: 12,
-                                    children: listPerawatan.map((perawatan) {
-                                      String jenis =
-                                          perawatan['jenis_perawatan'] ??
-                                              'Unknown Type';
-                                      String icon =
-                                          perawatan['icon'] ?? 'Unknown Type';
-                                      String deskripsi =
-                                          perawatan['deskripsi'] ??
-                                              'No description available.';
+                                  alignment: WrapAlignment.center,
+                                  spacing: 12,
+                                  runSpacing: 6,
+                                  children: listPerawatan.map((perawatan) {
+                                    String jenis =
+                                        perawatan['jenis_perawatan'] ??
+                                            'Unknown Type';
+                                    String icon =
+                                        perawatan['icon'] ?? 'Unknown Type';
+                                    String deskripsi = perawatan['deskripsi'] ??
+                                        'No description available.';
 
-                                      return GestureDetector(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                title: Text(jenis),
-                                                content: Row(
-                                                  children: [
-                                                    Icon(
-                                                      getIconData(icon),
-                                                      color: getColorIcon(getIconData(icon)),
-                                                      size: 40,
-                                                    ),
-                                                    SizedBox(width: 16),
-                                                    Expanded(
-                                                      child: Text(
-                                                        deskripsi,
-                                                        style: GoogleFonts.poppins(
-                                                          textStyle: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.black,
-                                                          ),
-                                                        ),
+                                    return GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text(jenis),
+                                              content: Row(children: [
+                                                Icon(
+                                                  getIconData(icon),
+                                                  color: getColorIcon(
+                                                      getIconData(icon)),
+                                                  size: 40,
+                                                ),
+                                                SizedBox(width: 16),
+                                                Expanded(
+                                                  child: Text(
+                                                    deskripsi,
+                                                    style: GoogleFonts.poppins(
+                                                      textStyle: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black,
                                                       ),
                                                     ),
-                                                  ]
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: Text('Close'),
                                                   ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: _buildCareCard(
-                                            getIconData(icon), jenis),
-                                      );
-                                    }).toList(),
+                                                ),
+                                              ]),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Close'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: _buildCareCard(
+                                          getIconData(icon), jenis),
+                                    );
+                                  }).toList(),
                                 ),
                                 SizedBox(height: 16),
                               ],
@@ -313,7 +309,7 @@ class DetailScreen extends StatelessWidget {
   // Function untuk membuat card info perawatan tanaman
   Widget _buildCareCard(IconData icon, String text) {
     return Container(
-      width: 202, // Set a fixed width for consistency in layout
+      width: 181, // Set a fixed width for consistency in layout
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         color: Color(0xFFF2FFFB), // Light green background
