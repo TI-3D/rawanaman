@@ -16,12 +16,14 @@ class _CardPlantCareManual extends State<CardPlantCareManual> {
   @override
   Widget build(BuildContext context) {
     // Retrieve the document ID from the arguments
-    final Map<String, dynamic>? args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    final Map<String, dynamic>? args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     final String documentId = args?['documentId'] ?? '';
 
     // Fetch plant data from Firestore using the document ID
     return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('plants').doc(documentId).get(),
+      future:
+          FirebaseFirestore.instance.collection('plants').doc(documentId).get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -36,7 +38,8 @@ class _CardPlantCareManual extends State<CardPlantCareManual> {
         }
 
         final plantData = snapshot.data!.data() as Map<String, dynamic>;
-        final String plantName = plantData.containsKey('nama') ? plantData['nama'] : 'Nama Tumbuhan';
+        final String plantName =
+            plantData.containsKey('nama') ? plantData['nama'] : 'Nama Tumbuhan';
 
         return Scaffold(
           backgroundColor: Colors.white,
@@ -88,7 +91,8 @@ class _CardPlantCareManual extends State<CardPlantCareManual> {
                         _buildLessonContainer(
                           context,
                           title: 'Environments Where "$plantName" Thrives',
-                          subtitle: 'Watering & Hardiness\nSunlight Conditions\nSoil Requirements',
+                          subtitle:
+                              'Watering & Hardiness\nSunlight Conditions\nSoil Requirements',
                         ),
                         _buildLessonContainer(
                           context,
@@ -99,7 +103,6 @@ class _CardPlantCareManual extends State<CardPlantCareManual> {
                     ),
                   ),
                 ),
-
 
                 // Tombol Kembali
                 Container(
@@ -121,7 +124,8 @@ class _CardPlantCareManual extends State<CardPlantCareManual> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 110, vertical: 12),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 110, vertical: 12),
                         backgroundColor: Color(0xFF10B982),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
@@ -139,19 +143,21 @@ class _CardPlantCareManual extends State<CardPlantCareManual> {
     );
   }
 
-  Widget _buildLessonContainer(BuildContext context, {required String title, required String subtitle}) {
-    final Map<String, dynamic>? args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+  Widget _buildLessonContainer(BuildContext context,
+      {required String title, required String subtitle}) {
+    final Map<String, dynamic>? args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     final String documentId = args?['documentId'] ?? '';
-    
+
     return GestureDetector(
       onTap: () {
         // Aksi yang ingin dilakukan saat Container di-tap
         Navigator.of(context).push(
-        createSlideRoute(
-          CardLessonDetail(),
-          {'documentId': documentId}, // Kirim arguments
-        ),
-      );
+          createSlideRoute(
+            CardLessonDetail(),
+            {'documentId': documentId}, // Kirim arguments
+          ),
+        );
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(27, 0, 27, 8),
@@ -208,8 +214,8 @@ class _CardPlantCareManual extends State<CardPlantCareManual> {
           ],
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 Route createSlideRoute(Widget page, Map<String, String> arguments) {
@@ -236,4 +242,3 @@ Route createSlideRoute(Widget page, Map<String, String> arguments) {
     },
   );
 }
-
