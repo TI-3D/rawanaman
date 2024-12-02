@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/pages/detail_wiki_pages.dart';
+import 'package:rawanaman/widgets/transition_fade.dart';
 
 class CardWikiData2 extends StatelessWidget {
   @override
@@ -63,6 +65,9 @@ class CardWiki2 extends StatelessWidget {
 
     return Card(
       elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100), // Buat lingkaran pada Card
+      ),
       child: InkWell(
         onTap: () {
           Navigator.pushNamed(
@@ -74,6 +79,7 @@ class CardWiki2 extends StatelessWidget {
           );
         },
         child: Stack(
+          alignment: Alignment.center, // Pusatkan konten di tengah
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
@@ -112,14 +118,14 @@ class CardWiki2 extends StatelessWidget {
             Positioned(
               bottom: 0,
               left: 0,
+              right: 0,
               child: Container(
-                color: Colors.black54,
-                padding: EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.symmetric(vertical: 6),
                 child: Text(
                   plantName,
                   style: GoogleFonts.poppins(
                     textStyle: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
                   ),

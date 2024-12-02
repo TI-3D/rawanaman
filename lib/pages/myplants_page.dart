@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rawanaman/widgets/card_myplants.dart';
-import 'package:rawanaman/widgets/navbar.dart';
-import 'package:rawanaman/widgets/card_detail_myplants.dart';
 
 class MyPlantsPage extends StatelessWidget {
   static const routeName = '/myplants';
-
-//   @override
-//   _MyPlantsPage createState() => _MyPlantsPage();
-
-//   class _MyPlantsPage {
-// }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +30,28 @@ class MyPlantsPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 35),
-              CardMyPlants()
+              // FutureBuilder untuk membaca data dari Firestore
+              FutureBuilder<QuerySnapshot>(
+                future: FirebaseFirestore.instance.collection('myplants').get(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+
+                  // Ambil data dari snapshot
+                  final plants = snapshot.data!.docs;
+
+                  if (plants.isEmpty) {
+                    return Center(child: Text('No plants found.'));
+                  }
+
+                  return CardMyPlants(plants: plants);
+                },
+              ),
             ],
           ),
         ),

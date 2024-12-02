@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/widgets/card_care_tips.dart';
 
 class DetailScreen extends StatelessWidget {
   @override
@@ -9,6 +11,7 @@ class DetailScreen extends StatelessWidget {
     final Map<String, String?>? args =
         ModalRoute.of(context)?.settings.arguments as Map<String, String?>?;
     final String documentId = args?['documentId'] ?? '';
+
 
     return FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
@@ -50,6 +53,7 @@ class DetailScreen extends StatelessWidget {
                         width: double.infinity,
                         height: 300.0, // Atur tinggi gambar
                         decoration: BoxDecoration(
+
                             image: plantImage != null && plantImage.isNotEmpty
                                 ? DecorationImage(
                                     image: AssetImage(plantImage),

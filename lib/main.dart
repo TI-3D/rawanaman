@@ -5,6 +5,7 @@ import 'package:rawanaman/pages/account_page.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
 import 'package:rawanaman/pages/start_page.dart';
 import 'package:rawanaman/widgets/card_camerabutton.dart';
+import 'package:rawanaman/widgets/card_care_tips.dart';
 import 'package:rawanaman/pages/setting_page2.dart';
 import 'package:rawanaman/widgets/card_detail_myplants.dart';
 import 'package:rawanaman/widgets/card_full_sun_care.dart';
@@ -53,7 +54,11 @@ class MyApp extends StatelessWidget {
         '/loginPage': (context) => LoginPage(
               isLogin: true,
             ),
-        '/main': (context) => MainScreen(),
+        // '/main': (context) => MainScreen(),
+        '/main': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as int? ?? 1;
+          return MainScreen(initialIndex: args);
+        },
         '/startPage': (context) => StartPage(),
         '/myplant': (context) => MyPlantsPage(),
         DetailWikiPage.routeName: (context) => const DetailWikiPage(),
@@ -61,6 +66,11 @@ class MyApp extends StatelessWidget {
         '/detail': (context) => DetailScreen(),
         '/plantCareManual': (context) => CardPlantCareManual(),
         '/fullSunCare': (context) => CardFullSunCare(),
+        '/careTips': (context) => CareTipsDialog(
+              jenis: 'jenis',
+              deskripsi: 'deskripsi',
+              documentId: 'documentId',
+            ),
         '/lessonDetail': (context) => CardLessonDetail(),
         '/find-plant': (context) => FindPlantPage(),
         '/cameraPage': (context) => CameraButton(),
@@ -77,18 +87,28 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
+  final int initialIndex;
+
+  MainScreen({Key? key, this.initialIndex = 1}) : super(key: key);
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 1; // Start with WikiPage selected
+  // int _selectedIndex = 1;
+  late int _selectedIndex;
 
   final List<Widget> _pages = [
     MyPlantsPage(),
     FindPlantPage(),
     WikiPage(),
   ];
+
+  void initState() {
+    super.initState();
+    // Initialize _selectedIndex with the value passed from the constructor
+    _selectedIndex = widget.initialIndex;
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -99,16 +119,15 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color.fromRGBO(16, 185, 130, 0.3),
-            Color.fromRGBO(255, 255, 255, 1.0),
-            Color.fromRGBO(255, 255, 255, 1.0),
+            Color(0xffa5f4dd),
+            Color(0xFFFFFFFF),
           ],
-          stops: [0.0, 0.6, 1.0],
+          stops: [0.0, 0.8],
         ),
       ),
       child: Scaffold(

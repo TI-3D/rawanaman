@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/pages/detail_wiki_pages.dart';
+import 'package:rawanaman/widgets/transition_fade.dart';
 
 class CardWikiData extends StatelessWidget {
   @override

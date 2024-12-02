@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rawanaman/models/gemini.dart';
+import 'package:rawanaman/models/rwn-flask.dart';
 
 class CameraPage extends StatefulWidget {
   @override
@@ -12,6 +15,7 @@ class _CameraPageState extends State<CameraPage> {
   late CameraController controller;
   late Future<void> cameraInitializer;
   String? imagePath; // Menyimpan jalur gambar yang diambil
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void initState() {
@@ -41,9 +45,74 @@ class _CameraPageState extends State<CameraPage> {
       XFile picture = await controller.takePicture();
       setState(() {
         imagePath = picture.path; // Simpan jalur gambar yang diambil
+        // imagePath = '/assets/images/leaf_mold.jpg';
       });
+      print('start identifying image');
+      String prompt = 'tomat';
+      String healthState = await makePrediction(imagePath!);
+      print('finish identify');
+      print('healthState = $healthState');
+
+      print('start promt');
+      await generateAndSaveText(prompt);
+      print('finish promt');
+      // Navigate to CardResultScan and pass the image path
+      if (healthState == 'Healthy') {
+        print('is healhty');
+        Navigator.pushNamed(context, '/scanResult',
+            arguments: <String, String?>{
+              'imagePath': imagePath,
+              'nama': prompt,
+            });
+      } else {
+        print('is sick');
+        Navigator.pushNamed(context, '/resultSick',
+            arguments: <String, String?>{
+              'imagePath': imagePath,
+              'nama': prompt,
+              'healthState': healthState,
+            });
+      }
     } catch (e) {
       print("Error saat mengambil gambar: $e");
+    }
+  }
+
+  Future<void> pickImageFromGallery() async {
+    final pickedFile =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        imagePath = pickedFile.path; // Save the path of the selected image
+      });
+      await processImage(imagePath!);
+    }
+  }
+
+  Future<void> processImage(String path) async {
+    // Your existing processing logic
+    print('start identifying image2');
+    String prompt = 'tomat'; // Example prompt
+    String healthState = await makePrediction(path);
+    print('finish identify2');
+    print('healthState = $healthState');
+
+    print('start prompt2');
+    await generateAndSaveText(prompt);
+    print('finish prompt2');
+
+    // Navigate based on health state
+    if (healthState == 'Healthy') {
+      Navigator.pushNamed(context, '/scanResult', arguments: <String, String?>{
+        'imagePath': path,
+        'nama': prompt,
+      });
+    } else {
+      Navigator.pushNamed(context, '/resultSick', arguments: <String, String?>{
+        'imagePath': path,
+        'nama': prompt,
+        'healthState': healthState,
+      });
     }
   }
 
@@ -52,80 +121,129 @@ class _CameraPageState extends State<CameraPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder<void>(
-          future: cameraInitializer,
-          builder: (context, snapshot) => (snapshot.connectionState ==
-                  ConnectionState.done)
-              ? Stack(
-                  children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.width *
-                              controller.value.aspectRatio,
-                          child: CameraPreview(controller),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 70.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.help_outline,
-                                      color: Colors.black),
+        future: cameraInitializer,
+        builder: (context, snapshot) => (snapshot.connectionState ==
+                ConnectionState.done)
+            ? Stack(
+                children: [
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width *
+                            controller.value.aspectRatio,
+                        child: CameraPreview(controller),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 70.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.image,
+                                    size: 40,
+                                    color: Colors.black), // Gallery icon
+                                onPressed: () {
+                                  pickImageFromGallery(); // Pick image from gallery
+                                },
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  if (!controller.value.isTakingPicture) {
+                                    await takePicture(); // Ambil gambar
+                                  }
+                                },
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  color: Color(0xff10B982),
+                                  size: 70,
                                 ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    if (!controller.value.isTakingPicture) {
-                                      await takePicture(); // Ambil gambar
-                                    }
-                                  },
-                                  child: const Icon(
-                                    Icons.camera_alt,
-                                    color: Color(0xff10B982),
-                                    size: 60,
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.autorenew,
-                                      color: Colors.black),
-                                  onPressed: () {
-                                    // Tambahkan tindakan untuk mengubah kamera di sini
-                                  },
-                                ),
-                              ],
-                            ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.info_outline,
+                                    size: 30, color: Colors.black),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Informasi'),
+                                        content: const Text(
+                                            'Arahkan kamera ke Tanaman yang ingin di Scan.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(); // Tutup dialog
+                                            },
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                    if (imagePath != null) // Menampilkan gambar jika ada
-                      Positioned.fill(
-                        child: Image.file(
-                          File(imagePath!),
-                          fit: BoxFit.cover,
-                        ),
                       ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width,
+                    ],
+                  ),
+                  // Gambar di tengah layar
+                  Positioned(
+                    top: 90,
+                    child: Align(
+                      alignment: Alignment.center,
                       child: Image.asset(
-                        'assets/images/layer_foto.png',
+                        'assets/images/frame.png', // Ganti dengan path gambar Anda
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  if (imagePath != null) // Menampilkan gambar jika ada
+                    Positioned.fill(
+                      child: Image.file(
+                        File(imagePath!),
                         fit: BoxFit.cover,
                       ),
                     ),
-                  ],
-                )
-              : const Center(
-                  child: SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(),
+                  // Tombol Back di atas
+                  Positioned(
+                    top: 60,
+                    left: 20,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context); // Kembali ke halaman sebelumnya
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.5),
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                    ),
                   ),
-                )),
+                ],
+              )
+            : const Center(
+                child: SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+      ),
     );
   }
 }
