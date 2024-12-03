@@ -8,42 +8,37 @@ class DetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Menerima data dari arguments, dengan penanganan null safety
-    final Map<String, String>? args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
-
-    // Get the image path from the arguments
-    final String? imagePath = args?['image'];
-    final String? namaDoc = args?['name']?.toLowerCase();
-    final String? diseaseName = args?['disease'];
+    final Map<String, String?>? args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, String?>?;
+    final String documentId = args?['documentId'] ?? '';
 
     return FutureBuilder<DocumentSnapshot>(
-        future: _fetchPlantData(namaDoc!), // Fetch data using document ID
+        future: FirebaseFirestore.instance
+            .collection('plants')
+            .doc(documentId)
+            .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: CircularProgressIndicator()); // Show loading indicator
-          } else if (snapshot.hasError) {
-            return Center(
-                child: Text('Error: ${snapshot.error}')); // Show error message
-          } else if (!snapshot.hasData || !snapshot.data!.exists) {
-            return Center(
-                child: Text('No data found for $namaDoc')); // No data found
+            return Center(child: CircularProgressIndicator());
           }
 
-          // If data is found, extract it
-          Map<String, dynamic> plantData =
-              snapshot.data!.data() as Map<String, dynamic>;
-          String description =
-              plantData['deskripsi'] ?? 'No description available';
-          String healthState = plantData['healthState'] ?? 'Unknown';
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
-          // data for saran perawatan
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return Center(child: Text('No Plant Data Found'));
+          }
+
+          final plantData = snapshot.data!.data() as Map<String, dynamic>;
+          final String plantName = plantData.containsKey('nama')
+              ? plantData['nama']
+              : 'Nama Tumbuhan';
+          final String? plantImage =
+              plantData.containsKey('image') ? plantData['image'] : null;
+
           List<Map<String, dynamic>> listPerawatan =
               List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
-
-          // ImageProvider imageProvider = imagePath == null
-          //     ? AssetImage('assets/images/kuping_gajah.jpg')
-          //     : FileImage(File(imagePath));
 
           return Scaffold(
             backgroundColor: Color(0xFFE0F6EF), //background hijau
@@ -57,12 +52,24 @@ class DetailScreen extends StatelessWidget {
                         width: double.infinity,
                         height: 300.0, // Atur tinggi gambar
                         decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(
-                                args?['image'] ?? 'assets/images/default.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                            image: plantImage != null && plantImage.isNotEmpty
+                                ? DecorationImage(
+                                    image: AssetImage(plantImage),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
+                            color: plantImage == null || plantImage.isEmpty
+                                ? Colors.grey[300]
+                                : null),
+                        child: plantImage == null || plantImage.isEmpty
+                            ? Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.white,
+                                  size: 64,
+                                ),
+                              )
+                            : null,
                       ),
                       //tombol back
                       Container(
@@ -101,8 +108,7 @@ class DetailScreen extends StatelessWidget {
                               children: [
                                 SizedBox(height: 16),
                                 Text(
-                                  args?['name'] ??
-                                      'Nama Tumbuhan', // Nama tanaman
+                                  plantName, // Nama tanaman
                                   style: GoogleFonts.poppins(
                                     textStyle: TextStyle(
                                       fontSize: 26,
@@ -111,31 +117,32 @@ class DetailScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 9),
-                                Text(
-                                  'a Species of Laceleaf (Anthurium)',
-                                  style: GoogleFonts.poppins(
-                                    textStyle: TextStyle(
-                                      fontSize: 14,
-                                      fontStyle: FontStyle.italic,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                Text(
-                                  'Common Name: Crystal Anthurium, Anthurium\n\n'
-                                  'Botanical Name: Anthurium crystallinum',
-                                  style: GoogleFonts.poppins(
-                                    textStyle: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ),
+                                // SizedBox(height: 9),
+                                // Text(
+                                //   'a Species of Laceleaf (Anthurium)',
+                                //   style: GoogleFonts.poppins(
+                                //     textStyle: TextStyle(
+                                //       fontSize: 14,
+                                //       fontStyle: FontStyle.italic,
+                                //       color: Colors.grey,
+                                //     ),
+                                //   ),
+                                // ),
+                                // SizedBox(height: 20),
+                                // Text(
+                                //   'Common Name: Crystal Anthurium, Anthurium\n\n'
+                                //   'Botanical Name: Anthurium crystallinum',
+                                //   style: GoogleFonts.poppins(
+                                //     textStyle: TextStyle(
+                                //       fontSize: 14,
+                                //       color: Colors.black54,
+                                //     ),
+                                //   ),
+                                // ),
                                 SizedBox(height: 36),
                                 Text(
-                                  'Deskripsi: $description',
+                                  plantData['deskripsi'] ??
+                                      'No description available.',
                                   style: GoogleFonts.poppins(
                                     textStyle: TextStyle(
                                       fontSize: 15,
@@ -146,10 +153,8 @@ class DetailScreen extends StatelessWidget {
                                 SizedBox(height: 27),
                                 Wrap(
                                   alignment: WrapAlignment.center,
-                                  spacing:
-                                      12, // Horizontal spacing between cards
-                                  runSpacing:
-                                      12, // Vertical spacing between rows of cards
+                                  spacing: 12,
+                                  runSpacing: 6,
                                   children: listPerawatan.map((perawatan) {
                                     String jenis =
                                         perawatan['jenis_perawatan'] ??
@@ -157,23 +162,43 @@ class DetailScreen extends StatelessWidget {
                                     String icon =
                                         perawatan['icon'] ?? 'Unknown Type';
                                     String deskripsi = perawatan['deskripsi'] ??
-                                        'No description available';
-                                    String documentId = perawatan['imageUrl'] ??
-                                        'No image available';
+                                        'No description available.';
 
                                     return GestureDetector(
                                       onTap: () {
-                                        // Memanggil pop-up langsung tanpa berpindah halaman
                                         showDialog(
                                           context: context,
-                                          barrierColor: Colors.black
-                                              .withOpacity(
-                                                  0.5), // Latar semi-transparan
-                                          builder: (BuildContext context) {
-                                            return CareTipsDialog(
-                                              jenis: jenis,
-                                              deskripsi: deskripsi,
-                                              documentId: documentId,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text(jenis),
+                                              content: Row(children: [
+                                                Icon(
+                                                  getIconData(icon),
+                                                  color: getColorIcon(
+                                                      getIconData(icon)),
+                                                  size: 40,
+                                                ),
+                                                SizedBox(width: 16),
+                                                Expanded(
+                                                  child: Text(
+                                                    deskripsi,
+                                                    style: GoogleFonts.poppins(
+                                                      textStyle: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ]),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('Close'),
+                                                ),
+                                              ],
                                             );
                                           },
                                         );
@@ -183,7 +208,7 @@ class DetailScreen extends StatelessWidget {
                                     );
                                   }).toList(),
                                 ),
-                                SizedBox(height: 3),
+                                SizedBox(height: 16),
                               ],
                             ),
                           ),
@@ -248,7 +273,7 @@ class DetailScreen extends StatelessWidget {
                                       context,
                                       '/plantCareManual',
                                       arguments: {
-                                        'name': args?['name'] ?? 'Nama Tumbuhan'
+                                        'documentId': documentId,
                                       },
                                     );
                                   },
@@ -284,7 +309,7 @@ class DetailScreen extends StatelessWidget {
   // Function untuk membuat card info perawatan tanaman
   Widget _buildCareCard(IconData icon, String text) {
     return Container(
-      width: 202, // Set a fixed width for consistency in layout
+      width: 181, // Set a fixed width for consistency in layout
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         color: Color(0xFFF2FFFB), // Light green background
@@ -319,15 +344,6 @@ class DetailScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<DocumentSnapshot> _fetchPlantData(String name) async {
-    final firestore = FirebaseFirestore.instance;
-    final collectionRef = firestore.collection('plants');
-    // Assuming the field for the name is 'nama'
-    return await collectionRef
-        .doc(name)
-        .get(); // Fetch document with ID 'tomat'
   }
 
   static Map<String, IconData> iconMap = {
