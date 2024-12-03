@@ -20,8 +20,6 @@ class CardResultScan extends StatelessWidget {
     final String? nama_doc = args?['nama'];
     final String? diseaseName = args?['healthState'];
 
-    print(nama_doc);
-
     return FutureBuilder<DocumentSnapshot>(
         future: _fetchPlantData(nama_doc!), // Fetch data using document ID
         builder: (context, snapshot) {
@@ -36,17 +34,14 @@ class CardResultScan extends StatelessWidget {
                 child: Text('No data found for $nama_doc')); // No data found
           }
 
-          final DocumentSnapshot documentSnapshot = snapshot.data!;
+          print("Snapshot data: ${snapshot.data}");
 
-          final documents = snapshot.data!;
-
-// Access the document data
-          final plantData = documentSnapshot.data() as Map<String, dynamic>;
           // If data is found, extract it
-          // final plant = snapshot.data!;
-          // final Map<String, dynamic> plantData =
-          //     plant.data() as Map<String, dynamic>;
-          // String documentId = plant.id;
+          final plant = snapshot.data!;
+          final Map<String, dynamic> plantData =
+              plant.data() as Map<String, dynamic>;
+          String documents = plant.id;
+
           String name = plantData['nama'] ?? 'Unknown Plant';
           String description =
               plantData['deskripsi'] ?? 'No description available';
@@ -357,7 +352,7 @@ class CardResultScan extends StatelessWidget {
                                     SizedBox(width: 19),
                                     Expanded(
                                       child: Text(
-                                        'Learn how to care for "${args?['name'] ?? 'nama tanaman'}" step by step',
+                                        'Learn how to care for "${args?['nama'] ?? 'nama tanaman'}" step by step',
                                         style: GoogleFonts.poppins(
                                           textStyle: TextStyle(
                                             fontSize: 14,
