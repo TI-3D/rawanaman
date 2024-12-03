@@ -1,12 +1,21 @@
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AddMyPlantButton extends StatelessWidget {
   final String plantName;
   final String diseaseName;
+  final File imageData;
 
-  AddMyPlantButton({required this.plantName, required this.diseaseName});
+  AddMyPlantButton(
+      {required this.plantName,
+      required this.diseaseName,
+      required this.imageData});
+
+  late String fileName = imageData.uri.pathSegments.last;
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +157,7 @@ class AddMyPlantButton extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'Add My Plant',
+                            'Add to My Plant',
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
@@ -175,18 +184,67 @@ class AddMyPlantButton extends StatelessWidget {
       DocumentReference plantRef = dataPlantsCollection.doc(plantName);
       DocumentReference diseaseRef = dataDiseaseCollection.doc(diseaseName);
 
-      // Update the post document with the new field that contains the user reference
-      await FirebaseFirestore.instance.collection('myplants').add(
-          {'plants': plantRef, 'disease': diseaseRef, 'reminder': reminder});
+      DocumentSnapshot plantDoc = await plantRef.get();
 
-      //   await userPlantsCollection.add({
-      //     'plantName': plantName,
-      //     'reminder': reminder,
-      //     'createdAt': Timestamp.now(),
-      //   });
+      if (!plantDoc.exists) {
+        print("Plant document does not exist.");
+        return;
+      }
+
+      String plantNameValue = plantDoc['nama'];
+
+      // Update the post document with the new field that contains the user reference
+      final DocumentReference myPlantDocRef =
+          await FirebaseFirestore.instance.collection('myplants').add({
+        'name': plantNameValue,
+        'plant': plantRef,
+        'disease': diseaseRef,
+        'reminder': reminder,
+        'image': fileName,
+        'created_at': Timestamp.now(),
+      });
+
+      // add data reference to current user
+      _refMyPlantDataToUsers(myPlantDocRef);
+      _uploadImage(imageData);
+
       print("Plant added successfully!");
     } catch (e) {
       print("Failed to add plant: $e");
+    }
+  }
+
+  void _uploadImage(File image) async {
+    try {
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('http://mkemaln.my.id/upload'));
+      request.files.add(await http.MultipartFile.fromPath('file', image.path));
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        print('File uploaded successfully');
+      } else {
+        print('File upload failed');
+      }
+    } catch (e) {
+      print('No image selected, error: $e');
+    }
+  }
+
+  void _refMyPlantDataToUsers(DocumentReference docRef) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user?.uid)
+          .update({
+        'myplants': FieldValue.arrayUnion([docRef])
+      });
+
+      print("My Plant data successfully append to users!");
+    } catch (e) {
+      print("Failed to add myPlant to user: $e");
     }
   }
 }

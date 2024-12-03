@@ -51,6 +51,8 @@ class CardResultScan extends StatelessWidget {
           List<Map<String, dynamic>> listPerawatan =
               List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
 
+          File fileUpload = File(imagePath!);
+
           ImageProvider imageProvider = imagePath == null
               ? AssetImage('assets/images/kuping_gajah.jpg')
               : FileImage(File(imagePath));
@@ -174,6 +176,7 @@ class CardResultScan extends StatelessWidget {
                               AddMyPlantButton(
                                 plantName: name.toLowerCase(),
                                 diseaseName: (diseaseName ?? '').toLowerCase(),
+                                imageData: fileUpload,
                               ),
 
                               SizedBox(height: 16),
