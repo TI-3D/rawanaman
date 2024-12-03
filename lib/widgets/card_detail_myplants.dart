@@ -77,56 +77,55 @@ class DetailScreen extends StatelessWidget {
                             Container(
                               width: double.infinity,
                               height: 300.0, // Atur tinggi gambar
-                              decoration: BoxDecoration(
-                                  image: myPlantImage != null &&
-                                          myPlantImage.isNotEmpty
-                                      ? DecorationImage(
-                                          image: AssetImage(myPlantImage),
-                                          fit: BoxFit.cover,
+                              decoration:
+                                  BoxDecoration(color: Colors.grey[300]),
+                              child:
+                                  myPlantImage == null || myPlantImage.isEmpty
+                                      ? Center(
+                                          child: Icon(
+                                            Icons.image_not_supported,
+                                            color: Colors.white,
+                                            size: 64,
+                                          ),
                                         )
-                                      : null,
-                                  color: myPlantImage == null ||
-                                          myPlantImage.isEmpty
-                                      ? Colors.grey[300]
-                                      : null),
-                              child: myPlantImage == null ||
-                                      myPlantImage.isEmpty
-                                  ? Center(
-                                      child: Icon(
-                                        Icons.image_not_supported,
-                                        color: Colors.white,
-                                        size: 64,
-                                      ),
-                                    )
-                                  : FutureBuilder<ImageProvider<Object>>(
-                                      future: _getImage(
-                                          myPlantImage), // Assuming plantImage holds the filename
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        } else if (snapshot.hasError) {
-                                          return Center(
-                                              child:
-                                                  Text('Error loading image'));
-                                        } else if (snapshot.hasData) {
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: snapshot
-                                                    .data!, // Use the ImageProvider from FutureBuilder
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          );
-                                        } else {
-                                          return Center(
-                                              child: Text('No image found'));
-                                        }
-                                      },
-                                    ),
+                                      : FutureBuilder<ImageProvider<Object>>(
+                                          future: _getImage(
+                                              myPlantImage), // Assuming plantImage holds the filename
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            } else if (snapshot.hasError) {
+                                              return Center(
+                                                child: Icon(
+                                                  Icons.image_not_supported,
+                                                  color: Colors.white,
+                                                  size: 64,
+                                                ),
+                                              );
+                                            } else if (snapshot.hasData) {
+                                              return Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: snapshot
+                                                        .data!, // Use the ImageProvider from FutureBuilder
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              return Center(
+                                                child: Icon(
+                                                  Icons.image_not_supported,
+                                                  color: Colors.white,
+                                                  size: 64,
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
                             ),
                             //tombol back
                             Container(
