@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -60,25 +62,39 @@ class CardMyPlants extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: plants.length,
                 itemBuilder: (context, index) {
+                  final myPlantDoc = plants[index].id;
                   final plantRef = plants[index].data() as Map<String, dynamic>;
                   final plantId = plantRef['plant'].id;
+                  final imageName = plantRef['image'] ?? '';
+                  final myPlantName = plantRef['name'] ?? 'Unknown';
 
-                  return _CardMyPlants(plantId: plantId);
+                  return _CardMyPlants(
+                      plantId: plantId,
+                      myPlantDocId: myPlantDoc,
+                      imageMyPlant: imageName,
+                      nameMyPlant: myPlantName);
                 },
               );
             }
           },
         );
       },
-
     );
   }
 }
 
 class _CardMyPlants extends StatelessWidget {
   final String plantId;
+  final String imageMyPlant;
+  final String nameMyPlant;
+  final String myPlantDocId;
 
-  _CardMyPlants({required this.plantId});
+  _CardMyPlants({
+    required this.plantId,
+    required this.imageMyPlant,
+    required this.nameMyPlant,
+    required this.myPlantDocId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -97,15 +113,18 @@ class _CardMyPlants extends StatelessWidget {
         }
 
         final plant = snapshot.data!;
-        final Map<String, dynamic> plantData = plant.data() as Map<String, dynamic>;
-        final String plantName = plantData['nama'] ?? 'No Name';
-        final String? plantImage = plantData['image'];
+        final Map<String, dynamic> plantData =
+            plant.data() as Map<String, dynamic>;
+        // final String plantName = plantData['nama'] ?? 'No Name';
+        // final String? plantImage = plantData['image'];
         List<Map<String, dynamic>> listPerawatan =
-              List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
+            List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
         String penyiraman = 'No frequency available'; // Default value
         for (var perawatan in listPerawatan) {
-          if (perawatan['jenis_perawatan'] == 'air' || perawatan['jenis_perawatan'] == 'Air') {
-            penyiraman = perawatan['nilai'] as String? ?? penyiraman; // Update frequency if found
+          if (perawatan['jenis_perawatan'] == 'air' ||
+              perawatan['jenis_perawatan'] == 'Air') {
+            penyiraman = perawatan['nilai'] as String? ??
+                penyiraman; // Update frequency if found
             break; // Exit the loop since we found the entry
           }
         }
@@ -125,6 +144,7 @@ class _CardMyPlants extends StatelessWidget {
                     '/detail',
                     arguments: {
                       'documentId': plant.id,
+                      'myPlantDoc': myPlantDocId,
                     },
                   );
                 },
@@ -135,13 +155,42 @@ class _CardMyPlants extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: plantImage != null && plantImage.isNotEmpty
-                            ? Image.asset(
-                                plantImage,
-                                width: 100,
-                                height: 160,
-                                fit: BoxFit.cover,
-                              )
+                        child: imageMyPlant != null && imageMyPlant.isNotEmpty
+                            ? FutureBuilder(
+                                future: _getImage(imageMyPlant),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Container(
+                                      width: 100,
+                                      height: 160,
+                                      color: Colors.grey[300],
+                                      child: Center(
+                                          child: CircularProgressIndicator()),
+                                    );
+                                  } else if (snapshot.hasData) {
+                                    // Display the image if the file is retrieved successfully
+                                    return Image.file(
+                                      snapshot.data!,
+                                      width: 100,
+                                      height: 160,
+                                      fit: BoxFit.cover,
+                                    );
+                                  } else {
+                                    return Container(
+                                      width: 100,
+                                      height: 160,
+                                      color: Colors.grey[300],
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.image_not_supported,
+                                          size: 50,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                })
                             : Container(
                                 width: 100,
                                 height: 160,
@@ -161,7 +210,7 @@ class _CardMyPlants extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              plantName,
+                              nameMyPlant,
                               style: GoogleFonts.poppins(
                                 textStyle: TextStyle(
                                     fontSize: 18,
@@ -171,7 +220,8 @@ class _CardMyPlants extends StatelessWidget {
                             ),
                             SizedBox(height: 8),
                             Text(
-                              plantData['deskripsi'] ?? 'No description available.',
+                              plantData['deskripsi'] ??
+                                  'No description available.',
                               style: GoogleFonts.poppins(
                                 textStyle: TextStyle(
                                   fontSize: 12,
@@ -212,5 +262,26 @@ class _CardMyPlants extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+Future<File> _getImage(String filename) async {
+  try {
+    var response =
+        await http.get(Uri.parse('http://mkemaln.my.id/images/$filename'));
+
+    if (response.statusCode == 200) {
+      // Create a file from the response body
+      final bytes = response.bodyBytes;
+      final dir = await Directory.systemTemp.createTemp();
+      final file = File('${dir.path}/$filename');
+      await file.writeAsBytes(bytes);
+      return file;
+    } else {
+      throw Exception('Failed to load image');
+    }
+  } catch (e) {
+    print('Error fetching image: $e');
+    rethrow;
   }
 }
