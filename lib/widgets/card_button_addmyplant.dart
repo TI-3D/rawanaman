@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -148,7 +149,7 @@ class AddMyPlantButton extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'Add My Plant',
+                            'Add to My Plant',
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
@@ -176,17 +177,37 @@ class AddMyPlantButton extends StatelessWidget {
       DocumentReference diseaseRef = dataDiseaseCollection.doc(diseaseName);
 
       // Update the post document with the new field that contains the user reference
-      await FirebaseFirestore.instance.collection('myplants').add(
-          {'plants': plantRef, 'disease': diseaseRef, 'reminder': reminder});
+      final DocumentReference myPlantDocRef =
+          await FirebaseFirestore.instance.collection('myplants').add({
+        'plant': plantRef,
+        'disease': diseaseRef,
+        'reminder': reminder,
+        'created_at': Timestamp.now(),
+      });
 
-      //   await userPlantsCollection.add({
-      //     'plantName': plantName,
-      //     'reminder': reminder,
-      //     'createdAt': Timestamp.now(),
-      //   });
+      // add data reference to current user
+      _refMyPlantDataToUsers(myPlantDocRef);
+
       print("Plant added successfully!");
     } catch (e) {
       print("Failed to add plant: $e");
+    }
+  }
+
+  void _refMyPlantDataToUsers(DocumentReference docRef) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user?.uid)
+          .update({
+        'myplants': FieldValue.arrayUnion([docRef])
+      });
+
+      print("My Plant data successfully append to users!");
+    } catch (e) {
+      print("Failed to add myPlant to user: $e");
     }
   }
 }
