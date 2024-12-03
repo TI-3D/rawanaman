@@ -118,9 +118,9 @@ class CardWiki2 extends StatelessWidget {
             Positioned(
               bottom: 0,
               left: 0,
-              right: 0,
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 6),
+                color: Colors.black54,
+                padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   plantName,
                   style: GoogleFonts.poppins(
