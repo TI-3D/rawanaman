@@ -173,43 +173,16 @@ class AddMyPlantButton extends StatelessWidget {
       final dataDiseaseCollection =
           FirebaseFirestore.instance.collection('disease');
 
-      void _addPlantToFirebase(bool reminder) async {
-        try {
-          final dataPlantsCollection =
-              FirebaseFirestore.instance.collection('plants');
-          final dataDiseaseCollection =
-              FirebaseFirestore.instance.collection('disease');
-
-          DocumentReference plantRef = dataPlantsCollection.doc(plantName);
-          DocumentReference diseaseRef = dataDiseaseCollection.doc(diseaseName);
-
-          // Update the post document with the new field that contains the user reference
-          final DocumentReference myPlantDocRef =
-              await FirebaseFirestore.instance.collection('myplants').add({
-            'plants': plantRef,
-            'disease': diseaseRef,
-            'reminder': reminder
-          });
-
-          // add data reference to current user
-          _refMyPlantDataToUsers(myPlantDocRef);
-
-          print("Plant added successfully!");
-        } catch (e) {
-          print("Failed to add plant: $e");
-        }
-      }
-
       DocumentReference plantRef = dataPlantsCollection.doc(plantName);
       DocumentReference diseaseRef = dataDiseaseCollection.doc(diseaseName);
 
       // Update the post document with the new field that contains the user reference
-      final DocumentReference myPlantDocRef = await FirebaseFirestore.instance
-          .collection('myplants')
-          .add({
-        'plants': plantRef,
+      final DocumentReference myPlantDocRef =
+          await FirebaseFirestore.instance.collection('myplants').add({
+        'plant': plantRef,
         'disease': diseaseRef,
-        'reminder': reminder
+        'reminder': reminder,
+        'created_at': Timestamp.now(),
       });
 
       // add data reference to current user
