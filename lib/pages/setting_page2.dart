@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingPage2 extends StatefulWidget {
   @override
@@ -179,6 +180,10 @@ class _SettingPageState extends State<SettingPage2> {
                   // Cek jika pengguna memilih "Yes"
                   if (confirmLogout == true) {
                     try {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.remove('isGuest');
+
                       await FirebaseAuth.instance
                           .signOut(); // Proses logout Firebase
                       Navigator.pushReplacementNamed(
