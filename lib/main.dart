@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:rawanaman/pages/home_screen.dart';
 import 'package:rawanaman/pages/login_page.dart';
 import 'package:rawanaman/pages/account_page.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
@@ -11,8 +12,7 @@ import 'package:rawanaman/widgets/card_detail_myplants.dart';
 import 'package:rawanaman/widgets/card_full_sun_care.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/widgets/card_plant_care_manual.dart';
-import 'package:rawanaman/pages/findplant_page.dart';
-import 'package:rawanaman/pages/setting_page.dart';
+import 'package:rawanaman/pages/home_page.dart';
 import 'package:rawanaman/widgets/card_diagnosa.dart';
 import 'package:rawanaman/widgets/card_scan_resultHealth.dart';
 import 'package:rawanaman/widgets/card_scan_pict.dart';
@@ -24,6 +24,7 @@ import 'package:rawanaman/widgets/navbar.dart';
 import 'package:rawanaman/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:rawanaman/pages/home_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
+        //'/': (context) => HomePage(),
         '/': (context) => SplashScreen(),
         '/loginPage': (context) => LoginPage(
               isLogin: true,
@@ -72,7 +74,7 @@ class MyApp extends StatelessWidget {
               documentId: 'documentId',
             ),
         '/lessonDetail': (context) => CardLessonDetail(),
-        '/find-plant': (context) => FindPlantPage(),
+        '/find-plant': (context) => HomePage(),
         '/cameraPage': (context) => CameraButton(),
         '/scanScreen': (context) => CardScanPict(),
         '/scanResult': (context) => CardResultScan(),
@@ -80,6 +82,7 @@ class MyApp extends StatelessWidget {
         '/diagnoseResult': (context) => CardDiagnosa(),
         '/settingPage': (context) => SettingPage2(),
         '/account': (context) => AccountPage(),
+        '/home': (context) => HomeScreen(),
       },
       // home: MainScreen(),
     );
@@ -89,7 +92,7 @@ class MyApp extends StatelessWidget {
 class MainScreen extends StatefulWidget {
   final int initialIndex;
 
-  MainScreen({Key? key, this.initialIndex = 1}) : super(key: key);
+  MainScreen({Key? key, this.initialIndex = 0}) : super(key: key);
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -99,9 +102,10 @@ class _MainScreenState extends State<MainScreen> {
   late int _selectedIndex;
 
   final List<Widget> _pages = [
+    HomePage(),
     MyPlantsPage(),
-    FindPlantPage(),
     WikiPage(),
+    SettingPage2(),
   ];
 
   void initState() {
