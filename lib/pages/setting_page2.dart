@@ -18,15 +18,8 @@ class _SettingPageState extends State<SettingPage2> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          padding: EdgeInsets.only(left: 23),
-          icon: Icon(Icons.arrow_back, color: Color(0xff10B982)),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         title: Text(
-          'Settings',
+          '   Settings',
           style: GoogleFonts.firaSans(
             textStyle: TextStyle(
               color: Colors.black,
@@ -63,35 +56,21 @@ class _SettingPageState extends State<SettingPage2> {
               ),
             ),
             SizedBox(height: 16),
-            GestureDetector(
-              onTap: () {
-                // Arahkan ke halaman login
+            ElevatedButton(
+              onPressed: () {
                 Navigator.pushNamed(context, '/loginPage');
               },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 60, vertical: 12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.green, width: 1.5),
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.transparent,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xff10B998), // Warna tombol hijau
+                padding: EdgeInsets.symmetric(horizontal: 34, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      25), // Membuat tombol dengan sudut membulat
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.login, color: Colors.green),
-                    SizedBox(width: 8),
-                    Text(
-                      'Login',
-                      style: GoogleFonts.inter(
-                        textStyle: TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              ),
+              child: Text(
+                'Log In',
+                style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
           ],
