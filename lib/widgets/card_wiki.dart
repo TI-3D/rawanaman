@@ -3,20 +3,34 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/pages/detail_wiki_pages.dart';
+import 'package:rawanaman/widgets/card_confirm_login.dart';
 import 'package:rawanaman/widgets/transition_fade.dart';
 
 class CardWikiData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser ;
+    final user = FirebaseAuth.instance.currentUser;
 
+    // Jika user tidak login, langsung tampilkan dialog konfirmasi
     if (user == null) {
-      return Center(child: Text('User  not logged in'));
+      Future.delayed(Duration.zero, () {
+        CardConfirmLogin.showLoginDialog(context);
+      });
+      return Center(
+        heightFactor: 15,
+        child: Text(
+          'You need to log in to view this content.',
+          style: TextStyle(fontSize: 16),
+        ),
+      );
     }
 
     // Fetch the user's document to get the myplants array
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('users').doc(user.uid).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .snapshots(),
       builder: (context, userSnapshot) {
         if (userSnapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -62,7 +76,8 @@ class CardWikiData extends StatelessWidget {
                 itemBuilder: (context, index) {
                   // Fetch the plant reference from the myplants document
                   final plantRef = plants[index].data() as Map<String, dynamic>;
-                  final plantId = plantRef['plant'].id; // Assuming plantRef is a reference to the plants collection
+                  final plantId = plantRef['plant']
+                      .id; // Assuming plantRef is a reference to the plants collection
 
                   return CardWiki(plantId: plantId);
                 },
@@ -83,7 +98,10 @@ class CardWiki extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('plants').doc(plantId).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('plants')
+          .doc(plantId)
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -94,7 +112,8 @@ class CardWiki extends StatelessWidget {
         }
 
         final plant = snapshot.data!;
-        final Map<String, dynamic> plantData = plant.data() as Map<String, dynamic>;
+        final Map<String, dynamic> plantData =
+            plant.data() as Map<String, dynamic>;
         final String plantName = plantData['nama'] ?? 'No Name';
         final String? plantImage = plantData['image'];
         final String documentId = plant.id;
@@ -115,35 +134,36 @@ class CardWiki extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: plantImage != null && plantImage.isNotEmpty ? Image.asset(
-                      plantImage,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
+                  child: plantImage != null && plantImage.isNotEmpty
+                      ? Image.asset(
+                          plantImage,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: double.infinity,
+                              color: Colors.grey[300],
+                              child: Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 50,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
                           width: double.infinity,
                           color: Colors.grey[300],
                           child: Center(
                             child: Icon(
                               Icons.image_not_supported,
                               size: 50,
-                              color: Colors.black54,
+                              color: Colors.white,
                             ),
                           ),
-                        );
-                      },
-                    )
-                  : Container(
-                      width: double.infinity,
-                      color: Colors.grey[300],
-                      child: Center(
-                        child: Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: Colors.white,
                         ),
-                      ),
-                    ),
                 ),
                 Positioned(
                   bottom: 0,

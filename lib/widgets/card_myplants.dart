@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rawanaman/widgets/card_confirm_login.dart';
 
 class CardMyPlants extends StatelessWidget {
   final List<DocumentSnapshot> plants;
@@ -13,8 +14,18 @@ class CardMyPlants extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
+    // Jika user tidak login, langsung tampilkan dialog konfirmasi
     if (user == null) {
-      return Center(child: Text('User  not logged in'));
+      Future.delayed(Duration.zero, () {
+        CardConfirmLogin.showLoginDialog(context);
+      });
+      return Center(
+        heightFactor: 15,
+        child: Text(
+          'You need to log in to view this content.',
+          style: TextStyle(fontSize: 16),
+        ),
+      );
     }
 
     // Fetch the user's document to get the myplants array
@@ -70,7 +81,6 @@ class CardMyPlants extends StatelessWidget {
           },
         );
       },
-
     );
   }
 }
@@ -97,15 +107,18 @@ class _CardMyPlants extends StatelessWidget {
         }
 
         final plant = snapshot.data!;
-        final Map<String, dynamic> plantData = plant.data() as Map<String, dynamic>;
+        final Map<String, dynamic> plantData =
+            plant.data() as Map<String, dynamic>;
         final String plantName = plantData['nama'] ?? 'No Name';
         final String? plantImage = plantData['image'];
         List<Map<String, dynamic>> listPerawatan =
-              List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
+            List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
         String penyiraman = 'No frequency available'; // Default value
         for (var perawatan in listPerawatan) {
-          if (perawatan['jenis_perawatan'] == 'air' || perawatan['jenis_perawatan'] == 'Air') {
-            penyiraman = perawatan['nilai'] as String? ?? penyiraman; // Update frequency if found
+          if (perawatan['jenis_perawatan'] == 'air' ||
+              perawatan['jenis_perawatan'] == 'Air') {
+            penyiraman = perawatan['nilai'] as String? ??
+                penyiraman; // Update frequency if found
             break; // Exit the loop since we found the entry
           }
         }
@@ -171,7 +184,8 @@ class _CardMyPlants extends StatelessWidget {
                             ),
                             SizedBox(height: 8),
                             Text(
-                              plantData['deskripsi'] ?? 'No description available.',
+                              plantData['deskripsi'] ??
+                                  'No description available.',
                               style: GoogleFonts.poppins(
                                 textStyle: TextStyle(
                                   fontSize: 12,
