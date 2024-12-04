@@ -150,7 +150,7 @@ class StartPage extends StatelessWidget {
               onPressed: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.setBool('isGuest', true);
-                Navigator.pushReplacementNamed(context, '/main');
+                Navigator.pushReplacementNamed(context, '/main', arguments: 0);
               },
               child: Text(
                 'Continue as a guest',
