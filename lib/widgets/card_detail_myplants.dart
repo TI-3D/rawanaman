@@ -56,9 +56,9 @@ class DetailScreen extends StatelessWidget {
                 }
 
                 final plantData = snapshot.data!.data() as Map<String, dynamic>;
-                // final String plantName = plantData.containsKey('nama')
-                //     ? plantData['nama']
-                //     : 'Nama Tumbuhan';
+                final String plantName = plantData.containsKey('nama')
+                    ? plantData['nama']
+                    : 'Nama Tumbuhan';
                 // final String? plantImage =
                 //     plantData.containsKey('image') ? plantData['image'] : null;
 
@@ -297,7 +297,7 @@ class DetailScreen extends StatelessWidget {
                                                   16), // Spasi antara ikon dan teks deskripsi
                                           Expanded(
                                             child: Text(
-                                              'Learn how to care for "${args?['name'] ?? 'nama tanaman'}" step by step',
+                                              'Learn how to care for "${plantName ?? 'nama tanaman'}" step by step',
                                               style: GoogleFonts.poppins(
                                                 textStyle: TextStyle(
                                                   fontSize: 14,
