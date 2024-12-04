@@ -66,9 +66,6 @@ class CardWiki2 extends StatelessWidget {
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100), // Buat lingkaran pada Card
-      ),
       child: InkWell(
         onTap: () {
           Navigator.pushNamed(
