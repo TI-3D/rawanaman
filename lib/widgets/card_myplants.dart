@@ -22,10 +22,35 @@ class CardMyPlants extends StatelessWidget {
         CardConfirmLogin.showLoginDialog(context);
       });
       return Center(
-        heightFactor: 15,
-        child: Text(
-          'You need to log in to view this content.',
-          style: TextStyle(fontSize: 16),
+        heightFactor: 5,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'You need to log in to view this content.',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/loginPage');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xff10B998), // Warna tombol hijau
+                padding: EdgeInsets.symmetric(horizontal: 34, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      25), // Membuat tombol dengan sudut membulat
+                ),
+              ),
+              child: Text(
+                'Log In',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -126,19 +151,6 @@ class _CardMyPlants extends StatelessWidget {
         final plant = snapshot.data!;
         final Map<String, dynamic> plantData =
             plant.data() as Map<String, dynamic>;
-        // final String plantName = plantData['nama'] ?? 'No Name';
-        // final String? plantImage = plantData['image'];
-        List<Map<String, dynamic>> listPerawatan =
-            List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
-        String penyiraman = 'No frequency available'; // Default value
-        for (var perawatan in listPerawatan) {
-          if (perawatan['jenis_perawatan'] == 'air' ||
-              perawatan['jenis_perawatan'] == 'Air') {
-            penyiraman = perawatan['nilai'] as String? ??
-                penyiraman; // Update frequency if found
-            break; // Exit the loop since we found the entry
-          }
-        }
 
         return Column(
           children: [
@@ -164,9 +176,10 @@ class _CardMyPlants extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Image Section
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: imageMyPlant != null && imageMyPlant.isNotEmpty
+                        child: imageMyPlant.isNotEmpty
                             ? FutureBuilder(
                                 future: _getImage(imageMyPlant),
                                 builder: (context, snapshot) {
@@ -180,7 +193,6 @@ class _CardMyPlants extends StatelessWidget {
                                           child: CircularProgressIndicator()),
                                     );
                                   } else if (snapshot.hasData) {
-                                    // Display the image if the file is retrieved successfully
                                     return Image.file(
                                       snapshot.data!,
                                       width: 100,
@@ -216,18 +228,59 @@ class _CardMyPlants extends StatelessWidget {
                               ),
                       ),
                       SizedBox(width: 16),
+                      // Details Section
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              nameMyPlant,
-                              style: GoogleFonts.poppins(
-                                textStyle: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.7, // 50% dari lebar layar
+                                    ),
+                                    child: Text(
+                                      nameMyPlant,
+                                      style: GoogleFonts.poppins(
+                                        textStyle: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      maxLines:
+                                          1, // Batas jumlah baris menjadi 1
+                                      overflow: TextOverflow
+                                          .ellipsis, // Tambahkan titik-titik jika teks terlalu panjang
+                                    ),
+                                  ),
+                                ),
+                                PopupMenuButton<String>(
+                                  onSelected: (value) {
+                                    if (value == 'rename') {
+                                      _renamePlant(context);
+                                    } else if (value == 'delete') {
+                                      _deletePlant(context);
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) {
+                                    return [
+                                      PopupMenuItem(
+                                        value: 'rename',
+                                        child: Text('Rename'),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 'delete',
+                                        child: Text('Delete'),
+                                      ),
+                                    ];
+                                  },
+                                ),
+                              ],
                             ),
                             SizedBox(height: 8),
                             Text(
@@ -241,26 +294,6 @@ class _CardMyPlants extends StatelessWidget {
                               ),
                               textAlign: TextAlign.justify,
                             ),
-                            SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.alarm,
-                                  size: 16,
-                                  color: Colors.grey,
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  penyiraman,
-                                  style: GoogleFonts.poppins(
-                                    textStyle: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
                           ],
                         ),
                       ),
@@ -268,6 +301,72 @@ class _CardMyPlants extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _renamePlant(BuildContext context) {
+    final TextEditingController nameController =
+        TextEditingController(text: nameMyPlant);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Rename Plant'),
+          content: TextField(
+            controller: nameController,
+            decoration: InputDecoration(hintText: 'Enter new name'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final newName = nameController.text.trim();
+                if (newName.isNotEmpty) {
+                  await FirebaseFirestore.instance
+                      .collection('myplants')
+                      .doc(myPlantDocId)
+                      .update({'name': newName});
+                }
+                Navigator.pop(context);
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deletePlant(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Delete Plant'),
+          content: Text(
+              'Are you sure you want to delete $nameMyPlant from your collection?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await FirebaseFirestore.instance
+                    .collection('myplants')
+                    .doc(myPlantDocId)
+                    .delete();
+                Navigator.pop(context);
+              },
+              child: Text('Delete'),
             ),
           ],
         );
