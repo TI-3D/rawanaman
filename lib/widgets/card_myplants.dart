@@ -67,12 +67,17 @@ class CardMyPlants extends StatelessWidget {
                   final plantId = plantRef['plant'].id;
                   final imageName = plantRef['image'] ?? '';
                   final myPlantName = plantRef['name'] ?? 'Unknown';
+                  final createdAt = plantRef['created_at'] ?? Timestamp.now();
+                  final siramAt = plantRef['nextSiram'] ?? createdAt;
 
                   return _CardMyPlants(
-                      plantId: plantId,
-                      myPlantDocId: myPlantDoc,
-                      imageMyPlant: imageName,
-                      nameMyPlant: myPlantName);
+                    plantId: plantId,
+                    myPlantDocId: myPlantDoc,
+                    imageMyPlant: imageName,
+                    nameMyPlant: myPlantName,
+                    createdMyPlant: createdAt,
+                    siramMyPlant: siramAt,
+                  );
                 },
               );
             }
@@ -88,13 +93,28 @@ class _CardMyPlants extends StatelessWidget {
   final String imageMyPlant;
   final String nameMyPlant;
   final String myPlantDocId;
+  final Timestamp createdMyPlant;
+  Timestamp siramMyPlant;
 
-  _CardMyPlants({
-    required this.plantId,
-    required this.imageMyPlant,
-    required this.nameMyPlant,
-    required this.myPlantDocId,
-  });
+  _CardMyPlants(
+      {required this.plantId,
+      required this.imageMyPlant,
+      required this.nameMyPlant,
+      required this.myPlantDocId,
+      required this.createdMyPlant,
+      required this.siramMyPlant});
+
+  Future<void> _updateNextSiram(String penyiraman, BuildContext context) async {
+    if (siramMyPlant == createdMyPlant) {
+      siramMyPlant = getTanggalSiram(penyiraman, createdMyPlant);
+      await FirebaseFirestore.instance
+          .collection('myplants')
+          .doc(myPlantDocId)
+          .set({
+        'nextSiram': siramMyPlant,
+      }, SetOptions(merge: true));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,6 +148,15 @@ class _CardMyPlants extends StatelessWidget {
             break; // Exit the loop since we found the entry
           }
         }
+
+        _updateNextSiram(penyiraman, context);
+
+        int hariSampaiSiram =
+            (siramMyPlant.toDate().difference(DateTime.now()).inDays);
+        DateTime hariIni = siramMyPlant.toDate();
+        String pesanSiram = hariSampaiSiram > 0
+            ? 'Siram dalam $hariSampaiSiram hari lagi'
+            : 'Siram hari ini';
 
         return Column(
           children: [
@@ -240,7 +269,7 @@ class _CardMyPlants extends StatelessWidget {
                                 ),
                                 SizedBox(width: 4),
                                 Text(
-                                  penyiraman,
+                                  pesanSiram,
                                   style: GoogleFonts.poppins(
                                     textStyle: TextStyle(
                                       fontSize: 12,
@@ -262,6 +291,25 @@ class _CardMyPlants extends StatelessWidget {
         );
       },
     );
+  }
+
+  static Map<String, int> frekuensiSiram = {
+    'sering': 2,
+    'secukupnya': 3,
+  };
+
+  int getPenyiramanData(String frekuensi) {
+    return frekuensiSiram[frekuensi] ?? 0;
+  }
+
+  Timestamp getTanggalSiram(String nilai, Timestamp tanggal) {
+    int siramDalamHari = getPenyiramanData(nilai);
+
+    DateTime lastWateredDate = tanggal.toDate();
+    DateTime nextWateringDate =
+        lastWateredDate.add(Duration(days: siramDalamHari));
+
+    return Timestamp.fromDate(nextWateringDate);
   }
 }
 
