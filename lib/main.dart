@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:rawanaman/pages/home_screen.dart';
 import 'package:rawanaman/pages/login_page.dart';
 import 'package:rawanaman/pages/account_page.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
@@ -23,6 +24,7 @@ import 'package:rawanaman/widgets/navbar.dart';
 import 'package:rawanaman/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:rawanaman/pages/home_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +51,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
+        //'/': (context) => HomePage(),
         '/': (context) => SplashScreen(),
         '/loginPage': (context) => LoginPage(
               isLogin: true,
@@ -79,6 +82,7 @@ class MyApp extends StatelessWidget {
         '/diagnoseResult': (context) => CardDiagnosa(),
         '/settingPage': (context) => SettingPage2(),
         '/account': (context) => AccountPage(),
+        '/home': (context) => HomeScreen(),
       },
       // home: MainScreen(),
     );
