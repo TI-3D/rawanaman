@@ -79,11 +79,10 @@ class _WikiPage extends State<WikiPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 3),
                                 Text(
                                   'Get to know about your plant’s disease and how to take care of them',
                                   style: GoogleFonts.poppins(
-                                      textStyle: TextStyle(fontSize: 12),
+                                      textStyle: TextStyle(fontSize: 11),
                                       letterSpacing: 0.3),
                                 ),
                               ],

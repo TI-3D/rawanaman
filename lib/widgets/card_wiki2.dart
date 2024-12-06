@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -60,7 +62,7 @@ class CardWiki2 extends StatelessWidget {
     final Map<String, dynamic> plantData = plant.data() as Map<String, dynamic>;
     final String plantName =
         plantData.containsKey('nama') ? plant['nama'] : 'No Name';
-    final String? plantImage =
+    final String plantImage =
         plantData.containsKey('image') ? plant['image'] : null;
     final String documentId = plant.id;
 
@@ -81,26 +83,37 @@ class CardWiki2 extends StatelessWidget {
           children: [
             ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: plantImage != null && plantImage.isNotEmpty
-                    ? Image.asset(
-                        plantImage,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          // Handle the error if the image is not found
-                          return Container(
-                            width: double.infinity,
-                            color: Colors.grey[300],
-                            child: Center(
-                              child: Icon(
-                                Icons.image_not_supported,
-                                size: 50,
-                                color: Colors.black54,
+                child: plantImage.isNotEmpty
+                    ? FutureBuilder(
+                        future: _getImage(plantImage),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container(
+                              width: double.infinity,
+                              color: Colors.grey[300],
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          } else if (snapshot.hasData) {
+                            return Image.file(
+                              snapshot.data!,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            );
+                          } else {
+                            return Container(
+                              width: double.infinity,
+                              color: Colors.grey[300],
+                              child: Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 50,
+                                  color: Colors.black54,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      )
+                            );
+                          }
+                        })
                     : Container(
                         width: double.infinity,
                         color: Colors.grey[300],
@@ -133,5 +146,26 @@ class CardWiki2 extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+Future<File> _getImage(String filename) async {
+  try {
+    var response =
+        await http.get(Uri.parse('http://mkemaln.my.id/images/$filename'));
+
+    if (response.statusCode == 200) {
+      // Create a file from the response body
+      final bytes = response.bodyBytes;
+      final dir = await Directory.systemTemp.createTemp();
+      final file = File('${dir.path}/$filename');
+      await file.writeAsBytes(bytes);
+      return file;
+    } else {
+      throw Exception('Failed to load image');
+    }
+  } catch (e) {
+    print('Error fetching image: $e');
+    rethrow;
   }
 }
