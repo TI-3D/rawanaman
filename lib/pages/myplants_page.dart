@@ -15,7 +15,7 @@ class MyPlantsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 65),
+              // SizedBox(height: 65),
               Text(
                 'My Plants',
                 style: GoogleFonts.poppins(
@@ -29,7 +29,7 @@ class MyPlantsPage extends StatelessWidget {
                   textStyle: TextStyle(fontSize: 15),
                 ),
               ),
-              SizedBox(height: 35),
+              SizedBox(height: 30),
               // FutureBuilder untuk membaca data dari Firestore
               FutureBuilder<QuerySnapshot>(
                 future: FirebaseFirestore.instance.collection('myplants').get(),
