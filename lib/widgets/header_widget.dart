@@ -69,15 +69,14 @@ class HeaderWidget extends StatelessWidget {
               ),
               _buildIconWithLabel(
                 icon: FontAwesomeIcons.camera,
-                label: 'Identify',
+                label: 'Find Plant',
                 iconColor: const Color(0xFF10B982),
                 textColor: const Color(0xFF10B982),
-                routeName: '/main',
-                arguments: 5,
+                routeName: '/cameraPage',
               ),
               _buildIconWithLabel(
                 icon: FontAwesomeIcons.book,
-                label: 'Book',
+                label: 'Wiki Plant',
                 iconColor: const Color(0xFF10B982),
                 textColor: const Color(0xFF10B982),
                 routeName: '/main',

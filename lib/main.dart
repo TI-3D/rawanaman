@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
             ),
         '/lessonDetail': (context) => CardLessonDetail(),
         '/find-plant': (context) => HomePage(),
-        '/cameraPage': (context) => CameraButton(),
+        '/cameraPage': (context) => CameraPage(),
         '/scanScreen': (context) => CardScanPict(),
         '/scanResult': (context) => CardResultScan(),
         '/resultSick': (context) => CardScanResultsick(),
@@ -106,7 +106,6 @@ class _MainScreenState extends State<MainScreen> {
     Container(),
     WikiPage(),
     SettingPage2(),
-    CameraPage(),
   ];
 
   void initState() {
