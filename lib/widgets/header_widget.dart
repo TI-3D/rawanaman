@@ -60,7 +60,7 @@ class HeaderWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildIconWithLabel(
-                icon: Icons.nature,
+                icon: FontAwesomeIcons.seedling,
                 label: 'My Plants',
                 iconColor: const Color(0xFF10B982),
                 textColor: const Color(0xFF10B982),
@@ -73,7 +73,7 @@ class HeaderWidget extends StatelessWidget {
                 iconColor: const Color(0xFF10B982),
                 textColor: const Color(0xFF10B982),
                 routeName: '/main',
-                arguments: 4,
+                arguments: 5,
               ),
               _buildIconWithLabel(
                 icon: FontAwesomeIcons.book,
@@ -81,7 +81,7 @@ class HeaderWidget extends StatelessWidget {
                 iconColor: const Color(0xFF10B982),
                 textColor: const Color(0xFF10B982),
                 routeName: '/main',
-                arguments: 2,
+                arguments: 3,
               ),
               _buildIconWithLabel(
                 icon: Icons.settings,
@@ -89,7 +89,7 @@ class HeaderWidget extends StatelessWidget {
                 iconColor: const Color(0xFF10B982),
                 textColor: const Color(0xFF10B982),
                 routeName: '/main',
-                arguments: 3,
+                arguments: 4,
               ),
             ],
           ),
