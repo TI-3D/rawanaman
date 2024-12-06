@@ -6,7 +6,6 @@ import 'package:rawanaman/pages/login_page.dart';
 import 'package:rawanaman/pages/account_page.dart';
 import 'package:rawanaman/pages/myplants_page.dart';
 import 'package:rawanaman/pages/start_page.dart';
-import 'package:rawanaman/widgets/card_camerabutton.dart';
 import 'package:rawanaman/widgets/card_care_tips.dart';
 import 'package:rawanaman/pages/setting_page2.dart';
 import 'package:rawanaman/widgets/card_detail_myplants.dart';
@@ -64,7 +63,7 @@ class MyApp extends StatelessWidget {
         '/myplant': (context) => MyPlantsPage(),
         DetailWikiPage.routeName: (context) => const DetailWikiPage(),
         WikiArticle.routeName: (context) => const WikiArticle(),
-        '/detail': (context) => DetailScreen(),
+        '/detail': (context) => DetailMyPlant(),
         '/plantCareManual': (context) => CardPlantCareManual(),
         '/fullSunCare': (context) => CardFullSunCare(),
         '/careTips': (context) => CareTipsDialog(

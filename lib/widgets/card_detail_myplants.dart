@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class DetailScreen extends StatelessWidget {
+class DetailMyPlant extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Menerima data dari arguments, dengan penanganan null safety
