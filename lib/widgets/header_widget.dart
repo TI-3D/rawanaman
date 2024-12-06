@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rawanaman/pages/camera_page.dart';
 
 class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({super.key});
+  final void Function(String routeName, dynamic arguments)? onNavigate;
+
+  const HeaderWidget({Key? key, this.onNavigate}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +38,6 @@ class HeaderWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-
-        // Container untuk ikon-ikon
         Container(
           height: 110,
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -59,36 +60,36 @@ class HeaderWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildIconWithLabel(
-                context: context,
                 icon: Icons.nature,
                 label: 'My Plants',
                 iconColor: const Color(0xFF10B982),
                 textColor: const Color(0xFF10B982),
-                routeName: '/my_plants',
+                routeName: '/main',
+                arguments: 1,
               ),
               _buildIconWithLabel(
-                context: context,
                 icon: FontAwesomeIcons.camera,
                 label: 'Identify',
                 iconColor: const Color(0xFF10B982),
                 textColor: const Color(0xFF10B982),
-                routeName: '/identify',
+                routeName: '/main',
+                arguments: 4,
               ),
               _buildIconWithLabel(
-                context: context,
                 icon: FontAwesomeIcons.book,
                 label: 'Book',
                 iconColor: const Color(0xFF10B982),
                 textColor: const Color(0xFF10B982),
-                routeName: '/wiki_plant',
+                routeName: '/main',
+                arguments: 2,
               ),
               _buildIconWithLabel(
-                context: context,
                 icon: Icons.settings,
                 label: 'Settings',
                 iconColor: const Color(0xFF10B982),
                 textColor: const Color(0xFF10B982),
-                routeName: '/settings',
+                routeName: '/main',
+                arguments: 3,
               ),
             ],
           ),
@@ -98,16 +99,18 @@ class HeaderWidget extends StatelessWidget {
   }
 
   Widget _buildIconWithLabel({
-    required BuildContext context,
     required IconData icon,
     required String label,
     required Color iconColor,
     required Color textColor,
     required String routeName,
+    dynamic arguments,
   }) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, routeName);
+        if (onNavigate != null) {
+          onNavigate!(routeName, arguments);
+        }
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -129,67 +132,6 @@ class HeaderWidget extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-void main() {
-  runApp(MaterialApp(
-    initialRoute: '/',
-    routes: {
-      '/': (context) => const Scaffold(
-            backgroundColor: Color(0xFFEFF7F2),
-            body: Center(child: HeaderWidget()),
-          ),
-      '/my_plants': (context) => const MyPlantsPage(),
-      '/identify': (context) => const IdentifyPage(),
-      '/wiki_plant': (context) => const WikiPlantPage(),
-      '/settings': (context) => const SettingsPage(),
-    },
-  ));
-}
-
-// Halaman Contoh
-class MyPlantsPage extends StatelessWidget {
-  const MyPlantsPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('My Plants')),
-      body: const Center(child: Text('My Plants Page')),
-    );
-  }
-}
-
-class IdentifyPage extends StatelessWidget {
-  const IdentifyPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Identify Plant')),
-      body: const Center(child: Text('Identify Page')),
-    );
-  }
-}
-
-class WikiPlantPage extends StatelessWidget {
-  const WikiPlantPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Wiki Plant')),
-      body: const Center(child: Text('Wiki Plant Page')),
-    );
-  }
-}
-
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: const Center(child: Text('Settings Page')),
     );
   }
 }

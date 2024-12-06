@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:rawanaman/pages/camera_page.dart';
 import 'package:rawanaman/pages/home_page.dart';
 import 'package:rawanaman/pages/login_page.dart';
 import 'package:rawanaman/pages/account_page.dart';
@@ -104,6 +105,7 @@ class _MainScreenState extends State<MainScreen> {
     MyPlantsPage(),
     WikiPage(),
     SettingPage2(),
+    CameraPage(),
   ];
 
   void initState() {

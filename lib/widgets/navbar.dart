@@ -56,7 +56,8 @@ class Navbar extends StatelessWidget {
               label: 'Settings',
             ),
           ],
-          currentIndex: selectedIndex,
+          currentIndex:
+              selectedIndex.clamp(0, 3), // Memastikan selectedIndex valid
           selectedItemColor: Color(0xff10B982),
           unselectedItemColor: Colors.grey,
           onTap: onItemTapped,

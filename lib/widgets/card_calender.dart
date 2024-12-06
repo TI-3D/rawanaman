@@ -9,8 +9,8 @@ class CustomCalendar extends StatefulWidget {
 }
 
 class _CustomCalendarState extends State<CustomCalendar> {
-  DateTime _focusedDay = DateTime.now(); // Tanggal saat ini
-  int _currentPageIndex = 0; // Indeks halaman untuk 12 hari per halaman
+  DateTime _focusedDay = DateTime.now();
+  int _currentPageIndex = 0;
 
   final List<String> _months = [
     'January',
@@ -27,6 +27,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
     'December'
   ];
 
+  final Map<DateTime, bool> _wateringStatus =
+      {}; // Untuk menyimpan status penyiraman
+
   @override
   void initState() {
     super.initState();
@@ -34,24 +37,22 @@ class _CustomCalendarState extends State<CustomCalendar> {
   }
 
   void _setInitialPageIndex() {
-    // Menghitung hari dalam bulan yang sedang aktif
-    DateUtils.getDaysInMonth(_focusedDay.year, _focusedDay.month);
     final currentDay = _focusedDay.day;
-
-    // Menghitung halaman yang sesuai berdasarkan hari aktif (dengan asumsi 12 hari per halaman)
-    final pageIndex = ((currentDay - 1) / 12).floor();
+    final pageIndex = ((currentDay - 1) / 7).floor();
     setState(() {
       _currentPageIndex = pageIndex;
     });
   }
 
+  int _getTotalWeeksInMonth(DateTime date) {
+    final totalDays = DateUtils.getDaysInMonth(date.year, date.month);
+    return (totalDays / 7).ceil();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Nama bulan dan tahun
     final monthName = DateFormat.MMMM().format(_focusedDay);
     final year = _focusedDay.year;
-
-    // Daftar hari dalam bulan
     final daysInMonth =
         DateUtils.getDaysInMonth(_focusedDay.year, _focusedDay.month);
     final List<DateTime> days = List.generate(
@@ -59,18 +60,19 @@ class _CustomCalendarState extends State<CustomCalendar> {
       (index) => DateTime(_focusedDay.year, _focusedDay.month, index + 1),
     );
 
-    // 12 hari per halaman
-    final totalPages = (days.length / 12).ceil();
-    final startIndex = _currentPageIndex * 12;
+    final totalPages = (days.length / 7).ceil();
+    final startIndex = _currentPageIndex * 7;
     final endIndex =
-        (startIndex + 12 > days.length) ? days.length : startIndex + 12;
+        (startIndex + 7 > days.length) ? days.length : startIndex + 7;
     final currentPageDays = days.sublist(startIndex, endIndex);
+
+    final totalWeeks = _getTotalWeeksInMonth(_focusedDay);
+    final currentWeek = _currentPageIndex + 1;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(30), // Border radius pada container luar
+        borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
             color: Color(0xff10B982).withOpacity(0.1),
@@ -85,11 +87,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
         child: Column(
           children: [
             const SizedBox(height: 10),
-            // Header Kalender
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(width: 10),
                 GestureDetector(
                   onTap: () async {
                     final selectedYear = await showDialog<int>(
@@ -97,15 +97,13 @@ class _CustomCalendarState extends State<CustomCalendar> {
                       builder: (context) => SimpleDialog(
                         title: const Text('Select Year'),
                         children: List.generate(
-                          20, // Rentang tahun (10 tahun)
+                          20,
                           (index) => SimpleDialogOption(
                             onPressed: () {
                               Navigator.pop(
                                   context, DateTime.now().year - 10 + index);
                             },
-                            child: Text(
-                              '${DateTime.now().year - 10 + index}',
-                            ),
+                            child: Text('${DateTime.now().year - 10 + index}'),
                           ),
                         ),
                       ),
@@ -113,16 +111,12 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
                     if (selectedYear != null) {
                       setState(() {
-                        _focusedDay = DateTime(
-                          selectedYear,
-                          _focusedDay.month,
-                          1,
-                        );
+                        _focusedDay =
+                            DateTime(selectedYear, _focusedDay.month, 1);
                         _currentPageIndex = 0;
                       });
                     }
                   },
-                  // Tahun
                   child: Text(
                     "$year",
                     style: const TextStyle(
@@ -152,16 +146,12 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
                     if (selectedMonth != null) {
                       setState(() {
-                        _focusedDay = DateTime(
-                          _focusedDay.year,
-                          selectedMonth,
-                          1,
-                        );
+                        _focusedDay =
+                            DateTime(_focusedDay.year, selectedMonth, 1);
                         _currentPageIndex = 0;
                       });
                     }
                   },
-                  // Bulan
                   child: Text(
                     monthName,
                     style: const TextStyle(
@@ -173,115 +163,123 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 ),
               ],
             ),
-
-            // Kalender
             Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                ),
-                itemCount: currentPageDays.length,
-                itemBuilder: (context, index) {
-                  final day = currentPageDays[index];
-                  final isToday = day.day == DateTime.now().day &&
-                      day.month == DateTime.now().month &&
-                      day.year == DateTime.now().year;
-
-                  // Menentukan nama hari
-                  final dayName = [
-                    "Sun",
-                    "Mon",
-                    "Tue",
-                    "Wed",
-                    "Thu",
-                    "Fri",
-                    "Sat"
-                  ][day.weekday % 7]; // Nama hari berdasarkan index
-
-                  // Logika dummy
-                  // Menentukan apakah hari ini penyiraman atau pemupukan
-                  final isWateringDay =
-                      day.day % 2 == 0; // Contoh logika penyiraman
-                  final isFertilizingDay =
-                      day.day % 3 == 0; // Contoh logika pemupukan
-
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _focusedDay = day;
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white, // Background tetap putih
-                        border: Border.all(
-                          color: isToday
-                              ? const Color(
-                                  0xFF10B998) // Warna border untuk hari ini
-                              : (day == _focusedDay
-                                  ? Colors
-                                      .blueAccent // Warna border untuk hari yang dipilih
-                                  : Colors
-                                      .transparent), // Tidak ada border untuk hari lainnya
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 6,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // Nama Hari
-                            Text(
-                              dayName,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            // Tanggal
-                            Text(
-                              "${day.day}",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            // Ikon Penyiraman atau Pemupukan
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                if (isWateringDay) ...[
-                                  Icon(Icons.water_drop,
-                                      color: Colors.blue, size: 15),
-                                  const SizedBox(width: 4),
-                                ],
-                                if (isFertilizingDay)
-                                  Icon(Icons.agriculture,
-                                      color: Colors.green, size: 15),
-                              ],
-                            ),
-                          ],
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        "Week ${_currentPageIndex + 1}",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
                       ),
                     ),
-                  );
-                },
+                  ),
+                  Expanded(
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 8,
+                      ),
+                      itemCount: currentPageDays.length,
+                      itemBuilder: (context, index) {
+                        final day = currentPageDays[index];
+
+                        final isToday = day.year == DateTime.now().year &&
+                            day.month == DateTime.now().month &&
+                            day.day == DateTime.now().day;
+
+                        // Logika apakah hari ini adalah hari penyiraman
+                        final isWateringDay = day.day % 2 == 0;
+                        final isWatered = _wateringStatus[day] ?? false;
+
+                        return GestureDetector(
+                          onTap: () {
+                            if (isWateringDay) {
+                              setState(() {
+                                _focusedDay = day;
+                              });
+                              _showWateringDialog(context,
+                                  day); // Tampilkan pop-up hanya jika hari penyiraman
+                            }
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: isToday
+                                    ? const Color(0xFF10B998)
+                                    : (day == _focusedDay
+                                        ? Colors.blueAccent
+                                        : Colors.transparent),
+                              ),
+                              borderRadius: BorderRadius.circular(7),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    DateFormat.E().format(day),
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${day.day}",
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  // Ikon Penyiraman
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      if (isWateringDay) ...[
+                                        Icon(
+                                          isWatered
+                                              ? Icons.eco
+                                              : Icons.water_drop,
+                                          color: isWatered
+                                              ? Colors.green
+                                              : Colors.blue,
+                                          size: 15,
+                                        ),
+                                        const SizedBox(width: 4),
+                                      ],
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-
-            // Tombol Navigasi Halaman
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -296,10 +294,11 @@ class _CustomCalendarState extends State<CustomCalendar> {
                   },
                 ),
                 Text(
-                  "${_currentPageIndex + 1} / $totalPages",
+                  "Week $currentWeek of $totalWeeks",
                   style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
                   ),
                 ),
                 IconButton(
@@ -318,5 +317,150 @@ class _CustomCalendarState extends State<CustomCalendar> {
         ),
       ),
     );
+  }
+
+  void _showWateringDialog(BuildContext context, DateTime day) {
+    // List of plant names that need to be watered
+    List<String> plantNames = ['Aloe Vera', 'Cactus', 'Fern', 'Spider Plant'];
+    // Ambil status penyiraman tanaman untuk hari tersebut
+    Map<String, bool> plantWateringStatus = _plantWateringStatus[day] ??
+        {for (var plant in plantNames) plant: false};
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            int wateredCount = plantWateringStatus.values
+                .where((status) => status == true)
+                .length;
+
+            return AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Peringatan Menyiram"),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "$wateredCount dari ${plantNames.length} tanaman sudah disiram.",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  ...plantNames.map((plant) {
+                    return Container(
+                      padding: const EdgeInsets.all(8.0),
+                      margin: const EdgeInsets.only(bottom: 8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.blueAccent
+                            .shade100, // Warna latar belakang biru muda
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            plant,
+                            style: const TextStyle(
+                                fontSize: 16, color: Colors.white),
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors
+                                      .green.shade100, // Background hijau muda
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      plantWateringStatus[plant] = true;
+                                    });
+                                  },
+                                  child: const Text(
+                                    "Sudah",
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors
+                                      .red.shade100, // Background merah muda
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      plantWateringStatus[plant] = false;
+                                    });
+                                  },
+                                  child: const Text(
+                                    "Belum",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    // Simpan status penyiraman ke _plantWateringStatus dan _wateringStatus
+                    _updateWateringStatus(day, plantWateringStatus);
+                    Navigator.of(context).pop(); // Tutup dialog
+                  },
+                  child: const Text(
+                    "Simpan",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.purple),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Map<DateTime, Map<String, bool>> _plantWateringStatus = {}; // Per-tanaman
+  //Map<DateTime, bool> _wateringStatus = {}; // Status harian
+
+  void _updateWateringStatus(
+      DateTime day, Map<String, bool> plantWateringStatus) {
+    // Hitung apakah semua tanaman telah disiram
+    bool allWatered =
+        plantWateringStatus.values.every((status) => status == true);
+
+    setState(() {
+      // Simpan status penyiraman tanaman
+      _plantWateringStatus[day] = plantWateringStatus;
+
+      // Simpan status harian
+      _wateringStatus[day] = allWatered;
+    });
   }
 }
