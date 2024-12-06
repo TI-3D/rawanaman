@@ -16,6 +16,7 @@ class _CameraPageState extends State<CameraPage> {
   late Future<void> cameraInitializer;
   String? imagePath; // Menyimpan jalur gambar yang diambil
   final ImagePicker _imagePicker = ImagePicker();
+  final String prompt = 'tomat';
 
   @override
   void initState() {
@@ -47,15 +48,14 @@ class _CameraPageState extends State<CameraPage> {
         imagePath = picture.path; // Simpan jalur gambar yang diambil
         // imagePath = '/assets/images/leaf_mold.jpg';
       });
-      print('start identifying image');
-      String prompt = 'tomat';
+      print('start identifying image from camera');
       String healthState = await makePrediction(imagePath!);
-      print('finish identify');
+      print('finish identify from camera');
       print('healthState = $healthState');
 
-      print('start promt');
+      print('start promt from camera');
       await generateAndSaveText(prompt);
-      print('finish promt');
+      print('finish promt from camera');
       // Navigate to CardResultScan and pass the image path
       if (healthState == 'Healthy') {
         print('is healhty');
@@ -91,15 +91,14 @@ class _CameraPageState extends State<CameraPage> {
 
   Future<void> processImage(String path) async {
     // Your existing processing logic
-    print('start identifying image2');
-    String prompt = 'tomat'; // Example prompt
+    print('start identifying image from gallery');
     String healthState = await makePrediction(path);
-    print('finish identify2');
+    print('finish identify from gallery');
     print('healthState = $healthState');
 
-    print('start prompt2');
+    print('start prompt from gallery');
     await generateAndSaveText(prompt);
-    print('finish prompt2');
+    print('finish prompt from gallery');
 
     // Navigate based on health state
     if (healthState == 'Healthy') {
