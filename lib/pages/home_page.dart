@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rawanaman/widgets/card_calender.dart';
+import 'package:rawanaman/widgets/card_instructions.dart';
 import 'package:rawanaman/widgets/header_widget.dart';
 import 'package:rawanaman/widgets/recommendations_widget.dart';
 
@@ -22,10 +23,31 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              const HeaderWidget(),
+              Center(
+                child: HeaderWidget(
+                  onNavigate: (routeName, arguments) {
+                    Navigator.pushNamed(
+                      context,
+                      routeName,
+                      arguments: arguments,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 40),
+              const Text(
+                'Tutorial Scan Tanaman',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 5),
+              const CardInstructions(),
               const SizedBox(height: 40),
               const SizedBox(
-                height: 1000,
+                height: 450,
                 child: CustomCalendar(),
               ),
               const SizedBox(height: 30),
