@@ -23,19 +23,9 @@ class CardScanResultsick extends StatelessWidget {
     return FutureBuilder<DocumentSnapshot>(
         future: _fetchPlantData(namaDoc!), // Fetch data using document ID
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: CircularProgressIndicator()); // Show loading indicator
-          } else if (snapshot.hasError) {
-            return Center(
-                child: Text('Error: ${snapshot.error}')); // Show error message
-          } else if (!snapshot.hasData || !snapshot.data!.exists) {
-            return Center(
-                child: Text('No data found for $namaDoc')); // No data found
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return Center(child: Text('Plant data not found.'));
           }
-
-          print("Snapshot data: ${snapshot.data}");
-
           // If data is found, extract it
           final plant = snapshot.data!;
           final Map<String, dynamic> plantData =
@@ -151,16 +141,25 @@ class CardScanResultsick extends StatelessWidget {
 
                                   return GestureDetector(
                                     onTap: () {
-                                      // Memanggil pop-up langsung tanpa berpindah halaman
-                                      showDialog(
+                                      // Menggunakan showGeneralDialog untuk popup dengan animasi
+                                      showGeneralDialog(
                                         context: context,
-                                        barrierColor: Colors.black.withOpacity(
-                                            0.5), // Latar semi-transparan
-                                        builder: (BuildContext context) {
-                                          return CareTipsDialog(
-                                            jenis: jenis,
-                                            deskripsi: deskripsi,
-                                            documentId: documentId,
+                                        barrierDismissible:
+                                            true, // Membolehkan menutup dialog dengan mengetuk di luar
+                                        barrierLabel: 'Dismiss',
+                                        transitionDuration: Duration(
+                                            milliseconds:
+                                                200), // Durasi transisi
+                                        pageBuilder: (context, animation,
+                                            secondaryAnimation) {
+                                          return FadeTransition(
+                                            opacity:
+                                                animation, // Animasi fade saat dialog muncul
+                                            child: CareTipsDialog(
+                                              jenis: jenis,
+                                              deskripsi: deskripsi,
+                                              documentId: documentId,
+                                            ),
                                           );
                                         },
                                       );

@@ -18,18 +18,18 @@ class CardDiagnosa extends StatelessWidget {
       future: _fetchDiseaseData(diseaseName!),
       builder: (context, snapshot) {
         // Check if the future is still loading
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
+        // if (snapshot.connectionState == ConnectionState.waiting) {
+        //   return Center(child: CircularProgressIndicator());
+        // }
 
         // Check for errors
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
+        // if (snapshot.hasError) {
+        //   return Center(child: Text('Error: ${snapshot.error}'));
+        // }
 
-        // Check if data exists
+        // // Check if data exists
         if (!snapshot.hasData || !snapshot.data!.exists) {
-          return Center(child: Text('Disease data not found.'));
+          return Center(child: Text(''));
         }
 
         Map<String, dynamic> diseaseData =

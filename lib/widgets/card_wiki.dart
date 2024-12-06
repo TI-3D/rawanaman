@@ -17,10 +17,35 @@ class CardWikiData extends StatelessWidget {
         CardConfirmLogin.showLoginDialog(context);
       });
       return Center(
-        heightFactor: 15,
-        child: Text(
-          'You need to log in to view this content.',
-          style: TextStyle(fontSize: 16),
+        heightFactor: 5,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'You need to log in to view this content.',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/loginPage');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xff10B998), // Warna tombol hijau
+                padding: EdgeInsets.symmetric(horizontal: 34, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      25), // Membuat tombol dengan sudut membulat
+                ),
+              ),
+              child: Text(
+                'Log In',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ],
         ),
       );
     }

@@ -103,6 +103,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     HomePage(),
     MyPlantsPage(),
+    Container(),
     WikiPage(),
     SettingPage2(),
     CameraPage(),
@@ -115,6 +116,11 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onItemTapped(int index) {
+    if (index == 2) {
+      // Do nothing if the unclickable tab is tapped
+      return;
+    }
+
     setState(() {
       _selectedIndex = index;
     });

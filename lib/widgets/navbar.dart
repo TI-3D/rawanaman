@@ -15,7 +15,7 @@ class Navbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double floatingButtonSize = 65; // Ukuran FloatingActionButton
+    final double floatingButtonSize = 70; // Ukuran FloatingActionButton
 
     return Stack(
       clipBehavior: Clip.none,
@@ -38,6 +38,14 @@ class Navbar extends StatelessWidget {
                 child: FaIcon(FontAwesomeIcons.seedling),
               ),
               label: 'My Plant',
+            ),
+            BottomNavigationBarItem(
+              icon: SizedBox(
+                height: 28,
+                width: 28,
+                child: SizedBox.shrink(),
+              ),
+              label: '',
             ),
             BottomNavigationBarItem(
               icon: SizedBox(
@@ -67,36 +75,42 @@ class Navbar extends StatelessWidget {
           iconSize: 28, // Ukuran ikon tetap
         ),
         Positioned(
-          top: -floatingButtonSize / 1.5, // Posisi mengambang
+          top: -floatingButtonSize / 6, // Posisi mengambang
           left: (MediaQuery.of(context).size.width / 2) -
               (floatingButtonSize / 2),
-          child: SizedBox(
-            height: floatingButtonSize,
-            width: floatingButtonSize,
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF10B998), // Warna tombol hijau
-                shape: BoxShape.circle, // Membuat bentuk lingkaran
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF10B998), // Warna bayangan hijau
-                    blurRadius: 8, // Jarak bayangan
-                    spreadRadius: 1, // Penyebaran bayangan
-                    offset: const Offset(0, 1), // Posisi bayangan
-                  ),
-                ],
-              ),
-              child: IconButton(
-                icon: const FaIcon(
-                  FontAwesomeIcons.camera,
-                  color: Colors.white,
-                  size: 28,
+          child: Material(
+            color:
+                Colors.transparent, // Transparan agar tidak menutupi dekorasi
+            child: InkWell(
+              borderRadius: BorderRadius.circular(
+                  floatingButtonSize / 2), // Bentuk lingkaran
+              onTap: () {
+                Navigator.of(context).push(
+                  SlideScaleTransition(page: CameraPage()),
+                );
+              },
+              child: Container(
+                height: floatingButtonSize,
+                width: floatingButtonSize,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B998), // Warna hijau
+                  shape: BoxShape.circle, // Membuat bentuk lingkaran
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF10B998), // Warna bayangan hijau
+                      blurRadius: 8, // Jarak bayangan
+                      spreadRadius: 1, // Penyebaran bayangan
+                      offset: const Offset(0, 1), // Posisi bayangan
+                    ),
+                  ],
                 ),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    SlideScaleTransition(page: CameraPage()),
-                  );
-                },
+                child: Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.camera,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
               ),
             ),
           ),
