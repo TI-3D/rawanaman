@@ -65,7 +65,7 @@ class Navbar extends StatelessWidget {
             ),
           ],
           currentIndex:
-              selectedIndex.clamp(0, 3), // Memastikan selectedIndex valid
+              selectedIndex.clamp(0, 4), // Memastikan selectedIndex valid
           selectedItemColor: Color(0xff10B982),
           unselectedItemColor: Colors.grey,
           onTap: onItemTapped,
