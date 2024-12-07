@@ -1,15 +1,53 @@
 import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-class CardMyPlants extends StatelessWidget {
+class CardMyPlants extends StatefulWidget {
   final List<DocumentSnapshot> plants;
 
   CardMyPlants({required this.plants});
+
+  @override
+  State<CardMyPlants> createState() => _CardMyPlantsState();
+}
+
+class _CardMyPlantsState extends State<CardMyPlants> {
+  Future<void> setupPushNotification(String userId) async {
+    final fcm = FirebaseMessaging.instance;
+
+    final permission = await fcm.requestPermission();
+
+    if (permission.authorizationStatus == AuthorizationStatus.authorized) {
+      final token = await fcm.getToken();
+
+      if (token != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .set({'fcmToken': token}, SetOptions(merge: true));
+
+        print('FCM Token saved: $token');
+      } else {
+        print('Failed to fetch FCM token');
+      }
+    } else {
+      print('Notification permission not granted');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null){
+      setupPushNotification(user.uid);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,11 +187,10 @@ class _CardMyPlants extends StatelessWidget {
           }
         }
 
-        _updateNextSiram(penyiraman, context);
+        // _updateNextSiram(penyiraman, context);
 
         int hariSampaiSiram =
             (siramMyPlant.toDate().difference(DateTime.now()).inDays);
-        DateTime hariIni = siramMyPlant.toDate();
         String pesanSiram = hariSampaiSiram > 0
             ? 'Siram dalam $hariSampaiSiram hari lagi'
             : 'Siram hari ini';
