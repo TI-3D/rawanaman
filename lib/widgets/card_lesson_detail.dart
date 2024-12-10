@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,9 @@ class CardLessonDetail extends StatelessWidget {
         final plantData = snapshot.data!.data() as Map<String, dynamic>;
         final String plantName =
             plantData.containsKey('nama') ? plantData['nama'] : 'Nama Tumbuhan';
+        final String plantImage = plantData.containsKey('image')
+            ? plantData['image']
+            : 'Gambar tidak ditemukan';
         List<Map<String, dynamic>> listPerawatan =
             List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
         List<Map<String, dynamic>> listPenyakit =
@@ -75,39 +79,15 @@ class CardLessonDetail extends StatelessWidget {
                     ),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: plantData['image'].isNotEmpty
-                          ? FutureBuilder(
-                              future: _getImage(plantData['image']),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Container(
-                                    width: double.infinity,
-                                    color: Colors.grey[300],
-                                    child: Center(
-                                        child: CircularProgressIndicator()),
-                                  );
-                                } else if (snapshot.hasData) {
-                                  return Image.file(
-                                    snapshot.data!,
-                                    width: double.infinity,
-                                    height: 200,
-                                    fit: BoxFit.cover,
-                                  );
-                                } else {
-                                  return Container(
-                                    width: double.infinity,
-                                    color: Colors.grey[300],
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.image_not_supported,
-                                        size: 50,
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              })
+                      child: plantImage.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl:
+                                  "http://mkemaln.my.id/images/$plantImage",
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                              fit: BoxFit.cover,
+                              width: double.infinity, // Set your desired width
+                            )
                           : Container(
                               width: double.infinity,
                               color: Colors.grey[300],
@@ -315,12 +295,6 @@ class CardLessonDetail extends StatelessWidget {
         children: [Text(label), Expanded(child: SizedBox()), Text(value)],
       ),
     );
-    // return
-    // ListTile(
-    //   title: Text(label),
-    //   subtitle: Text(value),
-    //   // Add any desired styling here
-    // );
   }
 
   static Map<String, IconData> iconMap = {
@@ -347,26 +321,5 @@ class CardLessonDetail extends StatelessWidget {
   // Function to get ColorData from string
   Color getColorIcon(IconData iconColor) {
     return colorIcon[iconColor] ?? Colors.black; // Default icon if not found
-  }
-}
-
-Future<File> _getImage(String filename) async {
-  try {
-    var response =
-        await http.get(Uri.parse('http://mkemaln.my.id/images/$filename'));
-
-    if (response.statusCode == 200) {
-      // Create a file from the response body
-      final bytes = response.bodyBytes;
-      final dir = await Directory.systemTemp.createTemp();
-      final file = File('${dir.path}/$filename');
-      await file.writeAsBytes(bytes);
-      return file;
-    } else {
-      throw Exception('Failed to load image');
-    }
-  } catch (e) {
-    print('Error fetching image: $e');
-    rethrow;
   }
 }

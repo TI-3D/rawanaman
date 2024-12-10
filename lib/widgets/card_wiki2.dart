@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -145,11 +146,12 @@ class _CardWikiData2State extends State<CardWikiData2> {
                             vertical: double.minPositive),
                         child: Text(
                           'Tidak ada Tanaman Dengan Nama Tersebut',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.inter(
                             textStyle: TextStyle(
                               fontSize: 18,
                             ),
                             // fontWeight: FontWeight.bold,
+                            fontSize: 18,
                             color: const Color.fromARGB(255, 78, 77, 77),
                           ),
                           textAlign: TextAlign.center,
@@ -217,40 +219,13 @@ class CardWiki2 extends StatelessWidget {
                     topLeft: Radius.circular(8),
                   ),
                   child: plantImage.isNotEmpty
-                      ? FutureBuilder(
-                          future: _getImage(plantImage),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Container(
-                                width: 80,
-                                height: 80,
-                                color: Colors.grey[300],
-                                child:
-                                    Center(child: CircularProgressIndicator()),
-                              );
-                            } else if (snapshot.hasData) {
-                              return Image.file(
-                                snapshot.data!,
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.cover,
-                              );
-                            } else {
-                              return Container(
-                                width: 80,
-                                height: 80,
-                                color: Colors.grey[300],
-                                child: Center(
-                                  child: Icon(
-                                    Icons.image_not_supported,
-                                    size: 50,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
+                      ? CachedNetworkImage(
+                          imageUrl: 'http://mkemaln.my.id/images/$plantImage',
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                          fit: BoxFit.cover,
+                          width: 100, // Set your desired width
+                          height: 100, // Set your desired height
                         )
                       : Container(
                           width: 80,
@@ -315,26 +290,5 @@ class CardWiki2 extends StatelessWidget {
         ),
       ],
     );
-  }
-}
-
-Future<File> _getImage(String filename) async {
-  try {
-    var response =
-        await http.get(Uri.parse('http://mkemaln.my.id/images/$filename'));
-
-    if (response.statusCode == 200) {
-      // Create a file from the response body
-      final bytes = response.bodyBytes;
-      final dir = await Directory.systemTemp.createTemp();
-      final file = File('${dir.path}/$filename');
-      await file.writeAsBytes(bytes);
-      return file;
-    } else {
-      throw Exception('Failed to load image');
-    }
-  } catch (e) {
-    print('Error fetching image: $e');
-    rethrow;
   }
 }
