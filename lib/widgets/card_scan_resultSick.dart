@@ -24,7 +24,7 @@ class CardScanResultsick extends StatelessWidget {
         future: _fetchPlantData(namaDoc!), // Fetch data using document ID
         builder: (context, snapshot) {
           if (!snapshot.hasData || !snapshot.data!.exists) {
-            return Center(child: Text('Plant data not found.'));
+            return Center(child: Text(''));
           }
           // If data is found, extract it
           final plant = snapshot.data!;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class CustomCalendar extends StatefulWidget {
@@ -117,13 +118,25 @@ class _CustomCalendarState extends State<CustomCalendar> {
                       });
                     }
                   },
-                  child: Text(
-                    "$year",
-                    style: const TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "$year",
+                        style: const TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      FaIcon(
+                        FontAwesomeIcons.caretDown,
+                        size: 14,
+                      )
+                    ],
                   ),
                 ),
                 GestureDetector(
@@ -138,7 +151,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
                             onPressed: () {
                               Navigator.pop(context, index + 1);
                             },
-                            child: Text(_months[index]),
+                            child: Text(
+                              _months[index],
+                            ),
                           ),
                         ),
                       ),
@@ -152,13 +167,25 @@ class _CustomCalendarState extends State<CustomCalendar> {
                       });
                     }
                   },
-                  child: Text(
-                    monthName,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        monthName,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      FaIcon(
+                        FontAwesomeIcons.caretDown,
+                        size: 14,
+                      )
+                    ],
                   ),
                 ),
               ],
@@ -182,6 +209,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                   ),
                   Expanded(
                     child: GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 4,

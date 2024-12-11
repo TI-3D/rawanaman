@@ -1,10 +1,11 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class DetailScreen extends StatelessWidget {
+class DetailMyPlant extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Menerima data dari arguments, dengan penanganan null safety
@@ -75,58 +76,28 @@ class DetailScreen extends StatelessWidget {
                           children: [
                             // Gambar tanaman di bagian atas
                             Container(
-                              width: double.infinity,
-                              height: 300.0, // Atur tinggi gambar
-                              decoration:
-                                  BoxDecoration(color: Colors.grey[300]),
-                              child:
-                                  myPlantImage == null || myPlantImage.isEmpty
-                                      ? Center(
-                                          child: Icon(
-                                            Icons.image_not_supported,
-                                            color: Colors.white,
-                                            size: 64,
-                                          ),
-                                        )
-                                      : FutureBuilder<ImageProvider<Object>>(
-                                          future: _getImage(
-                                              myPlantImage), // Assuming plantImage holds the filename
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return Center(
-                                                  child:
-                                                      CircularProgressIndicator());
-                                            } else if (snapshot.hasError) {
-                                              return Center(
-                                                child: Icon(
-                                                  Icons.image_not_supported,
-                                                  color: Colors.white,
-                                                  size: 64,
-                                                ),
-                                              );
-                                            } else if (snapshot.hasData) {
-                                              return Container(
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                    image: snapshot
-                                                        .data!, // Use the ImageProvider from FutureBuilder
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              return Center(
-                                                child: Icon(
-                                                  Icons.image_not_supported,
-                                                  color: Colors.white,
-                                                  size: 64,
-                                                ),
-                                              );
-                                            }
-                                          },
+                                width: double.infinity,
+                                height: 300.0, // Atur tinggi gambar
+                                decoration:
+                                    BoxDecoration(color: Colors.grey[300]),
+                                child: myPlantImage == null ||
+                                        myPlantImage.isEmpty
+                                    ? Center(
+                                        child: Icon(
+                                          Icons.image_not_supported,
+                                          color: Colors.white,
+                                          size: 64,
                                         ),
-                            ),
+                                      )
+                                    : CachedNetworkImage(
+                                        imageUrl:
+                                            "http://mkemaln.my.id/images/$myPlantImage",
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
+                                        fit: BoxFit.cover,
+                                        width: double
+                                            .infinity, // Set your desired width
+                                      )),
                             //tombol back
                             Container(
                               margin: EdgeInsets.fromLTRB(0, 178, 0, 0),
@@ -349,27 +320,6 @@ class DetailScreen extends StatelessWidget {
                 );
               });
         });
-  }
-
-  Future<ImageProvider<Object>> _getImage(String filename) async {
-    try {
-      var response =
-          await http.get(Uri.parse('http://mkemaln.my.id/images/$filename'));
-
-      if (response.statusCode == 200) {
-        // Create a file from the response body
-        final bytes = response.bodyBytes;
-        final dir = await Directory.systemTemp.createTemp();
-        final file = File('${dir.path}/$filename');
-        await file.writeAsBytes(bytes);
-        return FileImage(file);
-      } else {
-        throw Exception('Failed to load image');
-      }
-    } catch (e) {
-      print('Error fetching image: $e');
-      rethrow;
-    }
   }
 
   // Function untuk membuat card info perawatan tanaman

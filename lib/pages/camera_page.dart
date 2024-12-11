@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lottie/lottie.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rawanaman/models/gemini.dart';
 import 'package:rawanaman/models/rwn-flask.dart';
 import 'package:rawanaman/widgets/scan_animation.dart';
@@ -18,6 +16,7 @@ class _CameraPageState extends State<CameraPage> {
   late Future<void> cameraInitializer;
   String? imagePath; // Menyimpan jalur gambar yang diambil
   final ImagePicker _imagePicker = ImagePicker();
+  final String prompt = 'tomat';
 
   @override
   void initState() {
@@ -88,17 +87,16 @@ class _CameraPageState extends State<CameraPage> {
     await showScanAnimation(context,
         message: "Scanning your plant...", onCompleted: () {});
     // Your existing processing logic
-    print('start identifying image2');
-    String prompt = 'tomat'; // Example prompt
+    print('start identifying image from gallery');
     String healthState = await makePrediction(path);
-    print('finish identify2');
+    print('finish identify from gallery');
     print('healthState = $healthState');
 
     Navigator.of(context).pop(); // Tutup animasi scan setelah selesai
 
-    print('start prompt2');
+    print('start prompt from gallery');
     await generateAndSaveText(prompt);
-    print('finish prompt2');
+    print('finish prompt from gallery');
 
     // Navigate based on health state
     if (healthState == 'Healthy') {

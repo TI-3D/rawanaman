@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -186,40 +187,15 @@ class _CardMyPlants extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: imageMyPlant.isNotEmpty
-                            ? FutureBuilder(
-                                future: _getImage(imageMyPlant),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Container(
-                                      width: 100,
-                                      height: 160,
-                                      color: Colors.grey[300],
-                                      child: Center(
-                                          child: CircularProgressIndicator()),
-                                    );
-                                  } else if (snapshot.hasData) {
-                                    return Image.file(
-                                      snapshot.data!,
-                                      width: 100,
-                                      height: 160,
-                                      fit: BoxFit.cover,
-                                    );
-                                  } else {
-                                    return Container(
-                                      width: 100,
-                                      height: 160,
-                                      color: Colors.grey[300],
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.image_not_supported,
-                                          size: 50,
-                                          color: Colors.black54,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                })
+                            ? CachedNetworkImage(
+                                imageUrl:
+                                    'http://mkemaln.my.id/images/$imageMyPlant',
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                                fit: BoxFit.cover,
+                                width: 100, // Set your desired width
+                                height: 160, // Set your desired height
+                              )
                             : Container(
                                 width: 100,
                                 height: 160,
