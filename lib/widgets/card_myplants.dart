@@ -104,12 +104,14 @@ class CardMyPlants extends StatelessWidget {
                   final plantId = plantRef['plant'].id;
                   final imageName = plantRef['image'] ?? '';
                   final myPlantName = plantRef['name'] ?? 'Unknown';
+                  final bool isReminderSet = plantRef['reminder'] ?? false;
 
                   return _CardMyPlants(
                       plantId: plantId,
                       myPlantDocId: myPlantDoc,
                       imageMyPlant: imageName,
-                      nameMyPlant: myPlantName);
+                      nameMyPlant: myPlantName,
+                      reminder: isReminderSet);
                 },
               );
             }
@@ -125,12 +127,14 @@ class _CardMyPlants extends StatelessWidget {
   final String imageMyPlant;
   final String nameMyPlant;
   final String myPlantDocId;
+  final bool reminder;
 
   _CardMyPlants({
     required this.plantId,
     required this.imageMyPlant,
     required this.nameMyPlant,
     required this.myPlantDocId,
+    required this.reminder,
   });
 
   @override
@@ -152,6 +156,8 @@ class _CardMyPlants extends StatelessWidget {
         final plant = snapshot.data!;
         final Map<String, dynamic> plantData =
             plant.data() as Map<String, dynamic>;
+
+        // bool isReminderSet = plantData['reminder'] ?? false;
 
         return Column(
           children: [
@@ -207,7 +213,7 @@ class _CardMyPlants extends StatelessWidget {
                       // Details Section
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -217,7 +223,7 @@ class _CardMyPlants extends StatelessWidget {
                                     constraints: BoxConstraints(
                                       maxWidth:
                                           MediaQuery.of(context).size.width *
-                                              0.7, // 50% dari lebar layar
+                                              0.7,
                                     ),
                                     child: Text(
                                       nameMyPlant,
@@ -228,33 +234,35 @@ class _CardMyPlants extends StatelessWidget {
                                           color: Colors.black,
                                         ),
                                       ),
-                                      maxLines:
-                                          1, // Batas jumlah baris menjadi 1
-                                      overflow: TextOverflow
-                                          .ellipsis, // Tambahkan titik-titik jika teks terlalu panjang
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),
-                                PopupMenuButton<String>(
-                                  onSelected: (value) {
-                                    if (value == 'rename') {
-                                      _renamePlant(context);
-                                    } else if (value == 'delete') {
-                                      _deletePlant(context);
-                                    }
-                                  },
-                                  itemBuilder: (BuildContext context) {
-                                    return [
-                                      PopupMenuItem(
-                                        value: 'rename',
-                                        child: Text('Rename'),
-                                      ),
-                                      PopupMenuItem(
-                                        value: 'delete',
-                                        child: Text('Delete'),
-                                      ),
-                                    ];
-                                  },
+                                Row(
+                                  children: [
+                                    PopupMenuButton<String>(
+                                      onSelected: (value) {
+                                        if (value == 'rename') {
+                                          _renamePlant(context);
+                                        } else if (value == 'delete') {
+                                          _deletePlant(context);
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) {
+                                        return [
+                                          PopupMenuItem(
+                                            value: 'rename',
+                                            child: Text('Rename'),
+                                          ),
+                                          PopupMenuItem(
+                                            value: 'delete',
+                                            child: Text('Delete'),
+                                          ),
+                                        ];
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -269,6 +277,19 @@ class _CardMyPlants extends StatelessWidget {
                                 ),
                               ),
                               textAlign: TextAlign.justify,
+                            ),
+                            // Icon Pengingat
+                            IconButton(
+                              icon: Icon(
+                                reminder
+                                    ? Icons.notifications_active
+                                    : Icons.notifications_none,
+                                color: reminder ? Colors.green : Colors.grey,
+                              ),
+                              onPressed: () {
+                                _showReminderDialog(
+                                    context, myPlantDocId, reminder);
+                              },
                             ),
                           ],
                         ),
@@ -348,5 +369,57 @@ class _CardMyPlants extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+void _showReminderDialog(
+    BuildContext context, String plantId, bool currentStatus) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Set Reminder'),
+        content: Text(
+            'Do you want to turn reminder ${currentStatus ? 'off' : 'on'}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('No'),
+          ),
+          TextButton(
+            onPressed: () async {
+              // Update reminder in Firebase
+              await FirebaseFirestore.instance
+                  .collection('myplants')
+                  .doc(plantId)
+                  .update({'reminder': !currentStatus});
+              Navigator.pop(context);
+            },
+            child: Text('Yes'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<File> _getImage(String filename) async {
+  try {
+    var response =
+        await http.get(Uri.parse('http://mkemaln.my.id/images/$filename'));
+
+    if (response.statusCode == 200) {
+      // Create a file from the response body
+      final bytes = response.bodyBytes;
+      final dir = await Directory.systemTemp.createTemp();
+      final file = File('${dir.path}/$filename');
+      await file.writeAsBytes(bytes);
+      return file;
+    } else {
+      throw Exception('Failed to load image');
+    }
+  } catch (e) {
+    print('Error fetching image: $e');
+    rethrow;
   }
 }
