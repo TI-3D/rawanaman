@@ -220,7 +220,7 @@ class CardWiki2 extends StatelessWidget {
                   ),
                   child: plantImage.isNotEmpty
                       ? CachedNetworkImage(
-                          imageUrl: 'http://mkemaln.my.id/images/$plantImage',
+                          imageUrl: 'https://mkemaln.my.id/images/$plantImage',
                           errorWidget: (context, url, error) =>
                               Icon(Icons.error),
                           fit: BoxFit.cover,
