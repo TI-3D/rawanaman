@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rawanaman/pages/camera_page.dart';
-import 'package:rawanaman/widgets/card_camerabutton.dart';
 import 'package:rawanaman/widgets/transition_bottomslide.dart';
 
 class CardInstructions extends StatelessWidget {
