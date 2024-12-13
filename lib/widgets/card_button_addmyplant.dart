@@ -220,7 +220,7 @@ class AddMyPlantButton extends StatelessWidget {
   void _uploadImage(File image) async {
     try {
       var request = http.MultipartRequest(
-          'POST', Uri.parse('http://mkemaln.my.id/upload'));
+          'POST', Uri.parse('https://mkemaln.my.id/upload'));
       request.files.add(await http.MultipartFile.fromPath('file', image.path));
       var response = await request.send();
 

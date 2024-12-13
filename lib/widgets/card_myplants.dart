@@ -189,7 +189,7 @@ class _CardMyPlants extends StatelessWidget {
                         child: imageMyPlant.isNotEmpty
                             ? CachedNetworkImage(
                                 imageUrl:
-                                    'http://mkemaln.my.id/images/$imageMyPlant',
+                                    'https://mkemaln.my.id/images/$imageMyPlant',
                                 errorWidget: (context, url, error) =>
                                     Icon(Icons.error),
                                 fit: BoxFit.cover,
@@ -406,7 +406,7 @@ void _showReminderDialog(
 Future<File> _getImage(String filename) async {
   try {
     var response =
-        await http.get(Uri.parse('http://mkemaln.my.id/images/$filename'));
+        await http.get(Uri.parse('https://mkemaln.my.id/images/$filename'));
 
     if (response.statusCode == 200) {
       // Create a file from the response body

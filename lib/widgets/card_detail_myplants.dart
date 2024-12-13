@@ -86,7 +86,7 @@ class DetailMyPlant extends StatelessWidget {
                                       )
                                     : CachedNetworkImage(
                                         imageUrl:
-                                            "http://mkemaln.my.id/images/$myPlantImage",
+                                            "https://mkemaln.my.id/images/$myPlantImage",
                                         errorWidget: (context, url, error) =>
                                             Icon(Icons.error),
                                         fit: BoxFit.cover,
