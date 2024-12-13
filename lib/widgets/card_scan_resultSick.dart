@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/widgets/card_button_addmyplant.dart';
 import 'package:rawanaman/widgets/card_care_tips.dart';
+import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/widgets/card_plant_care_manual.dart';
 import 'package:rawanaman/widgets/transition_bottomslide.dart';
 
@@ -392,15 +393,13 @@ class CardScanResultsick extends StatelessWidget {
                               SizedBox(height: 27),
                               GestureDetector(
                                 onTap: () {
-                                  // Navigator.of(context).push(
-                                  //     SlideScaleTransition(
-                                  //         page: CardPlantCareManual()));
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/plantCareManual',
-                                    arguments: {
-                                      'documentId': namaDoc.toLowerCase(),
-                                    },
+                                  Navigator.of(context).push(
+                                    createSlideRoute(
+                                      CardLessonDetail(),
+                                      {
+                                        'documentId': namaDoc.toLowerCase()
+                                      }, // Kirim arguments
+                                    ),
                                   );
                                 },
                                 child: Align(

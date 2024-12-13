@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/widgets/card_button_addmyplant.dart';
 import 'package:rawanaman/widgets/card_care_tips.dart';
+import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/widgets/card_plant_care_manual.dart';
 import 'package:rawanaman/widgets/transition_bottomslide.dart';
 
@@ -23,10 +24,7 @@ class CardResultScan extends StatelessWidget {
     return FutureBuilder<DocumentSnapshot>(
         future: _fetchPlantData(nama_doc!), // Fetch data using document ID
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: CircularProgressIndicator()); // Show loading indicator
-          } else if (snapshot.hasError) {
+          if (snapshot.hasError) {
             return Center(
                 child: Text('Error: ${snapshot.error}')); // Show error message
           } else if (!snapshot.hasData || !snapshot.data!.exists) {
@@ -371,15 +369,13 @@ class CardResultScan extends StatelessWidget {
                               SizedBox(height: 27),
                               GestureDetector(
                                 onTap: () {
-                                  // Navigator.of(context).push(
-                                  //     SlideScaleTransition(
-                                  //         page: CardPlantCareManual()));
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/plantCareManual',
-                                    arguments: {
-                                      'documentId': nama_doc.toLowerCase(),
-                                    },
+                                  Navigator.of(context).push(
+                                    createSlideRoute(
+                                      CardLessonDetail(),
+                                      {
+                                        'documentId': nama_doc.toLowerCase()
+                                      }, // Kirim arguments
+                                    ),
                                   );
                                 },
                                 child: Align(
