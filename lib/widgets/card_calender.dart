@@ -52,6 +52,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+
     final monthName = DateFormat.MMMM().format(_focusedDay);
     final year = _focusedDay.year;
     final daysInMonth =
@@ -84,10 +87,10 @@ class _CustomCalendarState extends State<CustomCalendar> {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(26.0),
+        padding: EdgeInsets.all(isSmallScreen ? 16.0 : 26.0),
         child: Column(
           children: [
-            const SizedBox(height: 10),
+            SizedBox(height: isSmallScreen ? 5 : 10),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -123,8 +126,8 @@ class _CustomCalendarState extends State<CustomCalendar> {
                     children: [
                       Text(
                         "$year",
-                        style: const TextStyle(
-                          fontSize: 25,
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 18 : 25,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -172,8 +175,8 @@ class _CustomCalendarState extends State<CustomCalendar> {
                     children: [
                       Text(
                         monthName,
-                        style: const TextStyle(
-                          fontSize: 20,
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 16 : 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -198,7 +201,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
-                        "Week ${_currentPageIndex + 1}",
+                        "Week $currentWeek", //ganti
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -265,16 +268,16 @@ class _CustomCalendarState extends State<CustomCalendar> {
                                 children: [
                                   Text(
                                     DateFormat.E().format(day),
-                                    style: const TextStyle(
-                                      fontSize: 16,
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 15 : 20,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),
                                   ),
                                   Text(
                                     "${day.day}",
-                                    style: const TextStyle(
-                                      fontSize: 20,
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 15 : 20,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),
@@ -323,8 +326,8 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 ),
                 Text(
                   "Week $currentWeek of $totalWeeks",
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 15 : 20,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
@@ -348,6 +351,8 @@ class _CustomCalendarState extends State<CustomCalendar> {
   }
 
   void _showWateringDialog(BuildContext context, DateTime day) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
     // List of plant names that need to be watered
     List<String> plantNames = ['Aloe Vera', 'Cactus', 'Fern', 'Spider Plant'];
     // Ambil status penyiraman tanaman untuk hari tersebut
@@ -367,12 +372,11 @@ class _CustomCalendarState extends State<CustomCalendar> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Peringatan Menyiram"),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+                  Text(
+                    "Peringatan Menyiram",
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 22 : 15,
+                    ),
                   ),
                 ],
               ),

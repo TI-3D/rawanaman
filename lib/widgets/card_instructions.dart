@@ -29,7 +29,6 @@ class CardInstructions extends StatelessWidget {
                   BorderRadius.circular(12), // Sudut melengkung untuk gambar
               child: Image.asset(
                 'assets/images/foto.jpg',
-                height: 250, // Anda dapat menyesuaikan tinggi sesuai kebutuhan
                 width: double.infinity,
                 fit: BoxFit.cover, // Gambar mengisi area tanpa terpotong
               ),
@@ -69,174 +68,165 @@ class InstructionsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Petunjuk untuk Identifikasi'),
-        backgroundColor: const Color(0xFF10B982), // AppBar background color
+        backgroundColor: const Color(0xFF10B982),
         foregroundColor: Colors.black,
         elevation: 1,
       ),
-      backgroundColor: const Color(0xFFEAFBF2), // Green background
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Cara menggunakan Aplikasi RAWANAMAN:",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "Untuk mengidentifikasi tanaman dan penyakit tanaman, cukup ambil gambar tanaman atau pilih gambar tanaman dari 'Foto' Anda dan RAWANAMAN akan mengidentifikasinya secara instan menggunakan AI GEMINI!",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "Tips tentang cara mengambil gambar:",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "Bidikan tanaman yang jelas dengan sudut dan jarak yang tepat akan membantu RAWANAMAN mengidentifikasi tanaman dengan lebih akurat.",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "1. Fokuskan tanaman di tengah bingkai, hindari gambar yang gelap atau buram.",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-            Image.asset(
-              'assets/images/g1.png',
-              height: 400,
-              width: 400,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "2. Jika tanaman terlalu besar untuk bingkai, pastikan untuk menyertakan daun atau bunga tanaman.",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-            Image.asset(
-              'assets/images/g2.png',
-              height: 400,
-              width: 400,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "3. Hindari terlalu dekat, pastikan daun atau bunganya jelas dan lengkap.",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-            Image.asset(
-              'assets/images/g3.png',
-              height: 400,
-              width: 400,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "4. Hanya sertakan satu spesies pada satu waktu",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-            Image.asset(
-              'assets/images/g4.png',
-              height: 400,
-              width: 400,
-            ),
-            const SizedBox(height: 15),
-            const Text(
-              "Dengan informasi lokasi Anda 'RAWANAMAN' dapat memberi Anda hasil identifikasi yang lebih akurat.",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "Peringatan:",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Column(
+      backgroundColor: const Color(0xFFEAFBF2),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "- Perhatikan lingkungan sekitar dan tetap aman saat mengambil gambar.",
+                const Text(
+                  "Cara menggunakan Aplikasi RAWANAMAN:",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  textAlign: TextAlign.justify,
+                  "Untuk mengidentifikasi tanaman dan penyakit tanaman, cukup ambil gambar tanaman atau pilih gambar tanaman dari 'Foto' Anda dan RAWANAMAN akan mengidentifikasinya secara instan menggunakan AI GEMINI!",
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8), // Add space between points
-                Text(
-                  "- Jangan memakan tanaman liar apa pun.",
+                const SizedBox(height: 20),
+                const Text(
+                  "Tips tentang cara mengambil gambar:",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _buildTipText(
+                    "1. Fokuskan tanaman di tengah bingkai, hindari gambar yang gelap atau buram.",
+                    "g1.png",
+                    width),
+                _buildTipText(
+                    "2. Jika tanaman terlalu besar untuk bingkai, pastikan untuk menyertakan daun atau bunga tanaman.",
+                    "g2.png",
+                    width),
+                _buildTipText(
+                    "3. Hindari terlalu dekat, pastikan daun atau bunganya jelas dan lengkap.",
+                    "g3.png",
+                    width),
+                _buildTipText("4. Hanya sertakan satu spesies pada satu waktu.",
+                    "g4.png", width),
+                const SizedBox(height: 15),
+                const Text(
+                  textAlign: TextAlign.justify,
+                  "Dengan informasi lokasi Anda 'RAWANAMAN' dapat memberi Anda hasil identifikasi yang lebih akurat.",
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 8), // Add space between points
-                Text(
-                  "- Jangan menyentuh tanaman liar yang tidak dikenal, karena beberapa mungkin beracun atau dapat menyebabkan alergi.",
+                const SizedBox(height: 10),
+                const Text(
+                  "Peringatan:",
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                     color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      textAlign: TextAlign.justify,
+                      "- Perhatikan lingkungan sekitar dan tetap aman saat mengambil gambar.",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      textAlign: TextAlign.justify,
+                      "- Jangan memakan tanaman liar apa pun.",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      textAlign: TextAlign.justify,
+                      "- Jangan menyentuh tanaman liar yang tidak dikenal, karena beberapa mungkin beracun atau dapat menyebabkan alergi.",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Center(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      iconColor: const Color(0xFFEAFBF2),
+                      minimumSize: Size(width * 0.8, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        SlideScaleTransition(page: CameraPage()),
+                      );
+                    },
+                    icon: const Icon(Icons.camera_alt_outlined,
+                        color: Color(0xFF10B982)),
+                    label: const Text(
+                      "Identifikasi Tanaman",
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Color(0xFF10B982),
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            Center(
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  iconColor: const Color(0xFFEAFBF2),
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    SlideScaleTransition(page: CameraPage()),
-                  );
-                },
-                icon: const Icon(Icons.camera_alt_outlined,
-                    color: const Color(0xFF10B982)),
-                label: const Text(
-                  "Identifikasi Tanaman",
-                  style:
-                      TextStyle(fontSize: 18, color: const Color(0xFF10B982)),
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
+    );
+  }
+
+  Widget _buildTipText(String text, String image, double width) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          textAlign: TextAlign.justify,
+          text,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Image.asset(
+          'assets/images/$image',
+          width: width * 0.8,
+          fit: BoxFit.contain,
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 }
