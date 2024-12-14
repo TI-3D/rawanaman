@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rawanaman/pages/camera_page.dart';
 import 'package:rawanaman/pages/home_page.dart';
 import 'package:rawanaman/pages/login_page.dart';
@@ -26,15 +27,24 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Obtain a list of the available cameras on the device.
+
+  // Kunci orientasi ke semua mode (camera page)
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+
+  // Dapatkan daftar kamera yang tersedia di perangkat
   final cameras = await availableCameras();
 
-// Get a specific camera from the list of available cameras.
-  final firstCamera = cameras.first;
+  // Inisialisasi Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Jalankan aplikasi Anda
   runApp(MyApp());
 }
 

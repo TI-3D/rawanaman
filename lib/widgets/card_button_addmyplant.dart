@@ -22,6 +22,8 @@ class AddMyPlantButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
     return Center(
       child: OutlinedButton(
         onPressed: () {
@@ -39,7 +41,8 @@ class AddMyPlantButton extends StatelessWidget {
           ),
           padding: WidgetStateProperty.all(
             EdgeInsets.symmetric(
-                horizontal: 150, vertical: 12), // Padding di dalam tombol
+                horizontal: isSmallScreen ? 130 : 170,
+                vertical: 12), // Padding di dalam tombol
           ),
           overlayColor: WidgetStateProperty.all(
             Color(0xff10B982)

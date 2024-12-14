@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rawanaman/models/gemini.dart';
 import 'package:rawanaman/models/rwn-flask.dart';
@@ -21,6 +22,12 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
+    // Kunci orientasi ke portrait
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+    });
     cameraInitializer = initializeCamera();
   }
 
@@ -32,6 +39,13 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   void dispose() {
+    // Kembalikan orientasi fleksibel untuk halaman lainnya
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     controller.dispose();
     super.dispose();
   }
@@ -215,13 +229,6 @@ class _CameraPageState extends State<CameraPage> {
                       ),
                     ),
                   ),
-                  // if (imagePath != null) // Menampilkan gambar jika ada
-                  //   Positioned.fill(
-                  //     child: Image.file(
-                  //       File(imagePath!),
-                  //       fit: BoxFit.cover,
-                  //     ),
-                  //   ),
                   // Tombol Back di atas
                   Positioned(
                     top: 60,
