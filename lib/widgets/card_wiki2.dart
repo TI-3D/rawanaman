@@ -11,42 +11,6 @@ import 'package:rawanaman/widgets/transition_fade.dart';
 class CardWikiData2 extends StatefulWidget {
   @override
   _CardWikiData2State createState() => _CardWikiData2State();
-  // Widget build(BuildContext context) {
-  //   return StreamBuilder<QuerySnapshot>(
-  //       stream: FirebaseFirestore.instance.collection('plants').snapshots(),
-  //       builder: (context, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return Center(
-  //             child: CircularProgressIndicator(),
-  //           );
-  //         }
-
-  //         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-  //           return Container(
-  //             margin: const EdgeInsets.symmetric(vertical: double.minPositive),
-  //             child: Text(
-  //               'No Plants Available',
-  //               style: GoogleFonts.poppins(
-  //                 textStyle: TextStyle(fontSize: 18),
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Colors.grey,
-  //               ),
-  //             ),
-  //           );
-  //         } else {
-  //           final plants = snapshot.data!.docs;
-  //           return ListView.builder(
-  //             shrinkWrap: true,
-  //             physics: NeverScrollableScrollPhysics(),
-  //             // scrollDirection: ,
-  //             itemCount: plants.length, // Use the actual number of plants
-  //             itemBuilder: (context, index) {
-  //               return CardWiki2(plant: plants[index]);
-  //             },
-  //           );
-  //         }
-  //       });
-  // }
 }
 
 class _CardWikiData2State extends State<CardWikiData2> {
@@ -102,77 +66,79 @@ class _CardWikiData2State extends State<CardWikiData2> {
             fillColor: Colors.white,
           ),
         ),
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('plants').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return Container(
-                margin:
-                    const EdgeInsets.symmetric(vertical: double.minPositive),
-                child: Text(
-                  'No Plants Available',
-                  style: GoogleFonts.poppins(
-                    textStyle: TextStyle(fontSize: 18),
-                    fontWeight: FontWeight.bold,
-                    // color: Colors.grey,
-                  ),
-                ),
-              );
-            } else {
-              // Store all plants for filtering
-              allPlants = snapshot.data!.docs;
-              filteredPlants = allPlants.where((plant) {
-                final plantData = plant.data() as Map<String, dynamic>;
-                final plantName = plantData['nama'].toString().toLowerCase();
-                return plantName.contains(searchQuery);
-              }).toList();
-
-              if (filteredPlants.isEmpty) {
+        Expanded(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('plants').snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 50,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: double.minPositive),
-                        child: Text(
-                          'Tidak ada Tanaman Dengan Nama Tersebut',
-                          style: GoogleFonts.inter(
-                            textStyle: TextStyle(
-                              fontSize: 18,
-                            ),
-                            // fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: const Color.fromARGB(255, 78, 77, 77),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: CircularProgressIndicator(),
                 );
               }
 
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: AlwaysScrollableScrollPhysics(),
-                itemCount:
-                    filteredPlants.length, // Use the filtered number of plants
-                itemBuilder: (context, index) {
-                  return CardWiki2(plant: filteredPlants[index]);
-                },
-              );
-            }
-          },
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: double.minPositive),
+                  child: Text(
+                    'No Plants Available',
+                    style: GoogleFonts.poppins(
+                      textStyle: TextStyle(fontSize: 18),
+                      fontWeight: FontWeight.bold,
+                      // color: Colors.grey,
+                    ),
+                  ),
+                );
+              } else {
+                // Store all plants for filtering
+                allPlants = snapshot.data!.docs;
+                filteredPlants = allPlants.where((plant) {
+                  final plantData = plant.data() as Map<String, dynamic>;
+                  final plantName = plantData['nama'].toString().toLowerCase();
+                  return plantName.contains(searchQuery);
+                }).toList();
+
+                if (filteredPlants.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 50,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: double.minPositive),
+                          child: Text(
+                            'Tidak ada Tanaman Dengan Nama Tersebut',
+                            style: GoogleFonts.inter(
+                              textStyle: TextStyle(
+                                fontSize: 18,
+                              ),
+                              // fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: const Color.fromARGB(255, 78, 77, 77),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: AlwaysScrollableScrollPhysics(),
+                  itemCount: filteredPlants
+                      .length, // Use the filtered number of plants
+                  itemBuilder: (context, index) {
+                    return CardWiki2(plant: filteredPlants[index]);
+                  },
+                );
+              }
+            },
+          ),
         ),
       ],
     );
@@ -192,7 +158,7 @@ class CardWiki2 extends StatelessWidget {
     final String plantLatinName = plantData.containsKey('nama_latin')
         ? plant['nama_latin']
         : 'No Latin Name';
-    final String plantImage =
+    final String? plantImage =
         plantData.containsKey('image') ? plant['image'] : null;
     final String documentId = plant.id;
 
@@ -218,7 +184,7 @@ class CardWiki2 extends StatelessWidget {
                     bottomLeft: Radius.circular(8),
                     topLeft: Radius.circular(8),
                   ),
-                  child: plantImage.isNotEmpty
+                  child: plantImage != null
                       ? CachedNetworkImage(
                           imageUrl: 'https://mkemaln.my.id/images/$plantImage',
                           errorWidget: (context, url, error) =>
@@ -228,8 +194,8 @@ class CardWiki2 extends StatelessWidget {
                           height: 100, // Set your desired height
                         )
                       : Container(
-                          width: 80,
-                          height: 80,
+                          width: 100,
+                          height: 100,
                           color: Colors.grey[300],
                           child: Center(
                             child: Icon(

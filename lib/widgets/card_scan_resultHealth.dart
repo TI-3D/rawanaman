@@ -27,9 +27,6 @@ class CardResultScan extends StatelessWidget {
           if (snapshot.hasError) {
             return Center(
                 child: Text('Error: ${snapshot.error}')); // Show error message
-          } else if (!snapshot.hasData || !snapshot.data!.exists) {
-            return Center(
-                child: Text('No data found for $nama_doc')); // No data found
           }
 
           print("Snapshot data: ${snapshot.data}");
