@@ -74,6 +74,7 @@ Future<void> _saveToFirestore(Map<String, dynamic> jsonData) async {
   if (querySnapshot.docs.isEmpty) {
     // Document does not exist, save the new document
     await collectionRef.doc(name).set(jsonData);
+    await collectionRef.doc(name).update({'created_at': Timestamp.now()});
     print('Document added successfully');
   } else {
     print('Document with this name already exists');
