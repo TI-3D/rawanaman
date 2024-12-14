@@ -16,7 +16,7 @@ class _CameraPageState extends State<CameraPage> {
   late Future<void> cameraInitializer;
   String? imagePath; // Menyimpan jalur gambar yang diambil
   final ImagePicker _imagePicker = ImagePicker();
-  final String prompt = 'tomat';
+  final String prompt = 'lidah mertua';
 
   @override
   void initState() {
@@ -49,8 +49,13 @@ class _CameraPageState extends State<CameraPage> {
         message: "Scanning your plant...",
         onCompleted: () async {
           // Setelah animasi selesai, lakukan prediksi dan navigasi
-          String prompt = 'tomat';
+          print('start identifying image from camera');
           String healthState = await makePrediction(imagePath!);
+          print('finish identify from camera');
+
+          print('start prompt from camera');
+          await generateAndSaveText(prompt);
+          print('finish prompt from camera');
 
           if (healthState == 'Healthy') {
             Navigator.pushNamed(context, '/scanResult', arguments: {
@@ -84,33 +89,35 @@ class _CameraPageState extends State<CameraPage> {
 
   Future<void> processImage(String path) async {
     // Tampilkan animasi scan
-    await showScanAnimation(context,
-        message: "Scanning your plant...", onCompleted: () {});
-    // Your existing processing logic
-    print('start identifying image from gallery');
-    String healthState = await makePrediction(path);
-    print('finish identify from gallery');
-    print('healthState = $healthState');
+    await showScanAnimation(context, message: "Scanning your plant...",
+        onCompleted: () async {
+      print('start identifying image from gallery');
+      String healthState = await makePrediction(path);
+      print('finish identify from gallery');
+      print('healthState = $healthState');
 
-    Navigator.of(context).pop(); // Tutup animasi scan setelah selesai
+      // Tutup animasi scan setelah selesai
 
-    print('start prompt from gallery');
-    await generateAndSaveText(prompt);
-    print('finish prompt from gallery');
+      print('start prompt from gallery');
+      await generateAndSaveText(prompt);
+      print('finish prompt from gallery');
 
-    // Navigate based on health state
-    if (healthState == 'Healthy') {
-      Navigator.pushNamed(context, '/scanResult', arguments: <String, String?>{
-        'imagePath': path,
-        'nama': prompt,
-      });
-    } else {
-      Navigator.pushNamed(context, '/resultSick', arguments: <String, String?>{
-        'imagePath': path,
-        'nama': prompt,
-        'healthState': healthState,
-      });
-    }
+      // Navigate based on health state
+      if (healthState == 'Healthy') {
+        Navigator.pushNamed(context, '/scanResult',
+            arguments: <String, String?>{
+              'imagePath': path,
+              'nama': prompt,
+            });
+      } else {
+        Navigator.pushNamed(context, '/resultSick',
+            arguments: <String, String?>{
+              'imagePath': path,
+              'nama': prompt,
+              'healthState': healthState,
+            });
+      }
+    });
   }
 
   Future<void> showScanAnimation(BuildContext context,
