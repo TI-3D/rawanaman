@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
                 child: CustomCalendar(),
               ),
               const SizedBox(height: 30),
-              const RecommendationsWidget(),
+              RecommendationsWidget(),
             ],
           ),
         ),
