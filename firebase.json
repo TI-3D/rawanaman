@@ -1,1 +1,36 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"rawanaman-8c43f","appId":"1:434112925248:android:de4822526d23e64f6519a5","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"rawanaman-8c43f","configurations":{"android":"1:434112925248:android:de4822526d23e64f6519a5","ios":"1:434112925248:ios:0aa24dacd08fb7836519a5","web":"1:434112925248:web:0f9d3545d91919e46519a5"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "rawanaman-8c43f",
+          "appId": "1:434112925248:android:de4822526d23e64f6519a5",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "rawanaman-8c43f",
+          "configurations": {
+            "android": "1:434112925248:android:de4822526d23e64f6519a5",
+            "ios": "1:434112925248:ios:0aa24dacd08fb7836519a5",
+            "web": "1:434112925248:web:0f9d3545d91919e46519a5"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}
