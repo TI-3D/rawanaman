@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@google-cloud/firestore": "^7.11.0",
+    "axios": "^1.7.9",
+    "firebase-admin": "^13.0.1",
+    "google-auth-library": "^9.15.0",
+    "googleapis": "^144.0.0",
+    "node-fetch": "^3.3.2"
+  }
+}

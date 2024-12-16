@@ -1,17 +1,33 @@
 import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rawanaman/service/notification_service.dart';
 import 'package:rawanaman/widgets/card_confirm_login.dart';
 
-class CardMyPlants extends StatelessWidget {
+class CardMyPlants extends StatefulWidget {
   final List<DocumentSnapshot> plants;
 
   CardMyPlants({required this.plants});
+
+  @override
+  State<CardMyPlants> createState() => _CardMyPlantsState();
+}
+
+class _CardMyPlantsState extends State<CardMyPlants> {
+  Future<void> setupPushNotification() async {
+    await NotificationService.instance.initialize();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setupPushNotification();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,14 +120,18 @@ class CardMyPlants extends StatelessWidget {
                   final plantId = plantRef['plant'].id;
                   final imageName = plantRef['image'] ?? '';
                   final myPlantName = plantRef['name'] ?? 'Unknown';
+                  final createdAt = plantRef['created_at'] ?? Timestamp.now();
+                  final siramAt = plantRef['nextSiram'] ?? createdAt;
                   final bool isReminderSet = plantRef['reminder'] ?? false;
-
                   return _CardMyPlants(
-                      plantId: plantId,
-                      myPlantDocId: myPlantDoc,
-                      imageMyPlant: imageName,
-                      nameMyPlant: myPlantName,
-                      reminder: isReminderSet);
+                    plantId: plantId,
+                    myPlantDocId: myPlantDoc,
+                    imageMyPlant: imageName,
+                    nameMyPlant: myPlantName,
+                    createdMyPlant: createdAt,
+                    reminder:  isReminderSet,
+                    siramMyPlant: siramAt,
+                  );
                 },
               );
             }
@@ -127,15 +147,30 @@ class _CardMyPlants extends StatelessWidget {
   final String imageMyPlant;
   final String nameMyPlant;
   final String myPlantDocId;
+  final Timestamp createdMyPlant;
   final bool reminder;
+  Timestamp siramMyPlant;
 
-  _CardMyPlants({
-    required this.plantId,
-    required this.imageMyPlant,
-    required this.nameMyPlant,
-    required this.myPlantDocId,
-    required this.reminder,
-  });
+  _CardMyPlants(
+      {required this.plantId,
+      required this.imageMyPlant,
+      required this.nameMyPlant,
+      required this.myPlantDocId,
+      required this.createdMyPlant,
+       required this.reminder,
+      required this.siramMyPlant});
+
+  Future<void> _updateNextSiram(int penyiraman, BuildContext context) async {
+    if (siramMyPlant == createdMyPlant) {
+      siramMyPlant = getTanggalSiram(penyiraman, createdMyPlant);
+      await FirebaseFirestore.instance
+          .collection('myplants')
+          .doc(myPlantDocId)
+          .set({
+        'nextSiram': siramMyPlant,
+      }, SetOptions(merge: true));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +192,24 @@ class _CardMyPlants extends StatelessWidget {
         final Map<String, dynamic> plantData =
             plant.data() as Map<String, dynamic>;
 
-        // bool isReminderSet = plantData['reminder'] ?? false;
+        List<Map<String, dynamic>> listPerawatan =
+            List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
+        int penyiraman = 0; // Default value
+        for (var perawatan in listPerawatan) {
+          if (perawatan['jenis_perawatan'] == 'watering' ||
+              perawatan['jenis_perawatan'] == 'Watering') {
+            penyiraman = perawatan['nilai'] ??
+                penyiraman; // Update frequency if found
+            break; // Exit the loop since we found the entry
+          }
+        }
+        _updateNextSiram(penyiraman, context);
+
+        int hariSampaiSiram =
+            (siramMyPlant.toDate().difference(DateTime.now()).inDays);
+        String pesanSiram = hariSampaiSiram > 0
+            ? '$hariSampaiSiram days left to water'
+            : 'Water your plant today';
 
         return Column(
           children: [
@@ -278,7 +330,26 @@ class _CardMyPlants extends StatelessWidget {
                               ),
                               textAlign: TextAlign.justify,
                             ),
-                            // Icon Pengingat
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.alarm,
+                                  size: 16,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  pesanSiram,
+                                  style: GoogleFonts.poppins(
+                                    textStyle: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                             IconButton(
                               icon: Icon(
                                 reminder
@@ -303,6 +374,17 @@ class _CardMyPlants extends StatelessWidget {
         );
       },
     );
+  }
+
+
+  Timestamp getTanggalSiram(int nilai, Timestamp tanggal) {
+    int siramDalamHari = nilai;
+
+    DateTime lastWateredDate = tanggal.toDate();
+    DateTime nextWateringDate =
+        lastWateredDate.add(Duration(days: siramDalamHari));
+
+    return Timestamp.fromDate(nextWateringDate);
   }
 
   void _renamePlant(BuildContext context) {

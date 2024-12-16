@@ -22,8 +22,11 @@ import 'package:rawanaman/pages/wiki_page.dart';
 import 'package:rawanaman/pages/wiki_article.dart';
 import 'package:rawanaman/widgets/navbar.dart';
 import 'package:rawanaman/pages/splash_screen.dart';
+import 'package:rawanaman/service/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,6 +55,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false, //hapus banner
       title: 'rawanaman',
       theme: ThemeData(
