@@ -307,7 +307,7 @@ class CardScanResultsick extends StatelessWidget {
                                 onTap: () {
                                   Navigator.pushNamed(
                                       context, '/diagnoseResult',
-                                      arguments: <String, String?>{
+                                      arguments: {
                                         'healthState': diseaseName,
                                         'imagePath': imagePath,
                                       });

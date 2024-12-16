@@ -67,9 +67,9 @@ class CardLessonDetail extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Tambah Pengetahuanmu Tentang Tanaman $plantName',
+                      'Get to Know More about $plantName',
                       style: GoogleFonts.inter(
-                        fontSize: 20,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -109,7 +109,7 @@ class CardLessonDetail extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Klasifikasi Tanaman $plantName',
+                      '$plantName Classification',
                       style: GoogleFonts.inter(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -150,7 +150,7 @@ class CardLessonDetail extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Apa yang diperlukan $plantName untuk tumbuh sehat?',
+                      'What $plantName Needs to be Able Grow Healthy',
                       style: GoogleFonts.inter(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -174,7 +174,7 @@ class CardLessonDetail extends StatelessWidget {
                             ),
                             Text(
                               perawatan['jenis_perawatan'] ??
-                                  'Gagal Memuat Judul',
+                                  'Failed to Load Title',
                               style: GoogleFonts.inter(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -186,7 +186,8 @@ class CardLessonDetail extends StatelessWidget {
                         SizedBox(height: 8),
                         Text(
                           textAlign: TextAlign.justify,
-                          perawatan['deskripsi'] ?? 'Gagal Memuat Deskripsi',
+                          perawatan['deskripsi'] ??
+                              'Failed to load description',
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             color: Colors.black87,
@@ -196,7 +197,7 @@ class CardLessonDetail extends StatelessWidget {
                       ]
                     ] else ...[
                       Text(
-                        'Gagal Memuat Cara Perawatan',
+                        'Failed to load how to care',
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           color: Colors.black87,
@@ -212,7 +213,7 @@ class CardLessonDetail extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Penyakit yang $plantName sering terjangkit',
+                      'Common Disease of $plantName ',
                       style: GoogleFonts.inter(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

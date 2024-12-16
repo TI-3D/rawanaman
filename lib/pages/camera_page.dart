@@ -17,7 +17,7 @@ class _CameraPageState extends State<CameraPage> {
   late Future<void> cameraInitializer;
   String? imagePath; // Menyimpan jalur gambar yang diambil
   final ImagePicker _imagePicker = ImagePicker();
-  final String prompt = 'lidah mertua';
+  final String prompt = 'tomato';
 
   @override
   void initState() {
