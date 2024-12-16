@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/service/notification_service.dart';
+import 'package:rawanaman/widgets/card_confirm_login.dart';
 
 class CardMyPlants extends StatefulWidget {
   final List<DocumentSnapshot> plants;
@@ -31,8 +33,43 @@ class _CardMyPlantsState extends State<CardMyPlants> {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
+    // Jika user tidak login, langsung tampilkan dialog konfirmasi
     if (user == null) {
-      return Center(child: Text('User  not logged in'));
+      Future.delayed(Duration.zero, () {
+        CardConfirmLogin.showLoginDialog(context);
+      });
+      return Center(
+        heightFactor: 5,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'You need to log in to view this content.',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/loginPage');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xff10B998), // Warna tombol hijau
+                padding: EdgeInsets.symmetric(horizontal: 34, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      25), // Membuat tombol dengan sudut membulat
+                ),
+              ),
+              child: Text(
+                'Log In',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
     // Fetch the user's document to get the myplants array
@@ -85,13 +122,14 @@ class _CardMyPlantsState extends State<CardMyPlants> {
                   final myPlantName = plantRef['name'] ?? 'Unknown';
                   final createdAt = plantRef['created_at'] ?? Timestamp.now();
                   final siramAt = plantRef['nextSiram'] ?? createdAt;
-
+                  final bool isReminderSet = plantRef['reminder'] ?? false;
                   return _CardMyPlants(
                     plantId: plantId,
                     myPlantDocId: myPlantDoc,
                     imageMyPlant: imageName,
                     nameMyPlant: myPlantName,
                     createdMyPlant: createdAt,
+                    reminder:  isReminderSet,
                     siramMyPlant: siramAt,
                   );
                 },
@@ -110,6 +148,7 @@ class _CardMyPlants extends StatelessWidget {
   final String nameMyPlant;
   final String myPlantDocId;
   final Timestamp createdMyPlant;
+  final bool reminder;
   Timestamp siramMyPlant;
 
   _CardMyPlants(
@@ -118,6 +157,7 @@ class _CardMyPlants extends StatelessWidget {
       required this.nameMyPlant,
       required this.myPlantDocId,
       required this.createdMyPlant,
+       required this.reminder,
       required this.siramMyPlant});
 
   Future<void> _updateNextSiram(int penyiraman, BuildContext context) async {
@@ -151,8 +191,7 @@ class _CardMyPlants extends StatelessWidget {
         final plant = snapshot.data!;
         final Map<String, dynamic> plantData =
             plant.data() as Map<String, dynamic>;
-        // final String plantName = plantData['nama'] ?? 'No Name';
-        // final String? plantImage = plantData['image'];
+
         List<Map<String, dynamic>> listPerawatan =
             List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
         int penyiraman = 0; // Default value
@@ -164,7 +203,6 @@ class _CardMyPlants extends StatelessWidget {
             break; // Exit the loop since we found the entry
           }
         }
-
         _updateNextSiram(penyiraman, context);
 
         int hariSampaiSiram =
@@ -197,44 +235,19 @@ class _CardMyPlants extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Image Section
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: imageMyPlant != null && imageMyPlant.isNotEmpty
-                            ? FutureBuilder(
-                                future: _getImage(imageMyPlant),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Container(
-                                      width: 100,
-                                      height: 160,
-                                      color: Colors.grey[300],
-                                      child: Center(
-                                          child: CircularProgressIndicator()),
-                                    );
-                                  } else if (snapshot.hasData) {
-                                    // Display the image if the file is retrieved successfully
-                                    return Image.file(
-                                      snapshot.data!,
-                                      width: 100,
-                                      height: 160,
-                                      fit: BoxFit.cover,
-                                    );
-                                  } else {
-                                    return Container(
-                                      width: 100,
-                                      height: 160,
-                                      color: Colors.grey[300],
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.image_not_supported,
-                                          size: 50,
-                                          color: Colors.black54,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                })
+                        child: imageMyPlant.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl:
+                                    'https://mkemaln.my.id/images/$imageMyPlant',
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                                fit: BoxFit.cover,
+                                width: 100, // Set your desired width
+                                height: 160, // Set your desired height
+                              )
                             : Container(
                                 width: 100,
                                 height: 160,
@@ -249,18 +262,61 @@ class _CardMyPlants extends StatelessWidget {
                               ),
                       ),
                       SizedBox(width: 16),
+                      // Details Section
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(
-                              nameMyPlant,
-                              style: GoogleFonts.poppins(
-                                textStyle: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.7,
+                                    ),
+                                    child: Text(
+                                      nameMyPlant,
+                                      style: GoogleFonts.poppins(
+                                        textStyle: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    PopupMenuButton<String>(
+                                      onSelected: (value) {
+                                        if (value == 'rename') {
+                                          _renamePlant(context);
+                                        } else if (value == 'delete') {
+                                          _deletePlant(context);
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) {
+                                        return [
+                                          PopupMenuItem(
+                                            value: 'rename',
+                                            child: Text('Rename'),
+                                          ),
+                                          PopupMenuItem(
+                                            value: 'delete',
+                                            child: Text('Delete'),
+                                          ),
+                                        ];
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                             SizedBox(height: 8),
                             Text(
@@ -293,7 +349,19 @@ class _CardMyPlants extends StatelessWidget {
                                   ),
                                 ),
                               ],
-                            )
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                reminder
+                                    ? Icons.notifications_active
+                                    : Icons.notifications_none,
+                                color: reminder ? Colors.green : Colors.grey,
+                              ),
+                              onPressed: () {
+                                _showReminderDialog(
+                                    context, myPlantDocId, reminder);
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -309,7 +377,6 @@ class _CardMyPlants extends StatelessWidget {
   }
 
 
-
   Timestamp getTanggalSiram(int nilai, Timestamp tanggal) {
     int siramDalamHari = nilai;
 
@@ -319,12 +386,109 @@ class _CardMyPlants extends StatelessWidget {
 
     return Timestamp.fromDate(nextWateringDate);
   }
+
+  void _renamePlant(BuildContext context) {
+    final TextEditingController nameController =
+        TextEditingController(text: nameMyPlant);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Rename Plant'),
+          content: TextField(
+            controller: nameController,
+            decoration: InputDecoration(hintText: 'Enter new name'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final newName = nameController.text.trim();
+                if (newName.isNotEmpty) {
+                  await FirebaseFirestore.instance
+                      .collection('myplants')
+                      .doc(myPlantDocId)
+                      .update({'name': newName});
+                }
+                Navigator.pop(context);
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deletePlant(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Delete Plant'),
+          content: Text(
+              'Are you sure you want to delete $nameMyPlant from your collection?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await FirebaseFirestore.instance
+                    .collection('myplants')
+                    .doc(myPlantDocId)
+                    .delete();
+                Navigator.pop(context);
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+void _showReminderDialog(
+    BuildContext context, String plantId, bool currentStatus) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Set Reminder'),
+        content: Text(
+            'Do you want to turn reminder ${currentStatus ? 'off' : 'on'}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('No'),
+          ),
+          TextButton(
+            onPressed: () async {
+              // Update reminder in Firebase
+              await FirebaseFirestore.instance
+                  .collection('myplants')
+                  .doc(plantId)
+                  .update({'reminder': !currentStatus});
+              Navigator.pop(context);
+            },
+            child: Text('Yes'),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 Future<File> _getImage(String filename) async {
   try {
     var response =
-        await http.get(Uri.parse('http://mkemaln.my.id/images/$filename'));
+        await http.get(Uri.parse('https://mkemaln.my.id/images/$filename'));
 
     if (response.statusCode == 200) {
       // Create a file from the response body

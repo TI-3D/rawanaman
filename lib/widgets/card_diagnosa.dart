@@ -12,24 +12,24 @@ class CardDiagnosa extends StatelessWidget {
         ModalRoute.of(context)?.settings.arguments as Map<String, String?>?;
 
     final String? imagePath = args?['imagePath'];
-    final String? diseaseName = args?['healthState'];
+    final String diseaseName = args!['healthState']!;
 
     return FutureBuilder<DocumentSnapshot>(
-      future: _fetchDiseaseData(diseaseName!),
+      future: _fetchDiseaseData(diseaseName),
       builder: (context, snapshot) {
         // Check if the future is still loading
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
+        // if (snapshot.connectionState == ConnectionState.waiting) {
+        //   return Center(child: CircularProgressIndicator());
+        // }
 
-        // Check for errors
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
+        // // Check for errors
+        // if (snapshot.hasError) {
+        //   return Center(child: Text('Error: ${snapshot.error}'));
+        // }
 
-        // Check if data exists
+        // // Check if data exists
         if (!snapshot.hasData || !snapshot.data!.exists) {
-          return Center(child: Text('Disease data not found.'));
+          return Center(child: Text(''));
         }
 
         Map<String, dynamic> diseaseData =
@@ -111,7 +111,7 @@ class CardDiagnosa extends StatelessWidget {
                             ),
                             SizedBox(height: 16),
                             Text(
-                              'Deskripsi: $description',
+                              'Description: $description',
                               style: GoogleFonts.inter(
                                 textStyle: TextStyle(
                                   fontSize: 15,
@@ -155,7 +155,7 @@ class CardDiagnosa extends StatelessWidget {
 Future<DocumentSnapshot> _fetchDiseaseData(String name) async {
   name = name.toLowerCase();
 
-  print('start identifying disease image');
+  print('start identifying disease image $name');
   await generateAndSaveText2(name);
   print('finish identify disease');
 

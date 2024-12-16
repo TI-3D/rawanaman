@@ -11,7 +11,7 @@ Future<void> generateAndSaveText2(String plantName) async {
     print('Document with this disease already exists, skipping generation.');
     return; // Exit if the document already exists
   }
-
+  print('Preparation generate 1');
   // Generate text
   String generatedText = await _generateText(plantName);
 
@@ -29,6 +29,8 @@ Future<bool> _documentExists(String name) async {
   final firestore = FirebaseFirestore.instance;
   final collectionRef = firestore.collection('disease');
 
+  print('Check Document 0');
+
   // Check if the document with the given name exists
   final querySnapshot = await collectionRef.doc(name).get();
   return querySnapshot.exists; // Returns true if the document exists
@@ -40,28 +42,34 @@ Future<String> _generateText(String promptDiseaseName) async {
     apiKey: apiKey,
   );
 
+  print('Process generate 2');
+
   // String prompt =
   //     'tuliskan dengan format nama : $promptDiseaseName deskripsi: (singkat) perawatan: (maks 4) [ { jenis_perawatan : sinar matahari nilai : (isi banyak, secukupnya, atau rendah) (sebagai indikator cahaya yang diperlukan) deskripsi: ... }, { jenis_perawatan : air nilai : (sering, secukupnya, jarang) (sebagai indikator banyak penyiraman yang diperlukan) deskripsi: ... }, { jenis_perawatan : pemupukan nilai : (perlu, tidak perlu) (sebagai indikator apakah perlu pemupukan atau tidak) deskripsi: ... }, { jenis_perawatan : pemangkasan nilai : (perlu, tidak perlu) (sebagai indikator apakah perlu pemangkasan atau tidak) deskripsi: ... }, ] berbentuk json, disclaimer hanya berikan format json saja';
 
   String prompt =
-      'tuliskan dengan format nama : $promptDiseaseName deskripsi: (singkat) perawatan: (maks 3) [ { jenis_perawatan : (nama perawatan) deskripsi: ... }, { jenis_perawatan : (nama perawatan) deskripsi: ... }, { jenis_perawatan : (nama perawatan) deskripsi: ... }, ] berbentuk json, disclaimer hanya berikan format json saja Show drafts';
+      'tuliskan dalam bahasa inggris dengan format { nama : $promptDiseaseName, deskripsi: (singkat), perawatan: (maks 3) [ { jenis_perawatan : (nama perawatan) deskripsi: ... }, { jenis_perawatan : (nama perawatan) deskripsi: ... }, { jenis_perawatan : (nama perawatan) deskripsi: ... }, ] } berbentuk json, disclaimer hanya berikan format json saja Show drafts';
 
   final content = [Content.text(prompt)];
   final response = await model.generateContent(content);
+  print(response.text);
   return response.text ?? 'No Text generated';
 }
 
 String _cleanGeneratedText(String generatedText) {
   // Remove surrounding backticks and trim whitespace
+  print('Process clean up generate 3');
   return generatedText.replaceAll('```json', '').replaceAll('```', '').trim();
 }
 
 Map<String, dynamic> _parseJson(String generatedText) {
+  print('Process parse generate 4');
   // Assuming the generated text is a valid JSON string
   return json.decode(generatedText);
 }
 
 Future<void> _saveToFirestore(Map<String, dynamic> jsonData) async {
+  print('Process save generate 5');
   final firestore = FirebaseFirestore.instance;
   final collectionRef = firestore.collection('disease');
 

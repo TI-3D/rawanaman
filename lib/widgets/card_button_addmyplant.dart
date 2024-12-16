@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,25 +17,18 @@ class AddMyPlantButton extends StatelessWidget {
       required this.imageData});
 
   late String fileName = imageData.uri.pathSegments.last;
+  // late String fileExtension = path.extension(imageData.path);
+  // String filename = '$dataId$fileExtension';
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
     return Center(
       child: OutlinedButton(
         onPressed: () {
           _showConfirmationDialog(context);
         },
-        child: Text(
-          "Add Plant",
-          style: GoogleFonts.inter(
-            textStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
-              color: Color(0xff10B982), // Warna teks
-            ),
-          ),
-        ),
         style: ButtonStyle(
           side: WidgetStateProperty.all(
             BorderSide(
@@ -47,11 +41,23 @@ class AddMyPlantButton extends StatelessWidget {
           ),
           padding: WidgetStateProperty.all(
             EdgeInsets.symmetric(
-                horizontal: 150, vertical: 12), // Padding di dalam tombol
+                horizontal: isSmallScreen ? 130 : 170,
+                vertical: 12), // Padding di dalam tombol
           ),
           overlayColor: WidgetStateProperty.all(
             Color(0xff10B982)
                 .withOpacity(0.1), // Efek klik dengan warna transparan
+          ),
+        ),
+        child: Text(
+          "Add Plant",
+          style: GoogleFonts.inter(
+            textStyle: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+              color: Color(0xff10B982), // Warna teks
+            ),
           ),
         ),
       ),
@@ -217,7 +223,7 @@ class AddMyPlantButton extends StatelessWidget {
   void _uploadImage(File image) async {
     try {
       var request = http.MultipartRequest(
-          'POST', Uri.parse('http://mkemaln.my.id/upload'));
+          'POST', Uri.parse('https://mkemaln.my.id/upload'));
       request.files.add(await http.MultipartFile.fromPath('file', image.path));
       var response = await request.send();
 

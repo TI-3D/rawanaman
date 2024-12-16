@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rawanaman/models/gemini.dart';
 import 'package:rawanaman/models/rwn-flask.dart';
+import 'package:rawanaman/widgets/scan_animation.dart';
 
 class CameraPage extends StatefulWidget {
   @override
@@ -16,10 +17,17 @@ class _CameraPageState extends State<CameraPage> {
   late Future<void> cameraInitializer;
   String? imagePath; // Menyimpan jalur gambar yang diambil
   final ImagePicker _imagePicker = ImagePicker();
+  final String prompt = 'tomato';
 
   @override
   void initState() {
     super.initState();
+    // Kunci orientasi ke portrait
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+    });
     cameraInitializer = initializeCamera();
   }
 
@@ -31,48 +39,52 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   void dispose() {
+    // Kembalikan orientasi fleksibel untuk halaman lainnya
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     controller.dispose();
     super.dispose();
   }
 
   Future<void> takePicture() async {
-    Directory root = await getTemporaryDirectory();
-    String directoryPath = '${root.path}/Guided_Camera';
-    await Directory(directoryPath).create(recursive: true);
-    String filePath = '$directoryPath/${DateTime.now()}.jpg';
-
     try {
       XFile picture = await controller.takePicture();
       setState(() {
-        imagePath = picture.path; // Simpan jalur gambar yang diambil
-        // imagePath = '/assets/images/leaf_mold.jpg';
+        imagePath = picture.path;
       });
-      print('start identifying image');
-      String prompt = 'tomat';
-      String healthState = await makePrediction(imagePath!);
-      print('finish identify');
-      print('healthState = $healthState');
 
-      print('start promt');
-      await generateAndSaveText(prompt);
-      print('finish promt');
-      // Navigate to CardResultScan and pass the image path
-      if (healthState == 'Healthy') {
-        print('is healhty');
-        Navigator.pushNamed(context, '/scanResult',
-            arguments: <String, String?>{
+      // Tampilkan animasi scan
+      await showScanAnimation(
+        context,
+        message: "Scanning your plant...",
+        onCompleted: () async {
+          // Setelah animasi selesai, lakukan prediksi dan navigasi
+          print('start identifying image from camera');
+          String healthState = await makePrediction(imagePath!);
+          print('finish identify from camera');
+
+          print('start prompt from camera');
+          await generateAndSaveText(prompt);
+          print('finish prompt from camera');
+
+          if (healthState == 'Healthy') {
+            Navigator.pushNamed(context, '/scanResult', arguments: {
               'imagePath': imagePath,
               'nama': prompt,
             });
-      } else {
-        print('is sick');
-        Navigator.pushNamed(context, '/resultSick',
-            arguments: <String, String?>{
+          } else {
+            Navigator.pushNamed(context, '/resultSick', arguments: {
               'imagePath': imagePath,
               'nama': prompt,
               'healthState': healthState,
             });
-      }
+          }
+        },
+      );
     } catch (e) {
       print("Error saat mengambil gambar: $e");
     }
@@ -90,30 +102,49 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Future<void> processImage(String path) async {
-    // Your existing processing logic
-    print('start identifying image2');
-    String prompt = 'tomat'; // Example prompt
-    String healthState = await makePrediction(path);
-    print('finish identify2');
-    print('healthState = $healthState');
+    // Tampilkan animasi scan
+    await showScanAnimation(context, message: "Scanning your plant...",
+        onCompleted: () async {
+      print('start identifying image from gallery');
+      String healthState = await makePrediction(path);
+      print('finish identify from gallery');
+      print('healthState = $healthState');
 
-    print('start prompt2');
-    await generateAndSaveText(prompt);
-    print('finish prompt2');
+      // Tutup animasi scan setelah selesai
 
-    // Navigate based on health state
-    if (healthState == 'Healthy') {
-      Navigator.pushNamed(context, '/scanResult', arguments: <String, String?>{
-        'imagePath': path,
-        'nama': prompt,
-      });
-    } else {
-      Navigator.pushNamed(context, '/resultSick', arguments: <String, String?>{
-        'imagePath': path,
-        'nama': prompt,
-        'healthState': healthState,
-      });
-    }
+      print('start prompt from gallery');
+      await generateAndSaveText(prompt);
+      print('finish prompt from gallery');
+
+      // Navigate based on health state
+      if (healthState == 'Healthy') {
+        Navigator.pushNamed(context, '/scanResult',
+            arguments: <String, String?>{
+              'imagePath': path,
+              'nama': prompt,
+            });
+      } else {
+        Navigator.pushNamed(context, '/resultSick',
+            arguments: <String, String?>{
+              'imagePath': path,
+              'nama': prompt,
+              'healthState': healthState,
+            });
+      }
+    });
+  }
+
+  Future<void> showScanAnimation(BuildContext context,
+      {required String message, required VoidCallback onCompleted}) async {
+    await showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Agar pengguna tidak bisa menutup secara manual
+      builder: (context) => ScanAnimation(
+        message: message,
+        onCompleted: onCompleted, // Callback saat animasi selesai
+      ),
+    );
   }
 
   @override
@@ -205,13 +236,6 @@ class _CameraPageState extends State<CameraPage> {
                       ),
                     ),
                   ),
-                  if (imagePath != null) // Menampilkan gambar jika ada
-                    Positioned.fill(
-                      child: Image.file(
-                        File(imagePath!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
                   // Tombol Back di atas
                   Positioned(
                     top: 60,

@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rawanaman/widgets/card_button_addmyplant.dart';
 import 'package:rawanaman/widgets/card_care_tips.dart';
+import 'package:rawanaman/widgets/card_lesson_detail.dart';
 import 'package:rawanaman/widgets/card_plant_care_manual.dart';
 import 'package:rawanaman/widgets/transition_bottomslide.dart';
 
@@ -23,19 +24,9 @@ class CardScanResultsick extends StatelessWidget {
     return FutureBuilder<DocumentSnapshot>(
         future: _fetchPlantData(namaDoc!), // Fetch data using document ID
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-                child: CircularProgressIndicator()); // Show loading indicator
-          } else if (snapshot.hasError) {
-            return Center(
-                child: Text('Error: ${snapshot.error}')); // Show error message
-          } else if (!snapshot.hasData || !snapshot.data!.exists) {
-            return Center(
-                child: Text('No data found for $namaDoc')); // No data found
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return Center(child: Text(''));
           }
-
-          print("Snapshot data: ${snapshot.data}");
-
           // If data is found, extract it
           final plant = snapshot.data!;
           final Map<String, dynamic> plantData =
@@ -134,41 +125,54 @@ class CardScanResultsick extends StatelessWidget {
                               ),
                               SizedBox(height: 27),
 
-                              Wrap(
-                                alignment: WrapAlignment.center,
-                                spacing: 12, // Horizontal spacing between cards
-                                runSpacing:
-                                    12, // Vertical spacing between rows of cards
-                                children: listPerawatan.map((perawatan) {
-                                  String jenis = perawatan['jenis_perawatan'] ??
-                                      'Unknown Type';
-                                  String icon =
-                                      perawatan['icon'] ?? 'Unknown Type';
-                                  String deskripsi = perawatan['deskripsi'] ??
-                                      'No description available';
-                                  String documentId = perawatan['imageUrl'] ??
-                                      'No image available';
+                              Center(
+                                child: Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing:
+                                      12, // Horizontal spacing between cards
+                                  runSpacing:
+                                      12, // Vertical spacing between rows of cards
+                                  children: listPerawatan.map((perawatan) {
+                                    String jenis =
+                                        perawatan['jenis_perawatan'] ??
+                                            'Unknown Type';
+                                    String icon =
+                                        perawatan['icon'] ?? 'Unknown Type';
+                                    String deskripsi = perawatan['deskripsi'] ??
+                                        'No description available';
+                                    String documentId = perawatan['imageUrl'] ??
+                                        'No image available';
 
-                                  return GestureDetector(
-                                    onTap: () {
-                                      // Memanggil pop-up langsung tanpa berpindah halaman
-                                      showDialog(
-                                        context: context,
-                                        barrierColor: Colors.black.withOpacity(
-                                            0.5), // Latar semi-transparan
-                                        builder: (BuildContext context) {
-                                          return CareTipsDialog(
-                                            jenis: jenis,
-                                            deskripsi: deskripsi,
-                                            documentId: documentId,
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: _buildCareCard(
-                                        getIconData(icon), jenis),
-                                  );
-                                }).toList(),
+                                    return GestureDetector(
+                                      onTap: () {
+                                        // Menggunakan showGeneralDialog untuk popup dengan animasi
+                                        showGeneralDialog(
+                                          context: context,
+                                          barrierDismissible:
+                                              true, // Membolehkan menutup dialog dengan mengetuk di luar
+                                          barrierLabel: 'Dismiss',
+                                          transitionDuration: Duration(
+                                              milliseconds:
+                                                  200), // Durasi transisi
+                                          pageBuilder: (context, animation,
+                                              secondaryAnimation) {
+                                            return FadeTransition(
+                                              opacity:
+                                                  animation, // Animasi fade saat dialog muncul
+                                              child: CareTipsDialog(
+                                                jenis: jenis,
+                                                deskripsi: deskripsi,
+                                                documentId: documentId,
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: _buildCareCard(
+                                          getIconData(icon), jenis, context),
+                                    );
+                                  }).toList(),
+                                ),
                               ),
 
                               SizedBox(height: 25),
@@ -303,7 +307,7 @@ class CardScanResultsick extends StatelessWidget {
                                 onTap: () {
                                   Navigator.pushNamed(
                                       context, '/diagnoseResult',
-                                      arguments: <String, String?>{
+                                      arguments: {
                                         'healthState': diseaseName,
                                         'imagePath': imagePath,
                                       });
@@ -393,15 +397,13 @@ class CardScanResultsick extends StatelessWidget {
                               SizedBox(height: 27),
                               GestureDetector(
                                 onTap: () {
-                                  // Navigator.of(context).push(
-                                  //     SlideScaleTransition(
-                                  //         page: CardPlantCareManual()));
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/plantCareManual',
-                                    arguments: {
-                                      'documentId': namaDoc.toLowerCase(),
-                                    },
+                                  Navigator.of(context).push(
+                                    createSlideRoute(
+                                      CardLessonDetail(),
+                                      {
+                                        'documentId': namaDoc.toLowerCase()
+                                      }, // Kirim arguments
+                                    ),
                                   );
                                 },
                                 child: Align(
@@ -432,9 +434,13 @@ class CardScanResultsick extends StatelessWidget {
   }
 
   // Function untuk membuat card info perawatan tanaman
-  Widget _buildCareCard(IconData icon, String text) {
+  Widget _buildCareCard(IconData icon, String text, BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 1600;
     return Container(
-      width: 181, // Set a fixed width for consistency in layout
+      width: isSmallScreen
+          ? 170
+          : 180, // Set a fixed width for consistency in layout
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         color: Color(0xFFF2FFFB), // Light green background
@@ -461,7 +467,8 @@ class CardScanResultsick extends StatelessWidget {
           Text(
             text,
             style: GoogleFonts.poppins(
-              textStyle: TextStyle(fontSize: 14, color: Colors.black),
+              textStyle: TextStyle(
+                  fontSize: isSmallScreen ? 14 : 17, color: Colors.black),
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center, // Center-align text
