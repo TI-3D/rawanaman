@@ -170,8 +170,8 @@ class _CardMyPlants extends StatelessWidget {
         int hariSampaiSiram =
             (siramMyPlant.toDate().difference(DateTime.now()).inDays);
         String pesanSiram = hariSampaiSiram > 0
-            ? 'Siram dalam $hariSampaiSiram hari lagi'
-            : 'Siram hari ini';
+            ? '$hariSampaiSiram days left to water'
+            : 'Water your plant today';
 
         return Column(
           children: [
