@@ -2,21 +2,38 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/main.dart';
 import 'package:rawanaman/pages/detail_wiki_pages.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
+import 'package:rawanaman/widgets/transition_rightslide.dart';
 
 class RecommendationsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
           'Plant Treatment Recommendations',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            Navigator.of(context)
+                .push(TransitionRightslide(page: MainScreen(initialIndex: 3)));
+          },
+          child: Text(
+            textAlign: TextAlign.end,
+            'see more ->',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF10B982),
+            ),
           ),
         ),
         SizedBox(height: 16),
@@ -66,48 +83,48 @@ class RecommendationsWidget extends StatelessWidget {
                       // Return the plant cards
                       return CardRecomendation(plant: allPlants[index]);
                     } else {
-                      return Container(
-                        margin: EdgeInsets.only(right: 16, bottom: 8),
-                        width: 180, // Width of the card
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Material(
-                          borderRadius: BorderRadius.circular(
-                              16), // Match the card's border radius
-                          color: Colors
-                              .transparent, // Make the Material background transparent
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(
-                                16), // Match the card's border radius
-                            onTap: () {
-                              Navigator.pushNamed(context, '/main',
-                                  arguments: 3);
-                            },
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'More',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 20, // Larger font size
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                      // return Container(
+                      //   margin: EdgeInsets.only(right: 16, bottom: 8),
+                      //   width: 180, // Width of the card
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.white,
+                      //     borderRadius: BorderRadius.circular(16),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Colors.black12,
+                      //         blurRadius: 6,
+                      //         offset: Offset(0, 3),
+                      //       ),
+                      //     ],
+                      //   ),
+                      //   child: Material(
+                      //     borderRadius: BorderRadius.circular(
+                      //         16), // Match the card's border radius
+                      //     color: Colors
+                      //         .transparent, // Make the Material background transparent
+                      //     child: InkWell(
+                      //       borderRadius: BorderRadius.circular(
+                      //           16), // Match the card's border radius
+                      //       onTap: () {
+                      //         Navigator.pushNamed(context, '/main',
+                      //             arguments: 3);
+                      //       },
+                      //       child: Column(
+                      //         mainAxisAlignment: MainAxisAlignment.center,
+                      //         children: [
+                      //           Text(
+                      //             'More',
+                      //             textAlign: TextAlign.center,
+                      //             style: TextStyle(
+                      //               fontSize: 20, // Larger font size
+                      //               fontWeight: FontWeight.bold,
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // );
                     }
                   },
                 );

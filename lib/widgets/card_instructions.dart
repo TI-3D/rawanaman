@@ -37,7 +37,7 @@ class CardInstructions extends StatelessWidget {
               bottom: 16,
               left: 16,
               child: Text(
-                'Cara mengidentifikasi tanaman',
+                'How to Identify Plants',
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.white,
@@ -66,7 +66,7 @@ class InstructionsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Petunjuk untuk Identifikasi'),
+        title: const Text('Identification Guide'),
         backgroundColor: const Color(0xFF10B982),
         foregroundColor: Colors.black,
         elevation: 1,
@@ -82,7 +82,7 @@ class InstructionsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Cara menggunakan Aplikasi RAWANAMAN:",
+                  "How to Use the RAWANAMAN App:",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -92,7 +92,7 @@ class InstructionsPage extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Text(
                   textAlign: TextAlign.justify,
-                  "Untuk mengidentifikasi tanaman dan penyakit tanaman, cukup ambil gambar tanaman atau pilih gambar tanaman dari 'Foto' Anda dan RAWANAMAN akan mengidentifikasinya secara instan menggunakan AI GEMINI!",
+                  "To identify plants and plant diseases, simply take a picture of the plant or select an image from your gallery. RAWANAMAN will instantly analyze it using AI GEMINI!",
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black,
@@ -100,7 +100,7 @@ class InstructionsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  "Tips tentang cara mengambil gambar:",
+                  "Tips for Taking Pictures:",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -109,23 +109,23 @@ class InstructionsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 _buildTipText(
-                    "1. Fokuskan tanaman di tengah bingkai, hindari gambar yang gelap atau buram.",
+                    "1. Center the plant in the frame, and avoid dark or blurry images.",
                     "g1.png",
                     width),
                 _buildTipText(
-                    "2. Jika tanaman terlalu besar untuk bingkai, pastikan untuk menyertakan daun atau bunga tanaman.",
+                    "2. For large plants, ensure leaves or flowers are included in the frame.",
                     "g2.png",
                     width),
                 _buildTipText(
-                    "3. Hindari terlalu dekat, pastikan daun atau bunganya jelas dan lengkap.",
+                    "3. Maintain a moderate distance to ensure leaves or flowers are clear and fully visible.",
                     "g3.png",
                     width),
-                _buildTipText("4. Hanya sertakan satu spesies pada satu waktu.",
-                    "g4.png", width),
+                _buildTipText(
+                    "4. Only include one species per scan.", "g4.png", width),
                 const SizedBox(height: 15),
                 const Text(
                   textAlign: TextAlign.justify,
-                  "Dengan informasi lokasi Anda 'RAWANAMAN' dapat memberi Anda hasil identifikasi yang lebih akurat.",
+                  "With your location information, RAWANAMAN can provide more accurate identification results.",
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black,
@@ -133,7 +133,7 @@ class InstructionsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  "Peringatan:",
+                  "Warnings:",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -146,7 +146,7 @@ class InstructionsPage extends StatelessWidget {
                   children: [
                     Text(
                       textAlign: TextAlign.justify,
-                      "- Perhatikan lingkungan sekitar dan tetap aman saat mengambil gambar.",
+                      "- Be mindful of your surroundings and ensure safety while capturing images.",
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black,
@@ -155,7 +155,7 @@ class InstructionsPage extends StatelessWidget {
                     SizedBox(height: 8),
                     Text(
                       textAlign: TextAlign.justify,
-                      "- Jangan memakan tanaman liar apa pun.",
+                      "- Avoid consuming any wild plants.",
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black,
@@ -164,7 +164,7 @@ class InstructionsPage extends StatelessWidget {
                     SizedBox(height: 8),
                     Text(
                       textAlign: TextAlign.justify,
-                      "- Jangan menyentuh tanaman liar yang tidak dikenal, karena beberapa mungkin beracun atau dapat menyebabkan alergi.",
+                      "- Refrain from touching unknown wild plants, as some may be toxic or cause allergies.",
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black,
@@ -190,7 +190,7 @@ class InstructionsPage extends StatelessWidget {
                     icon: const Icon(Icons.camera_alt_outlined,
                         color: Color(0xFF10B982)),
                     label: const Text(
-                      "Identifikasi Tanaman",
+                      "Start Identifying Your Plants!",
                       style: TextStyle(
                           fontSize: 18,
                           color: Color(0xFF10B982),

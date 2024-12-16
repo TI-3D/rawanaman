@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 40),
               const Text(
-                'Tutorial Scan Tanaman',
+                'Plant Scanning Tutorial',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
