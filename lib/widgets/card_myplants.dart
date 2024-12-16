@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/service/notification_service.dart';
 
 class CardMyPlants extends StatefulWidget {
   final List<DocumentSnapshot> plants;
@@ -16,37 +17,14 @@ class CardMyPlants extends StatefulWidget {
 }
 
 class _CardMyPlantsState extends State<CardMyPlants> {
-  Future<void> setupPushNotification(String userId) async {
-    final fcm = FirebaseMessaging.instance;
-
-    final permission = await fcm.requestPermission();
-
-    if (permission.authorizationStatus == AuthorizationStatus.authorized) {
-      final token = await fcm.getToken();
-
-      if (token != null) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .set({'fcmToken': token}, SetOptions(merge: true));
-
-        print('FCM Token saved: $token');
-      } else {
-        print('Failed to fetch FCM token');
-      }
-    } else {
-      print('Notification permission not granted');
-    }
+  Future<void> setupPushNotification() async {
+    await NotificationService.instance.initialize();
   }
 
   @override
   void initState() {
     super.initState();
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user != null){
-      setupPushNotification(user.uid);
-    }
+    setupPushNotification();
   }
 
   @override
@@ -142,7 +120,7 @@ class _CardMyPlants extends StatelessWidget {
       required this.createdMyPlant,
       required this.siramMyPlant});
 
-  Future<void> _updateNextSiram(String penyiraman, BuildContext context) async {
+  Future<void> _updateNextSiram(int penyiraman, BuildContext context) async {
     if (siramMyPlant == createdMyPlant) {
       siramMyPlant = getTanggalSiram(penyiraman, createdMyPlant);
       await FirebaseFirestore.instance
@@ -177,17 +155,17 @@ class _CardMyPlants extends StatelessWidget {
         // final String? plantImage = plantData['image'];
         List<Map<String, dynamic>> listPerawatan =
             List<Map<String, dynamic>>.from(plantData['perawatan'] ?? []);
-        String penyiraman = 'No frequency available'; // Default value
+        int penyiraman = 0; // Default value
         for (var perawatan in listPerawatan) {
-          if (perawatan['jenis_perawatan'] == 'air' ||
-              perawatan['jenis_perawatan'] == 'Air') {
-            penyiraman = perawatan['nilai'] as String? ??
+          if (perawatan['jenis_perawatan'] == 'watering' ||
+              perawatan['jenis_perawatan'] == 'Watering') {
+            penyiraman = perawatan['nilai'] ??
                 penyiraman; // Update frequency if found
             break; // Exit the loop since we found the entry
           }
         }
 
-        // _updateNextSiram(penyiraman, context);
+        _updateNextSiram(penyiraman, context);
 
         int hariSampaiSiram =
             (siramMyPlant.toDate().difference(DateTime.now()).inDays);
@@ -330,17 +308,10 @@ class _CardMyPlants extends StatelessWidget {
     );
   }
 
-  static Map<String, int> frekuensiSiram = {
-    'sering': 2,
-    'secukupnya': 3,
-  };
 
-  int getPenyiramanData(String frekuensi) {
-    return frekuensiSiram[frekuensi] ?? 0;
-  }
 
-  Timestamp getTanggalSiram(String nilai, Timestamp tanggal) {
-    int siramDalamHari = getPenyiramanData(nilai);
+  Timestamp getTanggalSiram(int nilai, Timestamp tanggal) {
+    int siramDalamHari = nilai;
 
     DateTime lastWateredDate = tanggal.toDate();
     DateTime nextWateringDate =
