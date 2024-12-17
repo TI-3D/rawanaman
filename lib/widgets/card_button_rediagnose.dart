@@ -41,7 +41,7 @@ class CardButtonRediagnose extends StatelessWidget {
           ),
           padding: WidgetStateProperty.all(
             EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? 130 : 170,
+                horizontal: isSmallScreen ? 120 : 140,
                 vertical: 12), // Padding di dalam tombol
           ),
           overlayColor: WidgetStateProperty.all(

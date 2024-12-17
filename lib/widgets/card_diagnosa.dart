@@ -143,6 +143,13 @@ class CardDiagnosa extends StatelessWidget {
                               ),
                             ),
                             rediagnose == 'true'
+                                ? SizedBox(
+                                    height: 10,
+                                  )
+                                : SizedBox(
+                                    height: 0,
+                                  ),
+                            rediagnose == 'true'
                                 ? CardButtonRediagnose(
                                     myPlantId: myPlantId,
                                     diseaseName:
