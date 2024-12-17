@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:rawanaman/widgets/card_button_rediagnose.dart';
 import 'package:rawanaman/models/gemini2.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,8 +12,10 @@ class CardDiagnosa extends StatelessWidget {
     final Map<String, String?>? args =
         ModalRoute.of(context)?.settings.arguments as Map<String, String?>?;
 
-    final String? imagePath = args?['imagePath'];
-    final String diseaseName = args!['healthState']!;
+    final String myPlantId = args!['myplantid']!;
+    final String? imagePath = args['imagePath'];
+    final String diseaseName = args['healthState']!;
+    final String rediagnose = args['rediagnose']!;
 
     return FutureBuilder<DocumentSnapshot>(
       future: _fetchDiseaseData(diseaseName),
@@ -41,6 +44,8 @@ class CardDiagnosa extends StatelessWidget {
         // data for saran perawatan
         List<Map<String, dynamic>> listPerawatan =
             List<Map<String, dynamic>>.from(diseaseData['perawatan'] ?? []);
+
+        File? imageFile = imagePath != null ? File(imagePath) : null;
 
         ImageProvider imageProvider = imagePath == null
             ? AssetImage('assets/images/kuping_gajah.jpg')
@@ -77,7 +82,10 @@ class CardDiagnosa extends StatelessWidget {
                       ),
                       child: IconButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          rediagnose == 'true'
+                              ? Navigator.popUntil(context,
+                                  (route) => route.settings.name == '/detail')
+                              : Navigator.pop(context);
                         },
                         icon: Icon(Icons.arrow_back, color: Colors.black),
                       ),
@@ -134,6 +142,16 @@ class CardDiagnosa extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            rediagnose == 'true'
+                                ? CardButtonRediagnose(
+                                    myPlantId: myPlantId,
+                                    diseaseName:
+                                        (diseaseName ?? '').toLowerCase(),
+                                    imageData: imageFile,
+                                  )
+                                : SizedBox(
+                                    height: 0,
+                                  ),
                             SizedBox(height: 34),
                             Text(
                               'How to cure?',

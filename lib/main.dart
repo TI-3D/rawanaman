@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rawanaman/pages/camera_page.dart';
+import 'package:rawanaman/pages/camera_page_diagnose.dart';
 import 'package:rawanaman/pages/home_page.dart';
 import 'package:rawanaman/pages/login_page.dart';
 import 'package:rawanaman/pages/account_page.dart';
@@ -20,6 +21,7 @@ import 'package:rawanaman/widgets/card_scan_resultSick.dart';
 import 'package:rawanaman/pages/detail_wiki_pages.dart';
 import 'package:rawanaman/pages/wiki_page.dart';
 import 'package:rawanaman/pages/wiki_article.dart';
+import 'package:rawanaman/widgets/diagnose_healthy.dart';
 import 'package:rawanaman/widgets/navbar.dart';
 import 'package:rawanaman/pages/splash_screen.dart';
 import 'package:rawanaman/service/notification_service.dart';
@@ -88,10 +90,14 @@ class MyApp extends StatelessWidget {
         '/lessonDetail': (context) => CardLessonDetail(),
         '/find-plant': (context) => HomePage(),
         '/cameraPage': (context) => CameraPage(),
+        '/cameraPageDiagnose': (context) => CameraPageDiagnose(
+              myplantid: ModalRoute.of(context)!.settings.arguments as String,
+            ),
         '/scanScreen': (context) => CardScanPict(),
         '/scanResult': (context) => CardResultScan(),
         '/resultSick': (context) => CardScanResultsick(),
         '/diagnoseResult': (context) => CardDiagnosa(),
+        '/diagnoseHealthy': (context) => DiagnoseHealthy(),
         '/settingPage': (context) => SettingPage2(),
         '/account': (context) => AccountPage(),
         '/home': (context) => HomePage(),

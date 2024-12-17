@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:rawanaman/pages/detail_wiki_pages.dart';
 import 'package:rawanaman/widgets/card_lesson_detail.dart';
 
@@ -36,6 +37,11 @@ class DetailMyPlant extends StatelessWidget {
           final myPlantData = snapshot.data!.data() as Map<String, dynamic>;
           final String myPlantName = myPlantData['name'];
           final String myPlantImage = myPlantData['image'];
+          final DocumentReference diseaseData = myPlantData['disease'];
+          final Timestamp lastTimeScanned = myPlantData['lastTimeScanned'];
+          final DateTime lastTimeScannedDate = lastTimeScanned.toDate();
+          final String lastTimeScannedString =
+              DateFormat('dd-MM-yyyy').format(lastTimeScannedDate);
 
           return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
@@ -75,8 +81,7 @@ class DetailMyPlant extends StatelessWidget {
                                 height: 300.0, // Atur tinggi gambar
                                 decoration:
                                     BoxDecoration(color: Colors.grey[300]),
-                                child: myPlantImage == null ||
-                                        myPlantImage.isEmpty
+                                child: myPlantImage.isEmpty
                                     ? Center(
                                         child: Icon(
                                           Icons.image_not_supported,
@@ -234,145 +239,298 @@ class DetailMyPlant extends StatelessWidget {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(25),
                                 ),
-                                child: Row(
+                                child: Column(
                                   children: [
-                                    Column(
+                                    Row(
                                       children: [
-                                        Container(
-                                          padding:
-                                              EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                          child: Text(
-                                            'Health State',
-                                            style: GoogleFonts.poppins(
-                                              textStyle: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: 0.5),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(height: 5),
-                                        Stack(
-                                          alignment: Alignment.topRight,
+                                        Column(
                                           children: [
                                             Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 30, vertical: 30),
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFFFFFCEE),
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(20),
-                                                  bottomLeft:
-                                                      Radius.circular(8),
-                                                  topRight: Radius.circular(8),
-                                                  bottomRight:
-                                                      Radius.circular(20),
-                                                ),
-                                              ),
-                                              child: SvgPicture.asset(
-                                                'assets/svgs/plant.svg',
-                                                height: 45,
-                                                width: 45,
-                                                color: Color(0xffFFB200),
-                                              ),
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12, vertical: 2),
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFFFFB200),
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(2),
-                                                  bottomLeft:
-                                                      Radius.circular(20),
-                                                  topRight: Radius.circular(14),
-                                                  bottomRight:
-                                                      Radius.circular(0),
-                                                ),
-                                              ),
+                                              padding: EdgeInsets.fromLTRB(
+                                                  10, 0, 0, 0),
                                               child: Text(
-                                                'Bad',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
-                                                    letterSpacing: 0.5),
+                                                'Health State',
+                                                style: GoogleFonts.poppins(
+                                                  textStyle: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      letterSpacing: 0.5),
+                                                ),
                                               ),
                                             ),
+                                            SizedBox(height: 5),
+                                            Stack(
+                                              alignment: Alignment.topRight,
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 30,
+                                                      vertical: 30),
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFFFFFCEE),
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(20),
+                                                      bottomLeft:
+                                                          Radius.circular(8),
+                                                      topRight:
+                                                          Radius.circular(8),
+                                                      bottomRight:
+                                                          Radius.circular(20),
+                                                    ),
+                                                  ),
+                                                  child: SvgPicture.asset(
+                                                    'assets/svgs/plant.svg',
+                                                    height: 45,
+                                                    width: 45,
+                                                    color: Color(0xffFFB200),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 2),
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFFFFB200),
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(2),
+                                                      bottomLeft:
+                                                          Radius.circular(20),
+                                                      topRight:
+                                                          Radius.circular(14),
+                                                      bottomRight:
+                                                          Radius.circular(0),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    'Bad',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 12,
+                                                        letterSpacing: 0.5),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(width: 16),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: "Your plant's ",
+                                                    style: GoogleFonts.inter(
+                                                        textStyle: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors.black,
+                                                            letterSpacing: 0.3),
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  TextSpan(
+                                                    text: 'Sick',
+                                                    style: GoogleFonts.inter(
+                                                        textStyle: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Color(
+                                                                0xffFFB200),
+                                                            letterSpacing: 0.3),
+                                                        fontWeight:
+                                                            FontWeight.w800),
+                                                  ),
+                                                  TextSpan(
+                                                    text: " before",
+                                                    style: GoogleFonts.inter(
+                                                        textStyle: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors.black,
+                                                            letterSpacing: 0.3),
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(height: 9),
+                                            Text(
+                                              "Last time Scanned :",
+                                              style: GoogleFonts.inter(
+                                                textStyle: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                            ),
+                                            Text(
+                                              lastTimeScannedString,
+                                              style: GoogleFonts.inter(
+                                                textStyle: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
+                                            ),
+                                            SizedBox(height: 9),
+                                            FutureBuilder(
+                                                future: diseaseData.get(),
+                                                builder: (context, snapshot) {
+                                                  if (!snapshot.hasData ||
+                                                      !snapshot.data!.exists) {
+                                                    return Center(
+                                                        child: Text(''));
+                                                  }
+
+                                                  final diseaseData = snapshot
+                                                          .data!
+                                                          .data()
+                                                      as Map<String, dynamic>;
+                                                  final diseaseName =
+                                                      diseaseData['nama'];
+
+                                                  return Text(
+                                                    "Diagnose: $diseaseName",
+                                                    style: GoogleFonts.inter(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 13,
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
+                                                  );
+                                                }),
+
+                                            // Container(
+                                            //   margin: EdgeInsets.fromLTRB(0, 23, 0, 0),
+                                            //   child: GestureDetector(
+                                            //     onTap: () {
+                                            //       Navigator.pushNamed(
+                                            //           context, '/diagnoseResult',
+                                            //           arguments: <String, String?>{
+                                            //             'healthState': diseaseName,
+                                            //             'imagePath': imagePath,
+                                            //           });
+                                            //     },
+                                            //     child: Align(
+                                            //       alignment: Alignment.center,
+                                            //       child: Text(
+                                            //         'Diagnose >',
+                                            //         style: GoogleFonts.poppins(
+                                            //           textStyle: TextStyle(
+                                            //             fontSize: 14,
+                                            //             color: Colors.green,
+                                            //             fontWeight: FontWeight.bold,
+                                            //           ),
+                                            //         ),
+                                            //       ),
+                                            //     ),
+                                            //   ),
+                                            // ),
                                           ],
                                         ),
                                       ],
                                     ),
-                                    SizedBox(width: 16),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: 'This plant looks ',
-                                                style: GoogleFonts.inter(
-                                                    textStyle: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black,
-                                                        letterSpacing: 0.3),
-                                                    fontWeight:
-                                                        FontWeight.w600),
+                                    // SizedBox(
+                                    //   height: 14,
+                                    // ),
+                                    // FutureBuilder(
+                                    //     future: diseaseData.get(),
+                                    //     builder: (context, snapshot) {
+                                    //       if (!snapshot.hasData ||
+                                    //           !snapshot.data!.exists) {
+                                    //         return Center(child: Text(''));
+                                    //       }
+
+                                    //       final diseaseData = snapshot.data!
+                                    //           .data() as Map<String, dynamic>;
+                                    //       final diseaseName =
+                                    //           diseaseData['nama'];
+
+                                    //       List<Map<String, dynamic>>
+                                    //           listPerawatan =
+                                    //           List<Map<String, dynamic>>.from(
+                                    //               diseaseData['perawatan'] ??
+                                    //                   []);
+
+                                    //       return Column(
+                                    //         crossAxisAlignment:
+                                    //             CrossAxisAlignment.start,
+                                    //         children: [
+                                    //           Text(
+                                    //             "Diagnosed: $diseaseName",
+                                    //             style: GoogleFonts.inter(
+                                    //               textStyle: TextStyle(
+                                    //                   fontSize: 16,
+                                    //                   color: Colors.black,
+                                    //                   fontWeight:
+                                    //                       FontWeight.w700),
+                                    //             ),
+                                    //           ),
+                                    //           SizedBox(
+                                    //             height: 8,
+                                    //           ),
+                                    //           Text(
+                                    //             'How to cure?',
+                                    //             style: TextStyle(
+                                    //               fontSize: 16,
+                                    //               fontWeight: FontWeight.bold,
+                                    //             ),
+                                    //           ),
+                                    //           SizedBox(height: 6),
+                                    //           Column(
+                                    //             children:
+                                    //                 listPerawatan.map((step) {
+                                    //               return CureStep(
+                                    //                 title: step[
+                                    //                         'jenis_perawatan'] ??
+                                    //                     'Unknown',
+                                    //                 description:
+                                    //                     step['deskripsi'] ??
+                                    //                         'Unknown',
+                                    //               );
+                                    //             }).toList(),
+                                    //           ),
+                                    //         ],
+                                    //       );
+                                    //     }),
+                                    Container(
+                                      margin: EdgeInsets.fromLTRB(0, 23, 0, 0),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, '/cameraPageDiagnose',
+                                              arguments: myPlantDoc);
+                                        },
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Diagnose again >',
+                                            style: GoogleFonts.poppins(
+                                              textStyle: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.green,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                              TextSpan(
-                                                text: 'Sick',
-                                                style: GoogleFonts.inter(
-                                                    textStyle: TextStyle(
-                                                        fontSize: 16,
-                                                        color:
-                                                            Color(0xffFFB200),
-                                                        letterSpacing: 0.3),
-                                                    fontWeight:
-                                                        FontWeight.w800),
-                                              ),
-                                            ],
+                                            ),
                                           ),
                                         ),
-                                        SizedBox(height: 9),
-                                        Text(
-                                          "Your plant's Sick!",
-                                          style: GoogleFonts.inter(
-                                            textStyle: TextStyle(
-                                                fontSize: 13,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                        ),
-                                        // Container(
-                                        //   margin: EdgeInsets.fromLTRB(0, 23, 0, 0),
-                                        //   child: GestureDetector(
-                                        //     onTap: () {
-                                        //       Navigator.pushNamed(
-                                        //           context, '/diagnoseResult',
-                                        //           arguments: <String, String?>{
-                                        //             'healthState': diseaseName,
-                                        //             'imagePath': imagePath,
-                                        //           });
-                                        //     },
-                                        //     child: Align(
-                                        //       alignment: Alignment.center,
-                                        //       child: Text(
-                                        //         'Diagnose >',
-                                        //         style: GoogleFonts.poppins(
-                                        //           textStyle: TextStyle(
-                                        //             fontSize: 14,
-                                        //             color: Colors.green,
-                                        //             fontWeight: FontWeight.bold,
-                                        //           ),
-                                        //         ),
-                                        //       ),
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                      ],
+                                      ),
                                     ),
+                                    SizedBox(
+                                      height: 8,
+                                    )
                                   ],
                                 ),
                               )
@@ -658,5 +816,87 @@ class DetailMyPlant extends StatelessWidget {
   // Function to get ColorData from string
   Color getColorIcon(IconData iconColor) {
     return colorIcon[iconColor] ?? Colors.black; // Default icon if not found
+  }
+
+  Future<String> getDiseaseName(DocumentReference ref) async {
+    try {
+      // Get the document snapshot
+      DocumentSnapshot snapshot = await ref.get();
+
+      // Check if the document exists
+      if (snapshot.exists) {
+        // Return the 'nama' field
+        return snapshot.get('nama') as String;
+      } else {
+        // Document does not exist
+        return 'Failed to get disease name';
+      }
+    } catch (e) {
+      // Handle any errors
+      print('Error getting disease name: $e');
+      return 'Failed to get disease name';
+    }
+  }
+}
+
+class CureStep extends StatelessWidget {
+  final String title;
+  final String description;
+
+  CureStep({required this.title, required this.description});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+      child: Row(
+        crossAxisAlignment:
+            CrossAxisAlignment.start, // Aligns children at the start
+        children: [
+          Column(
+            children: [
+              SizedBox(
+                height: 4,
+              ),
+              Icon(
+                Icons.circle,
+                color: Color(0xff10B982),
+                size: 10,
+              ),
+            ],
+          ),
+          SizedBox(width: 4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 2), // Add a small space if needed
+                Text(
+                  description,
+                  textAlign: TextAlign.justify,
+                  style: GoogleFonts.sourceSans3(
+                    textStyle: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 0.04,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

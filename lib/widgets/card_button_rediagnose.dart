@@ -6,17 +6,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class AddMyPlantButton extends StatelessWidget {
-  final String plantName;
+class CardButtonRediagnose extends StatelessWidget {
+  final String myPlantId;
   final String diseaseName;
-  final File imageData;
+  final File? imageData;
 
-  AddMyPlantButton(
-      {required this.plantName,
+  CardButtonRediagnose(
+      {required this.myPlantId,
       required this.diseaseName,
       required this.imageData});
 
-  late String fileName = imageData.uri.pathSegments.last;
+  late String fileName = imageData!.uri.pathSegments.last;
   // late String fileExtension = path.extension(imageData.path);
   // String filename = '$dataId$fileExtension';
 
@@ -50,7 +50,7 @@ class AddMyPlantButton extends StatelessWidget {
           ),
         ),
         child: Text(
-          "Add Plant",
+          "Submit Diagnose",
           style: GoogleFonts.inter(
             textStyle: TextStyle(
               fontSize: 14,
@@ -97,33 +97,12 @@ class AddMyPlantButton extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Do you want to be reminded about watering and fertilisation?',
+                      'Do you want to submit the new diagnose result?',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         color: Colors.grey[700],
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Remind me",
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                        ),
-                        Switch(
-                          activeColor: Color(0xff10B982),
-                          inactiveThumbColor: Color(0xff10B982),
-                          value: reminder,
-                          onChanged: (value) {
-                            // Perbarui state lokal menggunakan setState
-                            setState(() {
-                              reminder = value;
-                            });
-                          },
-                        ),
-                      ],
                     ),
                     SizedBox(height: 20),
                     Row(
@@ -149,10 +128,9 @@ class AddMyPlantButton extends StatelessWidget {
                         TextButton(
                           onPressed: () {
                             // Panggil fungsi untuk menambahkan tanaman
-                            _addPlantToFirebase(reminder);
-                            Navigator.of(context).pop(true); // Tutup dialog
-                            Navigator.pushNamed(context, '/main',
-                                arguments: 1); // Navigasi
+                            _updateDiseaseToFirebase();
+                            Navigator.of(context).pop(true);
+                            Navigator.pushNamed(context, '/main', arguments: 1);
                           },
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.symmetric(
@@ -163,7 +141,7 @@ class AddMyPlantButton extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'Add to My Plant',
+                            'Submit',
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
@@ -180,40 +158,26 @@ class AddMyPlantButton extends StatelessWidget {
   }
 
   // Fungsi untuk menyimpan data ke Firebase
-  void _addPlantToFirebase(bool reminder) async {
+  void _updateDiseaseToFirebase() async {
     try {
+      print("myPlantId: $myPlantId"); // Debugging line
+      print("diseaseName: $diseaseName");
       final dataPlantsCollection =
-          FirebaseFirestore.instance.collection('plants');
+          FirebaseFirestore.instance.collection('myplants');
       final dataDiseaseCollection =
           FirebaseFirestore.instance.collection('disease');
 
-      DocumentReference plantRef = dataPlantsCollection.doc(plantName);
-      DocumentReference diseaseRef = dataDiseaseCollection.doc(diseaseName);
+      DocumentReference plantRef = dataPlantsCollection.doc(myPlantId);
+      DocumentReference diseaseRef =
+          dataDiseaseCollection.doc(diseaseName.toLowerCase());
 
-      DocumentSnapshot plantDoc = await plantRef.get();
-
-      if (!plantDoc.exists) {
-        print("Plant document does not exist.");
-        return;
-      }
-
-      String plantNameValue = plantDoc['nama'];
-
-      // Update the post document with the new field that contains the user reference
-      final DocumentReference myPlantDocRef =
-          await FirebaseFirestore.instance.collection('myplants').add({
-        'name': plantNameValue,
-        'plant': plantRef,
+      await plantRef.update({
         'disease': diseaseRef,
-        'reminder': reminder,
         'image': fileName,
-        'created_at': Timestamp.now(),
-        'lastTimeScanned': Timestamp.now(),
+        'lastTimeScanned': Timestamp.now()
       });
 
-      // add data reference to current user
-      _refMyPlantDataToUsers(myPlantDocRef);
-      _uploadImage(imageData);
+      _uploadImage(imageData!);
 
       print("Plant added successfully!");
     } catch (e) {
@@ -235,23 +199,6 @@ class AddMyPlantButton extends StatelessWidget {
       }
     } catch (e) {
       print('No image selected, error: $e');
-    }
-  }
-
-  void _refMyPlantDataToUsers(DocumentReference docRef) async {
-    final User? user = FirebaseAuth.instance.currentUser;
-
-    try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user?.uid)
-          .update({
-        'myplants': FieldValue.arrayUnion([docRef])
-      });
-
-      print("My Plant data successfully append to users!");
-    } catch (e) {
-      print("Failed to add myPlant to user: $e");
     }
   }
 }

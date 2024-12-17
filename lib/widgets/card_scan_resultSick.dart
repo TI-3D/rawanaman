@@ -347,8 +347,10 @@ class CardScanResultsick extends StatelessWidget {
                                   Navigator.pushNamed(
                                       context, '/diagnoseResult',
                                       arguments: {
+                                        'myplantid': 'null',
                                         'healthState': diseaseName,
                                         'imagePath': imagePath,
+                                        'rediagnose': 'false'
                                       });
                                 },
                                 child: Align(
