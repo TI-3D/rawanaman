@@ -54,7 +54,7 @@ export const sendWateringNotifications = onSchedule('0 21 * * *', async (event) 
                     const todayDate = new Date(today);
                     console.log(`next Siram Date: ${nextSiramDate.toDateString()}, Today Date: ${todayDate.toDateString()}`);
 
-                    if (nextSiramDate && nextSiramDate.getDate() === todayDate.getDate()) {
+                    if (nextSiramDate && nextSiramDate.getDate() === todayDate.getDate() && plantData.reminder) {
                         const fcmToken = userData.fcmToken; // Assuming you store the user's FCM token in the user document
                         const accessToken = await getAccessToken();
 
