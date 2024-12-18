@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -50,8 +52,52 @@ class _CustomCalendarState extends State<CustomCalendar> {
     return (totalDays / 7).ceil();
   }
 
+  Map<DateTime, List<String>> _plantNames = {};
+
+  Future<void> _fetchPlant(List<dynamic> myplantsRef) async {
+    for (var plantRef in myplantsRef) {
+      DocumentSnapshot plantDoc = await plantRef.get();
+      if (plantDoc.exists) {
+        DateTime nextSiram = (plantDoc['nextSiram'] as Timestamp).toDate();
+        DateTime normalizedNextSiram =
+            DateTime(nextSiram.year, nextSiram.month, nextSiram.day);
+        String plantName = plantDoc['name'];
+        // Store the nextSiram date for the plant
+        _plantWateringStatus[normalizedNextSiram] ??= {};
+        if (!_plantWateringStatus[normalizedNextSiram]!
+            .containsKey(plantDoc.id)) {
+          _plantWateringStatus[normalizedNextSiram]![plantDoc.id] = false;
+        }
+
+        if (!_plantNames.containsKey(normalizedNextSiram)) {
+          _plantNames[normalizedNextSiram] = [];
+        }
+        if (!_plantNames[normalizedNextSiram]!.contains(plantName)) {
+          _plantNames[normalizedNextSiram]!.add(plantName);
+        }
+      }
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get()
+          .then((userDoc) {
+        if (userDoc.exists) {
+          final userData = userDoc.data();
+          if (userData != null) {
+            _fetchPlant(userData['myplants']);
+          }
+        }
+      });
+    }
+
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
 
@@ -222,14 +268,20 @@ class _CustomCalendarState extends State<CustomCalendar> {
                       itemCount: currentPageDays.length,
                       itemBuilder: (context, index) {
                         final day = currentPageDays[index];
+                        DateTime normalizedDay =
+                            DateTime(day.year, day.month, day.day);
 
                         final isToday = day.year == DateTime.now().year &&
                             day.month == DateTime.now().month &&
                             day.day == DateTime.now().day;
 
                         // Logika apakah hari ini adalah hari penyiraman
-                        final isWateringDay = day.day % 2 == 0;
-                        final isWatered = _wateringStatus[day] ?? false;
+                        final isWateringDay =
+                            _plantWateringStatus.containsKey(normalizedDay);
+                        final isWatered = _plantWateringStatus[normalizedDay]
+                                ?.values
+                                .any((status) => status) ??
+                            false;
 
                         return GestureDetector(
                           onTap: () {
@@ -238,7 +290,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                                 _focusedDay = day;
                               });
                               _showWateringDialog(context,
-                                  day); // Tampilkan pop-up hanya jika hari penyiraman
+                                  normalizedDay); // Tampilkan pop-up hanya jika hari penyiraman
                             }
                           },
                           child: Container(
@@ -354,26 +406,28 @@ class _CustomCalendarState extends State<CustomCalendar> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
     // List of plant names that need to be watered
-    List<String> plantNames = ['Aloe Vera', 'Cactus', 'Fern', 'Spider Plant'];
+    List<String> plantNames = _plantNames[day] ?? [];
     // Ambil status penyiraman tanaman untuk hari tersebut
-    Map<String, bool> plantWateringStatus = _plantWateringStatus[day] ??
-        {for (var plant in plantNames) plant: false};
+    Map<String, bool> tempPlantWateringStatus = {};
+    for (var plantName in plantNames) {
+      tempPlantWateringStatus[plantName] =
+          _plantWateringStatus[day]?[plantName] ?? false;
+    }
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            int wateredCount = plantWateringStatus.values
-                .where((status) => status == true)
-                .length;
+            int wateredCount =
+                tempPlantWateringStatus.values.where((status) => status).length;
 
             return AlertDialog(
               title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Peringatan Menyiram",
+                    "Plant to water today",
                     style: TextStyle(
                       fontSize: isSmallScreen ? 22 : 15,
                     ),
@@ -383,74 +437,24 @@ class _CustomCalendarState extends State<CustomCalendar> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    "$wateredCount dari ${plantNames.length} tanaman sudah disiram.",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
                   const SizedBox(height: 10),
-                  ...plantNames.map((plant) {
+                  ...plantNames.asMap().entries.map((entry) {
+                    int index = entry.key + 1; // Start numbering from 1
+                    String plantName = entry.value;
+
                     return Container(
-                      padding: const EdgeInsets.all(8.0),
-                      margin: const EdgeInsets.only(bottom: 8.0),
+                      padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                      margin: EdgeInsets.only(bottom: 5),
                       decoration: BoxDecoration(
-                        color: Colors.blueAccent
-                            .shade100, // Warna latar belakang biru muda
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                          color: Colors.green[200],
+                          borderRadius: BorderRadius.circular(10)),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            plant,
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.white),
+                            '$index. $plantName', // Add number before plant name
+                            textAlign: TextAlign.left, // Align text to start
                           ),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 4, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors
-                                      .green.shade100, // Background hijau muda
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      plantWateringStatus[plant] = true;
-                                    });
-                                  },
-                                  child: const Text(
-                                    "Sudah",
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 4, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors
-                                      .red.shade100, // Background merah muda
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      plantWateringStatus[plant] = false;
-                                    });
-                                  },
-                                  child: const Text(
-                                    "Belum",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
+                          Expanded(child: SizedBox())
                         ],
                       ),
                     );
@@ -460,14 +464,10 @@ class _CustomCalendarState extends State<CustomCalendar> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    // Simpan status penyiraman ke _plantWateringStatus dan _wateringStatus
-                    _updateWateringStatus(day, plantWateringStatus);
                     Navigator.of(context).pop(); // Tutup dialog
                   },
                   child: const Text(
-                    "Simpan",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.purple),
+                    "Close",
                   ),
                 ),
               ],
@@ -479,20 +479,4 @@ class _CustomCalendarState extends State<CustomCalendar> {
   }
 
   Map<DateTime, Map<String, bool>> _plantWateringStatus = {}; // Per-tanaman
-  //Map<DateTime, bool> _wateringStatus = {}; // Status harian
-
-  void _updateWateringStatus(
-      DateTime day, Map<String, bool> plantWateringStatus) {
-    // Hitung apakah semua tanaman telah disiram
-    bool allWatered =
-        plantWateringStatus.values.every((status) => status == true);
-
-    setState(() {
-      // Simpan status penyiraman tanaman
-      _plantWateringStatus[day] = plantWateringStatus;
-
-      // Simpan status harian
-      _wateringStatus[day] = allWatered;
-    });
-  }
 }
