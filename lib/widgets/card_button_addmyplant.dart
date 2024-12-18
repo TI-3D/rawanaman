@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rawanaman/widgets/card_confirm_login.dart';
 
 class AddMyPlantButton extends StatelessWidget {
   final String plantName;
@@ -24,6 +25,7 @@ class AddMyPlantButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
+
     return Center(
       child: OutlinedButton(
         onPressed: () {

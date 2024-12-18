@@ -64,17 +64,17 @@ class AuthCheck extends StatelessWidget {
     return FutureBuilder<bool>(
         future: checkGuestStatus(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Scaffold(
-              body: Center(
-                child: Image.asset(
-                  'assets/images/rawanaman_logo.png',
-                  width: 150,
-                  height: 150,
-                ),
-              ),
-            );
-          }
+          // if (snapshot.connectionState == ConnectionState.waiting) {
+          //   return Scaffold(
+          //     body: Center(
+          //       child: Image.asset(
+          //         'assets/images/rawanaman_logo.png',
+          //         width: 150,
+          //         height: 150,
+          //       ),
+          //     ),
+          //   );
+          // }
 
           if (snapshot.hasData && snapshot.data == true) {
             // Jika pengguna adalah "guest", arahkan ke MainScreen
@@ -84,17 +84,17 @@ class AuthCheck extends StatelessWidget {
           return StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (ctx, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Scaffold(
-                    body: Center(
-                      child: Image.asset(
-                        'assets/images/rawanaman_logo.png',
-                        width: 150,
-                        height: 150,
-                      ),
-                    ),
-                  );
-                }
+                // if (snapshot.connectionState == ConnectionState.waiting) {
+                //   return Scaffold(
+                //     body: Center(
+                //       child: Image.asset(
+                //         'assets/images/rawanaman_logo.png',
+                //         width: 150,
+                //         height: 150,
+                //       ),
+                //     ),
+                //   );
+                // }
 
                 if (snapshot.hasData) {
                   return MainScreen();

@@ -3,6 +3,7 @@ import 'package:rawanaman/widgets/card_calender.dart';
 import 'package:rawanaman/widgets/card_instructions.dart';
 import 'package:rawanaman/widgets/header_widget.dart';
 import 'package:rawanaman/widgets/recommendations_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,6 +15,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       backgroundColor: const Color(0xFFEAFBF2),
       body: Padding(
@@ -46,11 +49,19 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 5),
               const CardInstructions(),
               const SizedBox(height: 40),
-              const SizedBox(
-                height: 450,
-                child: CustomCalendar(),
-              ),
-              const SizedBox(height: 30),
+              user != null
+                  ? const SizedBox(
+                      height: 450,
+                      child: CustomCalendar(),
+                    )
+                  : SizedBox(
+                      height: 0,
+                    ),
+              user != null
+                  ? const SizedBox(height: 30)
+                  : SizedBox(
+                      height: 0,
+                    ),
               RecommendationsWidget(),
             ],
           ),

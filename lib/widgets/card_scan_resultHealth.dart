@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,6 +21,8 @@ class CardResultScan extends StatelessWidget {
     final String? imagePath = args?['imagePath'];
     final String? nama_doc = args?['nama'];
     final String? diseaseName = args?['healthState'];
+
+    final user = FirebaseAuth.instance.currentUser;
 
     return FutureBuilder<DocumentSnapshot>(
         future: _fetchPlantData(nama_doc!), // Fetch data using document ID
@@ -218,11 +221,16 @@ class CardResultScan extends StatelessWidget {
 
                               SizedBox(height: 25),
                               // Button
-                              AddMyPlantButton(
-                                plantName: name.toLowerCase(),
-                                diseaseName: (diseaseName ?? '').toLowerCase(),
-                                imageData: fileUpload,
-                              ),
+                              user != null
+                                  ? AddMyPlantButton(
+                                      plantName: name.toLowerCase(),
+                                      diseaseName:
+                                          (diseaseName ?? '').toLowerCase(),
+                                      imageData: fileUpload,
+                                    )
+                                  : SizedBox(
+                                      height: 0,
+                                    ),
 
                               SizedBox(height: 16),
                             ],
