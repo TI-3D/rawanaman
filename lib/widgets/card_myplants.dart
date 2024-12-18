@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -106,7 +107,30 @@ class _CardMyPlantsState extends State<CardMyPlants> {
             }
 
             if (!plantsSnapshot.hasData || plantsSnapshot.data!.docs.isEmpty) {
-              return Center(child: Text('No Plants Available'));
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/cameraPage');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xff10B998), // Warna tombol hijau
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 34, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            25), // Membuat tombol dengan sudut membulat
+                      ),
+                    ),
+                    child: Text(
+                      'Add Plant',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ],
+              );
             } else {
               final plants = plantsSnapshot.data!.docs;
 
@@ -129,7 +153,7 @@ class _CardMyPlantsState extends State<CardMyPlants> {
                     imageMyPlant: imageName,
                     nameMyPlant: myPlantName,
                     createdMyPlant: createdAt,
-                    reminder:  isReminderSet,
+                    reminder: isReminderSet,
                     siramMyPlant: siramAt,
                   );
                 },
@@ -157,7 +181,7 @@ class _CardMyPlants extends StatelessWidget {
       required this.nameMyPlant,
       required this.myPlantDocId,
       required this.createdMyPlant,
-       required this.reminder,
+      required this.reminder,
       required this.siramMyPlant});
 
   Future<void> _updateNextSiram(int penyiraman, BuildContext context) async {
@@ -198,8 +222,8 @@ class _CardMyPlants extends StatelessWidget {
         for (var perawatan in listPerawatan) {
           if (perawatan['jenis_perawatan'] == 'watering' ||
               perawatan['jenis_perawatan'] == 'Watering') {
-            penyiraman = perawatan['nilai'] ??
-                penyiraman; // Update frequency if found
+            penyiraman =
+                perawatan['nilai'] ?? penyiraman; // Update frequency if found
             break; // Exit the loop since we found the entry
           }
         }
@@ -375,7 +399,6 @@ class _CardMyPlants extends StatelessWidget {
       },
     );
   }
-
 
   Timestamp getTanggalSiram(int nilai, Timestamp tanggal) {
     int siramDalamHari = nilai;
