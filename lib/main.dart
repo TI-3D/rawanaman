@@ -26,6 +26,7 @@ import 'package:rawanaman/widgets/navbar.dart';
 import 'package:rawanaman/widgets/card_disease_info.dart';
 import 'package:rawanaman/pages/splash_screen.dart';
 import 'package:rawanaman/service/notification_service.dart';
+import 'package:rawanaman/widgets/card_scan_notLeaf.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -97,6 +98,7 @@ class MyApp extends StatelessWidget {
         '/scanScreen': (context) => CardScanPict(),
         '/scanResult': (context) => CardResultScan(),
         '/resultSick': (context) => CardScanResultsick(),
+        '/notLeaf': (context) => CardScanNotLeaf(),
         '/diagnoseResult': (context) => CardDiagnosa(),
         '/diagnoseHealthy': (context) => DiagnoseHealthy(),
         '/diseaseinfo': (context) => CardDiseaseInfo(),
