@@ -9,6 +9,14 @@ class CardScanNotLeaf extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              Navigator.popUntil(context, (route) => route.settings.name == '/cameraPage');
+            },
+          ),
+        ],
         title: const Text('Scan Result'),
         backgroundColor: const Color(0xFF10B982),
         foregroundColor: Colors.black,
