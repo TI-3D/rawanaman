@@ -66,13 +66,11 @@ class _CameraPageState extends State<CameraPage> {
           print('start identifying image from camera');
 
           String healthState = await makePrediction(imagePath!);
-          print('finish identify from camera');
+          print('finish identify from camera ${healthState}');
 
           if (healthState == 'notleaf') {
             print("objek bukan sebuah daun");
-            Navigator.pushNamed(
-              context, '/notLeaf'
-            );
+            Navigator.pushNamed(context, '/notLeaf');
           } else {
             print('start prompt from camera');
             await generateAndSaveText(prompt);
@@ -91,23 +89,6 @@ class _CameraPageState extends State<CameraPage> {
               });
             }
             print("objek merupakan sebuah daun");
-          }
-
-          print('start prompt from camera');
-          await generateAndSaveText(prompt);
-          print('finish prompt from camera');
-
-          if (healthState == 'Healthy') {
-            Navigator.pushNamed(context, '/scanResult', arguments: {
-              'imagePath': imagePath,
-              'nama': prompt,
-            });
-          } else {
-            Navigator.pushNamed(context, '/resultSick', arguments: {
-              'imagePath': imagePath,
-              'nama': prompt,
-              'healthState': healthState,
-            });
           }
         },
       );

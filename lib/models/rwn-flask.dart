@@ -18,7 +18,7 @@ Future<String> makePrediction(String imagePath) async {
   };
 
   final response = await http.post(
-    Uri.parse("http://192.168.1.222:5000/predict"),
+    Uri.parse("http://192.168.3.192:5000/predict"),
     headers: {'Content-Type': 'application/json'},
     body: json.encode(inputData),
   );
