@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 
 Future<String> makePrediction(String imagePath) async {
+  // Fetch API URL from Firestore
+  // String apiUrl = await getApiMlUrl();
+
   // Read the image file
   File imageFile = File(imagePath);
   List<int> imageBytes = await imageFile.readAsBytes();
@@ -14,9 +18,7 @@ Future<String> makePrediction(String imagePath) async {
   };
 
   final response = await http.post(
-    Uri.parse('https://mkemaln.my.id/predict'),
-    // Uri.parse(
-    //     'https://rawanaman.wibudev.moe/predict'),
+    Uri.parse("http://192.168.1.222:5000/predict"),
     headers: {'Content-Type': 'application/json'},
     body: json.encode(inputData),
   );
@@ -45,5 +47,23 @@ Future<String> makePrediction(String imagePath) async {
         throw Exception(
             'Failed to make prediction: ${response.statusCode} ${response.reasonPhrase}');
     }
+  }
+}
+
+// Function to fetch API URL from Firestore
+Future<String> getApiMlUrl() async {
+  try {
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('system')
+        .doc('config')
+        .get();
+
+    if (snapshot.exists) {
+      return snapshot.get('api_ml'); // Ensure 'url' field exists in Firestore
+    } else {
+      throw Exception('API URL not found in Firestore.');
+    }
+  } catch (e) {
+    throw Exception('Error fetching API URL: $e');
   }
 }

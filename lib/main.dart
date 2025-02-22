@@ -23,6 +23,7 @@ import 'package:rawanaman/pages/wiki_page.dart';
 import 'package:rawanaman/pages/wiki_article.dart';
 import 'package:rawanaman/widgets/diagnose_healthy.dart';
 import 'package:rawanaman/widgets/navbar.dart';
+import 'package:rawanaman/widgets/card_disease_info.dart';
 import 'package:rawanaman/pages/splash_screen.dart';
 import 'package:rawanaman/service/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -98,6 +99,7 @@ class MyApp extends StatelessWidget {
         '/resultSick': (context) => CardScanResultsick(),
         '/diagnoseResult': (context) => CardDiagnosa(),
         '/diagnoseHealthy': (context) => DiagnoseHealthy(),
+        '/diseaseinfo': (context) => CardDiseaseInfo(),
         '/settingPage': (context) => SettingPage2(),
         '/account': (context) => AccountPage(),
         '/home': (context) => HomePage(),

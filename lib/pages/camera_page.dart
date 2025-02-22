@@ -67,6 +67,12 @@ class _CameraPageState extends State<CameraPage> {
           String healthState = await makePrediction(imagePath!);
           print('finish identify from camera');
 
+          if (healthState == 'leaf') {
+            print("objek terindentifikasi sebagai daun");
+          } else if (healthState == 'notleaf') {
+            print("objek bukan sebuah daun");
+          }
+
           print('start prompt from camera');
           await generateAndSaveText(prompt);
           print('finish prompt from camera');

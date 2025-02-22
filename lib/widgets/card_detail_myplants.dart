@@ -37,6 +37,7 @@ class DetailMyPlant extends StatelessWidget {
           final myPlantData = snapshot.data!.data() as Map<String, dynamic>;
           final String myPlantName = myPlantData['name'];
           final String myPlantImage = myPlantData['image'];
+          // final String? nullableMyPlantImage = myPlantImage;
           final DocumentReference diseaseData = myPlantData['disease'];
           final Timestamp lastTimeScanned = myPlantData['lastTimeScanned'];
           final DateTime lastTimeScannedDate = lastTimeScanned.toDate();
@@ -53,9 +54,9 @@ class DetailMyPlant extends StatelessWidget {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
 
-                if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return Center(child: Text('No Plant Data Found'));
-                }
+                // if (!snapshot.hasData || !snapshot.data!.exists) {
+                //   return Center(child: Text('No Plant Data Found'));
+                // }
 
                 final plantData = snapshot.data!.data() as Map<String, dynamic>;
                 final String plantName = plantData.containsKey('nama')
@@ -418,16 +419,59 @@ class DetailMyPlant extends StatelessWidget {
                                                   final diseaseName =
                                                       diseaseData['nama'];
 
-                                                  return Text(
-                                                    "Diagnose: $diseaseName",
-                                                    style: GoogleFonts.inter(
-                                                      textStyle: TextStyle(
-                                                          fontSize: 13,
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w500),
-                                                    ),
+                                                  return Row(
+                                                    children: [
+                                                      Text(
+                                                        "Diagnose:",
+                                                        style:
+                                                            GoogleFonts.inter(
+                                                          textStyle: TextStyle(
+                                                              fontSize: 13,
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pushNamed(
+                                                              context,
+                                                              '/diseaseinfo',
+                                                              arguments: {
+                                                                'imagePath':
+                                                                    myPlantImage,
+                                                                'diseaseName':
+                                                                    diseaseName,
+                                                              });
+                                                        },
+                                                        child: Text(
+                                                          diseaseName,
+                                                          style:
+                                                              GoogleFonts.inter(
+                                                            textStyle: TextStyle(
+                                                                fontSize: 13,
+                                                                color:
+                                                                    Colors.red,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
                                                   );
+                                                  // return Text(
+                                                  //   "Diagnose: $diseaseName",
+                                                  //   style: GoogleFonts.inter(
+                                                  //     textStyle: TextStyle(
+                                                  //         fontSize: 13,
+                                                  //         color: Colors.black,
+                                                  //         fontWeight:
+                                                  //             FontWeight.w500),
+                                                  //   ),
+                                                  // );
                                                 }),
 
                                             // Container(
